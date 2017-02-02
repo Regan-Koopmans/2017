@@ -1,0 +1,93 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.8 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\sortlist[entry]{nty/global/}
+  \entry{atlantic2017}{online}{}
+    \name{author}{1}{}{%
+      {{hash=AT}{%
+         family={Atlantic},
+         familyi={A\bibinitperiod},
+         given={The},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AT1}
+    \strng{fullhash}{AT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{edition}{first}
+    \field{title}{Scientists Have Found Another Crow That Uses Tools}
+    \verb{url}
+    \verb https://www.theatlantic.com/science/archive/2016/09/this-crow-nearly-
+    \verb died-out-before-we-knew-it-uses-tools/499724/
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{etymonline2017}{online}{}
+    \name{author}{1}{}{%
+      {{hash=E}{%
+         family={Etymonline},
+         familyi={E\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{E1}
+    \strng{fullhash}{E1}
+    \field{labelnamesource}{author}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \field{edition}{first}
+    \verb{url}
+    \verb http://www.etymonline.com/index.php
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{Crystal}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{edition}{first}
+    \field{title}{Google Images}
+    \verb{url}
+    \verb https://s-media-cache-ak0.pinimg.com/736x/6b/48/ca/6b48cabd04dee57f45
+    \verb c1f6a58813eaae.jpg
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{Sea}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{edition}{first}
+    \field{title}{Google Images - Animal Scientific Diagrams}
+    \verb{url}
+    \verb https://s-media-cache-ak0.pinimg.com/236x/19/44/b4/1944b45fa0ab35f9b6
+    \verb f42436073e342f.jpg
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+\endsortlist
+\endinput
