@@ -1,0 +1,189 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.8 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\sortlist[entry]{nty/global/}
+  \entry{atlantic2017}{online}{}
+    \name{author}{1}{}{%
+      {{hash=AT}{%
+         family={Atlantic},
+         familyi={A\bibinitperiod},
+         given={The},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AT1}
+    \strng{fullhash}{AT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{edition}{first}
+    \field{title}{Scientists Have Found Another Crow That Uses Tools}
+    \verb{url}
+    \verb https://www.theatlantic.com/science/archive/2016/09/this-crow-nearly-
+    \verb died-out-before-we-knew-it-uses-tools/499724/
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{boston}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \field{edition}{first}
+    \field{title}{Boston Dynamics}
+    \verb{url}
+    \verb https://www.bostondynamics.com/
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{geneng}{online}{}
+    \name{author}{2}{}{%
+      {{hash=EG}{%
+         family={Engineering},
+         familyi={E\bibinitperiod},
+         given={Genetic},
+         giveni={G\bibinitperiod},
+      }}%
+      {{hash=NB}{%
+         family={News},
+         familyi={N\bibinitperiod},
+         given={Biotechnology},
+         giveni={B\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{EGNB1}
+    \strng{fullhash}{EGNB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \field{edition}{first}
+    \field{title}{Nanotech Drug Delivery Expands Its Range of Applications}
+    \verb{url}
+    \verb https://www.genengnews.com/gen-exclusives/nanotech-drug-delivery-expa
+    \verb nds-its-range-of-applications/77900720
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{etymonline2017}{online}{}
+    \name{author}{1}{}{%
+      {{hash=E}{%
+         family={Etymonline},
+         familyi={E\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{E1}
+    \strng{fullhash}{E1}
+    \field{labelnamesource}{author}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \field{edition}{first}
+    \verb{url}
+    \verb http://www.etymonline.com/index.php
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{Crystal}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{edition}{first}
+    \field{title}{Google Images}
+    \verb{url}
+    \verb https://s-media-cache-ak0.pinimg.com/736x/6b/48/ca/6b48cabd04dee57f45
+    \verb c1f6a58813eaae.jpg
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{Sea}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{edition}{first}
+    \field{title}{Google Images - Animal Scientific Diagrams}
+    \verb{url}
+    \verb https://s-media-cache-ak0.pinimg.com/236x/19/44/b4/1944b45fa0ab35f9b6
+    \verb f42436073e342f.jpg
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{openworm}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{O}
+    \field{sortinithash}{O}
+    \field{edition}{first}
+    \field{title}{Open Worm}
+    \verb{url}
+    \verb https://www.openworm.org/
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{immune}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{W}
+    \field{sortinithash}{W}
+    \field{edition}{first}
+    \field{title}{Wikipedia - Artificial Immune System}
+    \verb{url}
+    \verb https://www.wikipedia.org/wiki/Artificial_immune_system
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{intel}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{W}
+    \field{sortinithash}{W}
+    \field{edition}{first}
+    \field{title}{Wikipedia - Artificial Intelligence}
+    \verb{url}
+    \verb https://www.wikipedia.org/wiki/Artificial_intelligence
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{artlife}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{W}
+    \field{sortinithash}{W}
+    \field{edition}{first}
+    \field{title}{Wikipedia - Artificial Life}
+    \verb{url}
+    \verb https://www.wikipedia.org/wiki/Artificial_life
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+\endsortlist
+\endinput
