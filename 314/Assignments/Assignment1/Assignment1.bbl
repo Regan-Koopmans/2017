@@ -42,6 +42,19 @@
     \warn{\item Invalid format of field 'month'}
   \endentry
 
+  \entry{cfl}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \field{edition}{first}
+    \field{title}{Biology Online}
+    \verb{url}
+    \verb https://www.biology-online.org/dictionary/Life
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
   \entry{boston}{online}{}
     \field{labeltitlesource}{title}
     \field{sortinit}{B}
@@ -147,6 +160,21 @@
     \warn{\item Invalid format of field 'month'}
   \endentry
 
+  \entry{cancer}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{edition}{first}
+    \field{title}{Stanford News - Deep Learning Algorithm Does as Well as
+  Dermatologists in Identifying Skin Cancer}
+    \verb{url}
+    \verb https://news.stanford.edu/2017/01/25/artificial-intelligence-used-ide
+    \verb ntify-skin-cancer/
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
   \entry{immune}{online}{}
     \field{labeltitlesource}{title}
     \field{sortinit}{W}
@@ -181,6 +209,32 @@
     \field{title}{Wikipedia - Artificial Life}
     \verb{url}
     \verb https://www.wikipedia.org/wiki/Artificial_life
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{atp}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{W}
+    \field{sortinithash}{W}
+    \field{edition}{first}
+    \field{title}{Wikipedia - Automated Theorem Proving}
+    \verb{url}
+    \verb https://www.wikipedia.org/wiki/Automated_theorem_proving
+    \endverb
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{pos}{online}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{W}
+    \field{sortinithash}{W}
+    \field{edition}{first}
+    \field{title}{Wikipedia - Particle Swarm Optimization}
+    \verb{url}
+    \verb https://www.wikipedia.org/wiki/Particle_swarm_optimization
     \endverb
     \field{year}{2017}
     \warn{\item Invalid format of field 'month'}
