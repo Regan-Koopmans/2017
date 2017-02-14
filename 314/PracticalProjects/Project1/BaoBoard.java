@@ -19,7 +19,6 @@ public class BaoBoard {
   public int placeSeed(Player player, int position) {
     int captured = 0;
     if (player == Player.PLAYER_1) {
-      System.out.println("Here");
       board[2][position] += 1;
       captured = board[1][position];
       board[1][position] = 0;
@@ -32,8 +31,14 @@ public class BaoBoard {
     return captured;
   }
 
-  public void sow(Player player, int startPosition, String direction) {
-    
+  public void sow(Player player, int numSeeds, int startPositionX, int startPositionY, String direction) {
+    int netDirection;
+    if (player = Player.PLAYER_1) {
+      netDirection = direction == "right" ? 1 : -1;
+    }
+    else {
+      netDirection = direction == "left" ? 1 : -1;
+    }
   }
 
   public void printBoard() {
