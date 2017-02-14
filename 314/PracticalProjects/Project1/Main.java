@@ -1,3 +1,12 @@
+/*
+
+    CLASS       : Main
+    AUTHOR      : Regan Koopmans
+    DESCRIPTION : Defines a graphical user interface and main entry-point
+                  into the program.
+
+ */
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;

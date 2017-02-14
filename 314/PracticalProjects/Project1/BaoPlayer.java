@@ -13,15 +13,21 @@ protected Player playerType;
 protected BaoBoard board;
 public int seedsInStock = 22;
 
+// These methods will have different implementations, depending on whether
+// a player is human or an artificial intelligence.
+
 public abstract int getLocation();
 public abstract Direction getDirection();
 public abstract int getCascadeLocation();
 public abstract Direction getCascadeDirection();
 
+// The concept of a turn is concrete for both, and hence can be described
+// abstractly
+
 public void nextTurn() {
 
-        if (seedsInStock > 0)
-        {
+        if (seedsInStock > 0) {
+
                 int location = getLocation();
                 int captured = board.placeSeed(playerType, location);
                 if (captured > 0) {
@@ -37,15 +43,15 @@ public void nextTurn() {
                         }
                 }
                 else {
-                        System.out.println("You did not capture any seeds");
+                        System.out.println("Player did not capture any seeds");
                 }
                 --seedsInStock;
         }
         else {
-                System.out.println("You do not have seeds in stock");
+                System.out.println("Player has no seeds in stock.");
                 System.out.print("Enter location of the pile you wish to cascade: ");
                 int cascadeLocation = getCascadeLocation();
-                int cascadeDirection = getCascadeDirection();
+                Direction cascadeDirection = getCascadeDirection();
         }
         System.out.println(seedsInStock);
 }

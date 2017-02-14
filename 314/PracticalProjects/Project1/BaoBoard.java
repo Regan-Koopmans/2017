@@ -1,3 +1,12 @@
+/*
+
+    CLASS       : BaoBoard
+    AUTHOR      : Regan Koopmans
+    DESCRIPTION : Defines an abstract Bao player, which is fully implemented
+                  by HumanPlayer and AI Player
+
+ */
+
 public class BaoBoard {
 
 private int[][] board = new int[4][8];

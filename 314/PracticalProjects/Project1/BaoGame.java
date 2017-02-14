@@ -1,3 +1,12 @@
+/*
+
+    CLASS       : BaoGame
+    AUTHOR      : Regan Koopmans
+    DESCRIPTION : Encapsulates the procession of a typical Bao game,
+                  including turns and winning conditions, and allows for
+                  games of different Human/Computer players.
+
+ */
 
 public class BaoGame {
 
@@ -19,14 +28,18 @@ private Boolean hasWon(Player player) {
 }
 
 public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
+
         BaoPlayer player1 = new HumanPlayer(board, Player.PLAYER_1);
         BaoPlayer player2 = new AIPlayer(board, Player.PLAYER_2, 20);
+
         while (!hasWon(Player.PLAYER_1) && !hasWon(Player.PLAYER_2)) {
+
                 System.out.println("\n\tPlayer1\n");
                 player1.nextTurn();
                 System.out.println("\n\tPlayer2\n");
                 player2.nextTurn();
                 board.printBoard();
+
         }
 }
 }
