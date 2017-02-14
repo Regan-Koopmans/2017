@@ -1,5 +1,5 @@
 public class AIPlayer extends BaoPlayer {
-  public AIPlayer(BaoBoard board) {
+  public AIPlayer(BaoBoard board, int depth) {
     super(board);
   }
 

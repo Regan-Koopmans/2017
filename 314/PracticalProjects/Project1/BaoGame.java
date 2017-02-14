@@ -1,6 +1,6 @@
 
 public class BaoGame {
-  public enum Player { PLAYER_1, PLAYER_2 }
+
   BaoBoard board = new BaoBoard();
 
   private Boolean hasWon(Player player) {
@@ -20,7 +20,7 @@ public class BaoGame {
 
   public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
     BaoPlayer player1 = new HumanPlayer(board);
-    BaoPlayer player2 = new AIPlayer(board);
+    BaoPlayer player2 = new AIPlayer(board, 20);
     while (!hasWon(Player.PLAYER_1) && !hasWon(Player.PLAYER_2)) {
       System.out.println("\n\tPlayer1\n");
       player1.nextTurn();

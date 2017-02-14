@@ -16,6 +16,26 @@ public class BaoBoard {
     return board;
   }
 
+  public int placeSeed(Player player, int position) {
+    int captured = 0;
+    if (player == Player.PLAYER_1) {
+      System.out.println("Here");
+      board[2][position] += 1;
+      captured = board[1][position];
+      board[1][position] = 0;
+    }
+    else {
+      board[1][7-position] += 1;
+      captured = board[2][7-position];
+      board[2][position] = 0;
+    }
+    return captured;
+  }
+
+  public void sow(Player player, int startPosition, String direction) {
+    
+  }
+
   public void printBoard() {
     for (int [] array:board) {
       for (int x:array) {
