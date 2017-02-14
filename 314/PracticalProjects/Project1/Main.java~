@@ -18,7 +18,7 @@ public class Main extends Application {
     textGame();
   }
 
-  public static void textGame() {
+  public void textGame() {
     BaoGame bg = new BaoGame();
     bg.start(true, false);
   }

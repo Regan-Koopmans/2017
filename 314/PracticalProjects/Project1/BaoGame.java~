@@ -24,7 +24,7 @@ public class BaoGame {
     while (!hasWon(Player.PLAYER_1) && !hasWon(Player.PLAYER_2)) {
       System.out.println("\n\tPlayer1\n");
       player1.nextTurn();
-      System.out.println("\n\tPlayer2\n");
+      System.out.println("\n\tPlayer2\n"):
       player2.nextTurn();
       board.printBoard();
     }

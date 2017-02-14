@@ -14,9 +14,8 @@ public class HumanPlayer extends BaoPlayer {
 
   public void textBasedTurn() {
     Scanner in = new Scanner(System.in);
-    System.out.print("Input location [1-8]: ");
+    System.out.print("Input ");
     String location = in.nextLine();
-    System.out.print("Sow direction [left/right]: ");
     String sowDirection = in.nextLine();
   }
 }

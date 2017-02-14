@@ -3,7 +3,6 @@ public class AIPlayer extends BaoPlayer {
     super(board);
   }
 
-
   public void nextTurn() {
     // CLEVER AI STUFF GOES HERE
   }
