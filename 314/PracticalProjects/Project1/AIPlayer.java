@@ -1,10 +1,19 @@
 public class AIPlayer extends BaoPlayer {
-  public AIPlayer(BaoBoard board, int depth) {
-    super(board);
-  }
+public AIPlayer(BaoBoard board, Player playerType, int depth) {
+        super(board, playerType);
+}
 
+public int getLocation() {
+}
 
-  public void nextTurn() {
-    // CLEVER AI STUFF GOES HERE
-  }
+public Direction getDirection() {
+}
+
+public int getCascadeLocation() {
+        return 0;
+}
+
+public Direction getCascadeDirection() {
+        return Direction.LEFT;
+}
 }

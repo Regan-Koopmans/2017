@@ -1,11 +1,57 @@
+/*
+
+    CLASS       : BaoPlayer
+    AUTHOR      : Regan Koopmans
+    DESCRIPTION : Defines an abstract Bao player, which is fully implemented
+                  by HumanPlayer and AI Player
+
+ */
+
 public abstract class BaoPlayer {
 
-  protected BaoBoard board;
-  public int seedsInStock = 22;
+protected Player playerType;
+protected BaoBoard board;
+public int seedsInStock = 22;
 
-  public abstract void nextTurn();
+public abstract int getLocation();
+public abstract Direction getDirection();
+public abstract int getCascadeLocation();
+public abstract Direction getCascadeDirection();
 
-  public BaoPlayer(BaoBoard board) {
-    this.board = board;
-  }
+public void nextTurn() {
+
+        if (seedsInStock > 0)
+        {
+                int location = getLocation();
+                int captured = board.placeSeed(playerType, location);
+                if (captured > 0) {
+                        Direction sowDirection;
+                        if (location == 0 || location == 1) {
+                                sowDirection = Direction.LEFT;
+                        }
+                        else if (location == 6 || location == 7) {
+                                sowDirection = Direction.RIGHT;
+                        }
+                        else {
+                                sowDirection = getDirection();
+                        }
+                }
+                else {
+                        System.out.println("You did not capture any seeds");
+                }
+                --seedsInStock;
+        }
+        else {
+                System.out.println("You do not have seeds in stock");
+                System.out.print("Enter location of the pile you wish to cascade: ");
+                int cascadeLocation = getCascadeLocation();
+                int cascadeDirection = getCascadeDirection();
+        }
+        System.out.println(seedsInStock);
+}
+
+public BaoPlayer(BaoBoard board, Player playerType) {
+        this.board = board;
+        this.playerType = playerType;
+}
 }

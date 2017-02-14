@@ -2,39 +2,25 @@
 import java.util.Scanner;
 
 public class HumanPlayer extends BaoPlayer {
-  public HumanPlayer(BaoBoard board) {
-    super(board);
-  }
+public HumanPlayer(BaoBoard board, Player playerType) {
+        super(board, playerType);
+}
 
-  public void nextTurn() {
-    textBasedTurn();
-  }
 
-  public void textBasedTurn() {
-    Scanner in = new Scanner(System.in);
-    if (seedsInStock > 0)
-    {
-      System.out.print("Input location [0-7]: ");
-      Integer location = in.nextInt();
-      int captured = board.placeSeed(Player.PLAYER_1, location);
-      System.out.println("CAPTURED : " + captured);
-      if (captured > 0) {
+public int getLocation() {
+        Scanner in = new Scanner(System.in);
+}
 
-        // Special locations
+public Direction getDirection() {
+        Scanner in = new Scanner(System.in);
+}
 
-        if (location == 0 || location == 1) {
+public int getCascadeLocation() {
+        Scanner in = new Scanner(System.in);
+}
 
-        }
-        else if (location == 6 || location == 7) {
+public Direction getCascadeDirection() {
+        Scanner in = new Scanner(System.in);
+}
 
-        }
-        else {
-          System.out.print("Sow direction [left/right]: ");
-          String sowDirection = in.nextLine();
-        }
-      }
-      --seedsInStock;
-    }
-    System.out.println(seedsInStock);
-  }
 }
