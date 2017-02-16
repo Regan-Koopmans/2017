@@ -19,23 +19,47 @@ import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.scene.input.KeyEvent;
 
+import java.net.Socket;
+
 import java.util.Optional;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class Client extends Application {
 
-private int PORT;
-private int ADDR;
+private static int PORT;
+private static String ADDR;
+
+private static Socket socket;
+private static DataInputStream streamIn;
+private static DataOutputStream streamOut;
+
+
+  public static void openStreams() {
+    streamIn = null;
+    try {
+      streamOut = new DataOutputStream(socket.getOutputStream());
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+  }
 
 public static void main(String [] args) {
-  if (args.length < 3) {
-    System.out.println("Port not provided, assuming 3000.");
+  if (args.length < 1) {
+      System.out.println("Address not provided, assuming 10.0.0.1:3000.");
+      ADDR = "10.0.0.1";
+      PORT = 3000;
   }
   else if (args.length < 2)
   {
-    System.out.println("Address not provided, assuming 10.0.0.1:3000.");
+    System.out.println("Port not provided, assuming 3000.");
+    ADDR = args[0];
+    PORT = 3000;
   }
   else {
-
+      ADDR = args[0];
+      PORT = Integer.parseInt(args[1]);
   }
   launch(args);
 }
@@ -60,25 +84,7 @@ public void start(Stage mainStage) {
   chatMain.setEditable(false);
   chatMain.setText("Connecting...");
 
-
-  Button sendButton = new Button();
-  sendButton.setText("Send");
-
-
   TextField messageField = new TextField();
-
-  // Add behaviors to UI Elements
-
-  sendButton.setOnAction(new EventHandler<ActionEvent>() {
-      public void handle(ActionEvent event) {
-
-      }
-    });
-
-  // Add all elements to central pane.
-
-
-
 
   String username = getUsername();
   chatMain.setText(chatMain.getText() + "\nEntering chat with username : " + username);
@@ -101,6 +107,22 @@ public void start(Stage mainStage) {
 
   mainStage.setScene(mainScene);
   mainStage.show();
+
+  /*try {
+      Socket socket = new Socket(ADDR, PORT);
+  } catch(Exception e) {
+      System.out.println(e);
+  }
+  openStreams();
+  String line = "";
+  while (!line.equals(".bye")) {
+    try {
+      streamOut.writeUTF("hi");
+      streamOut.flush();
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+  }*/
 }
 
 }
