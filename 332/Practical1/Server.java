@@ -14,6 +14,7 @@ public class Server implements Runnable {
     private DataInputStream streamIn = null;
     private DataOutputStream streamOut = null;
     private Thread thread = null;
+    private ServerThread client = null;
 
     public static void fatalError(String msg) {
         System.out.println(msg);
@@ -35,21 +36,20 @@ public class Server implements Runnable {
       public void run() {
         while (thread != null) {
           try {
-          socket = server.accept();
-          open();
-          boolean done = false;
-          while (!done) {
-              try {
-                String line = streamIn.readUTF();
-                System.out.println("USER MESSAGE { " + line + " }");
-                streamOut.writeUTF(line);
-                done = line.equals(".bye");
-              } catch (Exception ios) { done = true; }
-          }
-          close();
+          addThread(server.accept());
         } catch (Exception e) {
           fatalError("Could not establish server socket on port ");
         }
+      }
+    }
+
+    public void addThread(Socket socket) {
+      client = new ServerThread(this, socket);
+      try {
+        client.open();
+        client.start();
+      } catch (Exception e) {
+        System.out.println(e);
       }
     }
 

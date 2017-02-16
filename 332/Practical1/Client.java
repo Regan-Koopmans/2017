@@ -34,6 +34,7 @@ private static String ADDR;
 private static Socket socket;
 private static DataInputStream streamIn;
 private static DataOutputStream streamOut;
+private Thread clientThread;
 
 
   public static void openStreams() {
@@ -105,6 +106,9 @@ public void start(Stage mainStage) {
   root.setCenter(chatMain);
   Scene mainScene = new Scene(root, 700, 500);
 
+  clientThread = new ClientThread(chatMain, streamIn);
+  clientThread.start();
+
   mainScene.setOnKeyPressed(new EventHandler <KeyEvent>() {
       public void handle(KeyEvent event) {
         if (event.getCode().toString().equals("ENTER")) {
@@ -113,7 +117,6 @@ public void start(Stage mainStage) {
             try {
               streamOut.writeUTF(username + " : " + message);
               streamOut.flush();
-              appendToChat(chatMain, streamIn.readUTF());
             } catch  (Exception e) {
               System.out.println(e);
               System.out.println(streamOut);
@@ -127,10 +130,16 @@ public void start(Stage mainStage) {
   mainStage.setScene(mainScene);
   mainStage.show();
 
+
+
 }
-
-  void appendToChat(TextArea textArea, String message) {
-    textArea.appendText("\n" + message);
+  public void stop() {
+    try {
+      streamOut.writeUTF("###EXIT###");
+      streamOut.flush();
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    System.exit(0);
   }
-
 }
