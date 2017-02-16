@@ -1,3 +1,5 @@
 *.pdf
 *.jpg
 *.class
+*.log
+*.gz

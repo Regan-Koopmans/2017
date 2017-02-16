@@ -40,7 +40,10 @@ private static DataOutputStream streamOut;
     streamIn = null;
     try {
       streamOut = new DataOutputStream(socket.getOutputStream());
+      streamIn = new DataInputStream(socket.getInputStream());
     } catch (Exception e) {
+      System.out.println("Could not make streams for some reason");
+      System.out.println("Socket = " + socket);
       System.out.println(e);
     }
   }
@@ -79,8 +82,9 @@ public void start(Stage mainStage) {
   BorderPane root = new BorderPane();
 
   try {
-      Socket socket = new Socket(ADDR, PORT);
+      socket = new Socket(ADDR, PORT);
   } catch(Exception e) {
+      System.out.println("Exception here!");
       System.out.println(e);
   }
   openStreams();
@@ -94,7 +98,8 @@ public void start(Stage mainStage) {
   TextField messageField = new TextField();
 
   String username = getUsername();
-  chatMain.setText(chatMain.getText() + "\nEntering chat with username : " + username);
+  chatMain.setText(chatMain.getText() + "\nEntering chat with username : "
+    + username + "\n");
 
   root.setBottom(messageField);
   root.setCenter(chatMain);
@@ -106,15 +111,16 @@ public void start(Stage mainStage) {
           if (!messageField.getText().equals("")) {
             String message = messageField.getText();
             try {
-              streamOut.writeUTF("hi");
+              streamOut.writeUTF(username + " : " + message);
               streamOut.flush();
+              appendToChat(chatMain, streamIn.readUTF());
             } catch  (Exception e) {
               System.out.println(e);
               System.out.println(streamOut);
             }
             messageField.setText("");
-	  }
-	}
+	      }
+	     }
       }
     });
 
@@ -122,5 +128,9 @@ public void start(Stage mainStage) {
   mainStage.show();
 
 }
+
+  void appendToChat(TextArea textArea, String message) {
+    textArea.appendText("\n" + message);
+  }
 
 }
