@@ -26,38 +26,36 @@ public abstract Direction getCascadeDirection();
 
 public void nextTurn() {
 
-        if (seedsInStock > 0) {
+  if (seedsInStock > 0) {
 
-                int location = getLocation();
-                int captured = board.placeSeed(playerType, location);
-                if (captured > 0) {
-                        Direction sowDirection;
-                        if (location == 0 || location == 1) {
-                                sowDirection = Direction.LEFT;
-                        }
-                        else if (location == 6 || location == 7) {
-                                sowDirection = Direction.RIGHT;
-                        }
-                        else {
-                                sowDirection = getDirection();
-                        }
-                }
-                else {
-                        System.out.println("Player did not capture any seeds");
-                }
-                --seedsInStock;
-        }
-        else {
-                System.out.println("Player has no seeds in stock.");
-                System.out.print("Enter location of the pile you wish to cascade: ");
-                int cascadeLocation = getCascadeLocation();
-                Direction cascadeDirection = getCascadeDirection();
-        }
-        System.out.println(seedsInStock);
+    int location = getLocation();
+    int captured = board.placeSeed(playerType, location);
+
+    if (captured > 0) {
+      int sowLocation;
+      Direction sowFromDirection;
+
+      // Locations 0-1 and 6-7 automatically sow from the opposite side.
+
+      if (location == 0 || location == 1) { sowFromDirection = Direction.LEFT; }
+      else if (location == 6 || location == 7) { sowFromDirection = Direction.RIGHT; }
+      else { sowFromDirection = getDirection(); }
+
+      board.sow(playerType, captured, sowFromDirection);
+    }
+    else { System.out.println("Player did not capture any seeds"); }
+    --seedsInStock;
+  }
+  else {
+    System.out.println("Player has no seeds in stock.");
+    int cascadeLocation = getCascadeLocation();
+    Direction cascadeDirection = getCascadeDirection();
+  }
+  System.out.println(seedsInStock);
 }
 
 public BaoPlayer(BaoBoard board, Player playerType) {
-        this.board = board;
-        this.playerType = playerType;
+  this.board = board;
+  this.playerType = playerType;
 }
 }
