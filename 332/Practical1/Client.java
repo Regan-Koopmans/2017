@@ -47,7 +47,7 @@ private static DataOutputStream streamOut;
 
 public static void main(String [] args) {
   if (args.length < 1) {
-      System.out.println("Address not provided, assuming 10.0.0.1:3000.");
+      System.out.println("Address not provided, assuming 0.0.0.0:3000.");
       ADDR = "10.0.0.1";
       PORT = 3000;
   }
@@ -78,6 +78,13 @@ public void start(Stage mainStage) {
   mainStage.setTitle("COS 332 - Chat Application");
   BorderPane root = new BorderPane();
 
+  try {
+      Socket socket = new Socket(ADDR, PORT);
+  } catch(Exception e) {
+      System.out.println(e);
+  }
+  openStreams();
+
   // Declare UI Elemets
 
   TextArea chatMain = new TextArea();
@@ -97,8 +104,14 @@ public void start(Stage mainStage) {
       public void handle(KeyEvent event) {
         if (event.getCode().toString().equals("ENTER")) {
           if (!messageField.getText().equals("")) {
-            chatMain.setText(chatMain.getText() + "\n" + username + " : "
-                             + messageField.getText());
+            String message = messageField.getText();
+            try {
+              streamOut.writeUTF("hi");
+              streamOut.flush();
+            } catch  (Exception e) {
+              System.out.println(e);
+              System.out.println(streamOut);
+            }
             messageField.setText("");
 	  }
 	}
@@ -108,21 +121,6 @@ public void start(Stage mainStage) {
   mainStage.setScene(mainScene);
   mainStage.show();
 
-  /*try {
-      Socket socket = new Socket(ADDR, PORT);
-  } catch(Exception e) {
-      System.out.println(e);
-  }
-  openStreams();
-  String line = "";
-  while (!line.equals(".bye")) {
-    try {
-      streamOut.writeUTF("hi");
-      streamOut.flush();
-    } catch (Exception e) {
-      System.out.println(e);
-    }
-  }*/
 }
 
 }

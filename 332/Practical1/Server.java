@@ -9,10 +9,9 @@ import java.io.BufferedInputStream;
 
 public class Server {
 
-    private static Socket socket = null;
-    private static ServerSocket serverSocket = null;
-    private static DataInputStream streamIn = null;
-    private static DataOutputStream streamOut = null;
+    private Socket socket = null;
+    private ServerSocket server = null;
+    private DataInputStream streamIn = null;
 
     public static void fatalError(String msg) {
         System.out.println(msg);
@@ -20,7 +19,28 @@ public class Server {
         System.exit(1);
     }
 
-    public static void open() {
+    public Server(int port) {
+      try {
+          System.out.println("Binding to port " + port);
+          server = new ServerSocket(port);
+          System.out.println("Server started: " + server);
+          socket = server.accept();
+          open();
+          boolean done = false;
+          while (!done) {
+              try {
+                String line = streamIn.readUTF();
+                System.out.println(line);
+                done = line.equals(".bye");
+              } catch(Exception e) { System.out.println(e); }
+          }
+
+      } catch(Exception e) {
+          fatalError("Could not establish server socket on port " + port);
+      }
+    }
+
+    public void open() {
       try {
         streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
       }
@@ -29,12 +49,12 @@ public class Server {
       }
     }
 
-    public static void close() {
+    public void close() {
       try {
         if ( socket != null ) {
           socket.close();
         }
-        if ( streamOut != null) {
+        if ( streamIn != null) {
           streamIn.close();
         }
       } catch (Exception e) {
@@ -43,33 +63,6 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        int PORT = 3000;
-        if (args.length < 1) {
-            System.out.println("No port was given, assuming 3000.");
-        }
-        else {
-            try {
-                PORT = Integer.parseInt(args[0]);
-            } catch (Exception e) {
-                fatalError("You did not pass an integer port.");
-            }
-        }
-
-        try {
-            serverSocket = new ServerSocket(PORT);
-            socket = serverSocket.accept();
-            open();
-            boolean done = false;
-            while (!done) {
-                try {
-                  String line = streamIn.readUTF();
-                  System.out.println(line);
-                  done = line.equals(".bye");
-                } catch(Exception e) { System.out.println(e); }
-            }
-
-        } catch(Exception e) {
-            fatalError("Could not establish server socket on port " + PORT);
-        }
+      Server server = new Server(Integer.parseInt(args[0]));
     }
 }
