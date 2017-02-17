@@ -43,13 +43,13 @@ public int placeSeed(Player player, int position) {
   return captured;
 }
 
-
-
 public void sow(Player player, int numCapturedSeeds, Direction direction) {
 
   int netDirection = (direction.ordinal() == 0) ? 1 : -1;
   int offset = 2;
   int position;
+  int previousPosition = 0;
+  boolean sowed = false;
 
   position = (direction == Direction.LEFT) ? 0 : 7;
 
@@ -63,10 +63,11 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
     netDirection *= -1;
     offset = 1;
   }
-
+  sowed = (numCapturedSeeds > 0) ? true : false;
   while (numCapturedSeeds > 0) {
 
     board[offset][position] += 1;
+    previousPosition = position;
     position += netDirection;
 
     if (position > 7) {
@@ -89,11 +90,31 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
     }
     --numCapturedSeeds;
   }
+  if (sowed && board[offset][previousPosition] != 0) {
+
+    // adversary is the offset for the enemy
+
+    int adversary = (player == Player.PLAYER_1) ? 1 : 2;
+
+    System.out.println(previousPosition);
+
+    if (board[adversary][previousPosition] != 0) {
+      int capture = board[adversary][previousPosition];
+      board[adversary][previousPosition] = 0;
+      sow(player, capture, direction);
+    }
+    else {
+      System.out.println(adversary + " " + previousPosition + " equals 0.");
+    }
+  }
+  else {
+    System.out.println("Turn ended.");
+  }
 }
 
 public void printBoard() {
-  for (int [] array:board) {
-    for (int x:array) {
+  for (int [] arr:board) {
+    for (int x:arr) {
       System.out.print("[" + x + "]");
     }
     System.out.println("");

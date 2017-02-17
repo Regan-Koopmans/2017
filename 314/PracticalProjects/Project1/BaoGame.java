@@ -36,6 +36,7 @@ public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
 
                 System.out.println("\n\tPlayer1\n");
                 player1.nextTurn();
+                board.printBoard();
                 System.out.println("\n\tPlayer2\n");
                 player2.nextTurn();
                 board.printBoard();

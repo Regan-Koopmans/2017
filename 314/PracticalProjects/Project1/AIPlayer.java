@@ -17,6 +17,7 @@ public int getLocation() {
 }
 
 public Direction getDirection() {
+  System.out.println("AI HAS CHOSEN TO SOW FROM THE LEFT");
   return Direction.LEFT;
 }
 
