@@ -1,0 +1,6 @@
+
+      HELP PAGE
+     -----------
+list  - Shows a list of all appointments.
+clear - Clears the screen
+help  - Shows this message.
