@@ -22,7 +22,7 @@ public class Server implements Runnable {
 
     public static void fatalError(String msg) {
         System.out.println(msg);
-        System.out.println("Exitiing.");
+        System.out.println("Exiting.");
         System.exit(1);
     }
 
@@ -38,26 +38,39 @@ public class Server implements Runnable {
       streamOut.flush();
     }
 
+    public void newAppointment() throws Exception {
+      streamOut.writeUTF("Enter appointment name : ");
+      streamOut.flush();
+      String line = streamIn.readLine();
+      if (true) {
+        String msg = "An appointment named \"" + line + "\" already exists." + "\n";
+        streamOut.writeUTF(msg);
+        streamOut.flush();
+      }
+    }
+
     public void printFile(String file) throws Exception {
       try {
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line = br.readLine();
         while (line != null) {
-          System.out.println(line);
-          sb.append(line+ "\n");
+
+          sb.append(line + "\n");
           line = br.readLine();
         }
         streamOut.writeUTF(sb.toString());
-        streamOut.flush();
+        //streamOut.flush();
       } catch (Exception e) { System.out.println(e); }
     }
 
     public void handle(String line) throws Exception {
       switch(line) {
-      case "help" :  printFile("Help.txt"); break;
-      case "clear" : clearScreen(); break;
-      default: System.out.println("Didn't understand that boss."); break;
+        case "help"    :  printFile("Help.txt");                          break;
+        case "new"     :  newAppointment();                               break;
+        case "license" :  printFile("License.txt");                       break;
+        case "clear"   :  clearScreen();                                  break;
+        default: System.out.println("Didn't understand that boss.");      break;
       }
     }
 
@@ -86,7 +99,6 @@ public class Server implements Runnable {
                 streamOut.writeUTF(decorate("> ", Decorate.RED));
                 streamOut.flush();
                 String line = streamIn.readLine();
-                System.out.println(line);
                 handle(line);
                 done = line.equals(".bye");
               } catch (Exception e) { done = true; }
@@ -108,7 +120,8 @@ public class Server implements Runnable {
 
     public void open() {
       try {
-        streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        streamIn = new DataInputStream(
+          new BufferedInputStream(socket.getInputStream()));
         streamOut = new DataOutputStream(socket.getOutputStream());
       }
       catch (Exception e) {
