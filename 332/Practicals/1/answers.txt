@@ -1,0 +1,13 @@
+# Practical 1 Questions
+
+## Question 1
+
+All that we know is whether packets are accepted or not. `tcproute` can only draw
+valuable information from packets that are returned, rather than rejected.
+
+## Question 2
+
+No, you cannot trace the route to `up.ac.za`. This is because this domain is not
+hosted locally on the university network. This is demonstrated by
+
+## Question 3
