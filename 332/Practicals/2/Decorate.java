@@ -1,1 +1,1 @@
-public enum Decorate { RED };
+public enum Decorate { RED, GREEN };
