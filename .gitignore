@@ -3,3 +3,6 @@
 *.class
 *.log
 *.gz
+*.blg
+*.aux
+*.bbl
