@@ -7,6 +7,8 @@
 
  */
 
+import java.util.ArrayList;
+
 public abstract class BaoPlayer {
 
 protected Player playerType;
@@ -16,7 +18,7 @@ public int seedsInStock = 22;
 // These methods will have different implementations, depending on whether
 // a player is human or an artificial intelligence.
 
-public abstract int getLocation();
+public abstract int getLocation(ArrayList<Integer> captureMoves);
 public abstract Direction getDirection();
 public abstract int getCascadeLocation();
 public abstract Direction getCascadeDirection();
@@ -28,7 +30,12 @@ public void nextTurn() {
 
   if (seedsInStock > 0) {
 
-    int location = getLocation();
+    ArrayList<Integer> captureMoves = board.getCaptureMoves(playerType);
+    if (captureMoves.isEmpty()) {
+      System.out.println("NO CAPTURE MOVES! :(");
+    }
+    int location = getLocation(captureMoves);
+
     int captured = board.placeSeed(playerType, location);
 
     if (captured > 0) {

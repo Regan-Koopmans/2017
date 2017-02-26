@@ -7,13 +7,15 @@
 
  */
 
+import java.util.ArrayList;
+
 public class AIPlayer extends BaoPlayer {
 public AIPlayer(BaoBoard board, Player playerType, int depth) {
   super(board, playerType);
 }
 
-public int getLocation() {
-  return 0;
+public int getLocation(ArrayList<Integer> captureMoves) {
+  return captureMoves.get(0);
 }
 
 public Direction getDirection() {

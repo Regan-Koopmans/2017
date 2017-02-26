@@ -7,6 +7,8 @@
 
  */
 
+import java.util.ArrayList;
+
 public class BaoBoard {
 
 private int[][] board = new int[4][8];
@@ -41,6 +43,25 @@ public int placeSeed(Player player, int position) {
     board[2][7-position] = 0;
   }
   return captured;
+}
+
+public ArrayList<Integer> getCaptureMoves(Player player) {
+
+    ArrayList<Integer> captureMoves = new ArrayList<Integer>();
+
+    int offset = (player == Player.PLAYER_1) ? 1 : 2;
+    int position;
+    for (int x = 0; x < 8; ++x) {
+        if (board[offset][x] != 0) {
+
+            // Player 2 has a reversed perspective.
+
+            position = (player == Player.PLAYER_1) ? x : 7-x;
+            captureMoves.add(position);
+        }
+    }
+
+    return captureMoves;
 }
 
 public void sow(Player player, int numCapturedSeeds, Direction direction) {
@@ -104,7 +125,7 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
       sow(player, capture, direction);
     }
     else {
-      System.out.println(adversary + " " + previousPosition + " equals 0.");
+      System.out.println("Player's turn has ended");
     }
   }
   else {

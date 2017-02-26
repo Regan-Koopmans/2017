@@ -4,6 +4,8 @@
 
   Below is a tree representing the search space:
 
+  \bigskip
+
   \begin{flushleft}
     \input{tree-1}
   \end{flushleft}
@@ -12,28 +14,56 @@
 
   \subsection{Question 2}
 
-    The path that will be generated if Breadth-First Search is used:
+    The path that will be generated if \textit{Breadth-First Search} is used:
 
-      $$A \rightarrow K \rightarrow L \rightarrow M$$
-
-    The cost of this path is $20 + 20 + 20 = 60$.
+      $$Path: A \rightarrow K \rightarrow L \rightarrow M$$
+      $$ = 20 + 20 + 20 $$
+      $$= 60$$
 
   \subsection{Question 3}
 
-    The path that will be generated if Depth-First Search is used:
+    The path that will be generated if \textit{Depth-First Search} is used:
 
-      $$A \rightarrow B \rightarrow F \rightarrow E \rightarrow K \rightarrow L
-          \rightarrow M $$
-
-
-    The cost of this path is $40+22.36+10+14.14+20+20=126.5$.
+      $$Path: A \rightarrow B \rightarrow F \rightarrow E \rightarrow K \rightarrow L \rightarrow M $$
+      $$ = 40+22.36+10+14.14+20+20$$
+      $$=126.5$$
 
   \subsection{Question 4}
+
+  Below is the tree as seen by the perspecitve of the \textit{Uniform Cost Search}. All nodes not
+  depicted are unexplored by the algorithm, and hence their effective costs are undefined, or
+  ``infinity''.
+
+    $$Path:A \rightarrow C \rightarrow D \rightarrow F \rightarrow L \rightarrow M$$
+    $$ = 11.18 + 10 + 5 + 10 + 20 $$
+    $$ = 56.18 $$
+
+  \bigskip
 
   \begin{flushleft}
     \input{tree-2}
   \end{flushleft}
 
+  \pagebreak
+
   \subsection{Question 5}
 
+  Below is the tree as seen by the perspective of the Greedy Algorithm.
+
+    $$Path: A \rightarrow B \rightarrow H \rightarrow G \rightarrow I \rightarrow J \rightarrow M $$
+    $$ = 40 + 10 + 10 + 5 + 10 + 5$$
+    $$ = 80 $$
+
+  \bigskip
+
+  \begin{flushleft}
+    \input{tree-3}
+  \end{flushleft}
+
+  \pagebreak
+
   \subsection{Question 6}
+
+  \begin{flushleft}
+    \input{tree-4}
+  \end{flushleft}

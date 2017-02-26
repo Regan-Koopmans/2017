@@ -1,1 +1,46 @@
 \section{The Wolf-Goat-Cabbage Problem}
+
+  \subsection{Question 1}
+
+    Below is a graph representing the relationships between all possible states
+    in the Wolf-Goat-Cabbage Problem. In this graphic:
+
+    \begin{itemize}
+      \item \textcolor{gray}{\textbf{Grey}} edges represent a movement of the
+      boat with no animals.
+      \item \textcolor{green}{\textbf{Green}} edges represent a movement with
+      the cabbage on the boat.
+      \item \textcolor{cyan}{\textbf{Blue}} edges represent a movement with the
+      goat on the boat.
+      \item \textcolor{red}{\textbf{Red}} edges represent a movement with the
+      wolf on the boat.
+    \end{itemize}
+    \bigskip
+    All edges are considered bidirectional (since the activities can be done in
+    reverse).
+    \bigskip
+    \input{graph-1}
+
+  \pagebreak
+  \subsection{Question 2}
+
+  Below is a tree representation of actions that may be taken to convert all
+actors being on one bank to another. The children are ordered left-to-right
+\textbf{B}(oat), \textbf{W}(olf), \textbf{G}(oat), \textbf{C}(abbage), meaning
+that a movement of the boat with no animals will always appear as the most left
+child (if such a move is possible).
+\\\\
+Further, the error states (ie. all leaves that
+are not the goal state), are written $A \rightarrow B$, which reads as ``A
+consumes B''.
+
+    \bigskip
+
+    \input{tree-5}
+
+  \subsection{Question 3}
+
+    \bigskip
+
+    $$1111 \rightarrow 0101 \rightarrow 1101 \rightarrow 0001 \rightarrow 1011
+    \rightarrow 0010 \rightarrow 1010 \rightarrow 0000$$
