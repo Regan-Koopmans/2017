@@ -3,3 +3,6 @@ make:
 
 run:
 	java Main
+
+clean:
+	rm *.class

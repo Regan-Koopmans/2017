@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class BaoBoard {
 
 private int[][] board = new int[4][8];
+private boolean[] hasBoard = {true, true};
 
 public BaoBoard() {
 
@@ -62,6 +63,10 @@ public ArrayList<Integer> getCaptureMoves(Player player) {
     }
 
     return captureMoves;
+}
+
+public boolean isHouse(Player player, int position) {
+  return true;
 }
 
 public void sow(Player player, int numCapturedSeeds, Direction direction) {

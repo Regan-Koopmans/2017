@@ -1,48 +1,47 @@
-
-
-
-\newarray\states
-\readarray{states}{1111 & 1110 & 1101 & 1100 & 1011 & 1010 & 1001 & 1000 & 0111 & 0110 & 0101 & 0100 & 0011 & 0010 & 0001 & 0000}
-
-
 \noindent\makebox[\textwidth]{%
-    \begin{tikzpicture}[block/.style={circle,thick}]
 
-        \foreach \a in {1,...,16}{
-            \draw (\a*360/16: 5cm) node[shape=circle,draw=black](\a){\states(\a)};
-        }
+    \begin{tikzpicture}[block/.style={circle}]
 
-    \fill[fill=red] (1);
-    \draw ->(1);
-    \draw (1) to[bend left=10] (9)  [draw=lightgray];
-    \draw (1) to (10) [draw=green];
-    \draw (1) to[bend right=10] (11) [draw=cyan];
-    \draw (1) to[bend right=20] (13) [draw=red];
+    \node[shape=circle, draw=orange] (0000) at (9,0) {0000};
+    \node[shape=circle, draw=black] (0001) at (1,1) {0001};
+    \node[shape=circle, draw=black] (0010) at (5,0) {0010};
+    \node[shape=circle, draw=red] (0011) at (-4,2) {0011};
+    \node[shape=circle, draw=black] (0100) at (1,-1) {0100};
+    \node[shape=circle, draw=red] (0110) at (-4,-2) {0110};
+    \node[shape=circle, draw=red] (0111) at (-7, 0) {0111};
+    \node[shape=circle, draw=red] (1000) at (11,0) {1000};
+    \node[shape=circle, draw=red] (1001) at (9,2) {1001};
+    \node[shape=circle, draw=black] (1010) at (7,0) {1010};
+    \node[shape=circle, draw=black] (1011) at (3,1) {1011};
+    \node[shape=circle, draw=red] (1100) at (9,-2) {1100};
+    \node[shape=circle, draw=black] (1110) at (3,-1) {1110};
+    \node[shape=circle, draw=green] (1111) at (-5,0) {1111};
+    \node[shape=circle, draw=black] (0101) at (-3,0) {0101};
+    \node[shape=circle, draw=black] (1101) at (-1,0) {1101};
 
-    \draw (2) to[bend left=10] (10) [draw=lightgray];
-    \draw (2) to[bend right=10] (12) [draw=cyan];
-    \draw (2) to[bend right=10] (14) [draw=red];
+    \path [-] (1111) edge node[above] {$G$} (0101);
+    \path [-] (1111) edge node[above] {$B$} (0111);
+    \path [-] (1111) edge node[left] {$C$} (0011);
+    \path [-] (1111) edge node[left] {$W$} (0110);
 
-    \draw (3) to[bend left=10] (11) [draw=lightgray];
-    \draw (3) to (12) [draw=green];
-    \draw (3) to (15) [draw=red];
+    \path [-] (0101) edge node[above] {$B$} (1101);
 
-    \draw (4) to[bend left=10] (12) [draw=lightgray];
-    \draw (4) to (16) [draw=red];
+    \path [-] (1101) edge node[above] {$C$} (0001);
+    \path [-] (1101) edge node[below] {$W$} (0100);
 
-    \draw (5) to[bend left=10] (13) [draw=lightgray];
-    \draw (5) to[bend left=10] (14) [draw=cyan];
-    \draw (5) to (15) [draw=green];
+    \path [-] (0001) edge node[above] {$G$} (1011);
+    \path [-] (0100) edge node[above] {$G$} (1110);
 
-    \draw (6) to[bend left=10] (14) [draw=lightgray];
-    \draw (6) to (16) [draw=green];
+    \path [-] (1011) edge node[above] {$W$} (0010);
+    \path [-] (1110) edge node[above] {$C$} (0010);
 
-    \draw (7) to (16) [draw=green];
-    \draw (7) to[bend left=10] (15) [draw=lightgray];
+    \path [-] (0010) edge node[above] {$B$} (1010);
 
-    \draw (8) to[bend left=10] (16) [draw=lightgray];
+    \path [-] (1010) edge node[above] {$G$} (0000);
 
-
+    \path [-] (0000) edge node[above] {$B$} (1000);
+    \path [-] (0000) edge node[above] {$B$} (1001);
+    \path [-] (0000) edge node[above] {$B$} (0111);
 
     \end{tikzpicture}
 }
