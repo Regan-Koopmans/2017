@@ -26,15 +26,20 @@ does not exist in the scope of this subnet and can hence not be traced to.
 No, you cannot trace the route to \texttt{up.ac.za} from campus. This is because
 this domain is not hosted locally on the university network. This is
 demonstrated by the fact that when you try to \texttt{traceroute} to the domain
-we see one final SYN packet to a domain outside the network, which  is never
-acknowledged (i.e. no ACK is sent in return). This means that the packet has
-been refused by the university firewall and access has been denied to this
-outside
+we see one final SYN packet to a domain outside (specifically a 
+\texttt{172.XXX.XXX.XXX} address) the network, which  is never acknowledged 
+(i.e. no packet is ever sent in return). This means that the packet has been refused by 
+the university firewall and access has been denied to this external domain.
 
 \paragraph{Question 3}
 
-\begin{center}
-  \includegraphics[scale=0.5]{whoiscropped}
-\end{center}
+If we look up \texttt{www.up.ac.za} on a whois ``service'' online we find that it 
+is managed by a Amazon Web Services server located in Washington, USA. This means that if
+Amazon Web Services was attacked (or one of the service providers that support
+Amazon were attacked), then access to the university's website would be
+prohibited. We can therefore assume that the attack was made on one or more 
+American servers, which in turn interupted the hosting of the univeristy 
+website.
+
 
 \end{document}
