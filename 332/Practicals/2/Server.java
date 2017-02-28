@@ -22,6 +22,9 @@ public class Server implements Runnable {
     private DataOutputStream streamOut = null;
     private Thread thread = null;
 
+    // This variable holds a list of all appointments
+    // abstracted in "Appointment" data types.
+
     private static ArrayList<Appointment> appointments =
       new ArrayList<Appointment>();
 
@@ -47,13 +50,29 @@ public class Server implements Runnable {
     public void newAppointment() throws Exception {
       streamOut.writeUTF("Enter appointment name : ");
       streamOut.flush();
-      String line = streamIn.readLine();
-      if (appointmentExists(line)) {
-        String msg = "An appointment named \"" + line + "\" already exists."
+      String name = streamIn.readLine();
+      if (appointmentExists(name)) {
+        String msg = "An appointment named \"" + name + "\" already exists."
           + "\n";
         streamOut.writeUTF(msg);
         streamOut.flush();
       } else {
+	streamOut.writeUTF("Write a short description of this appointment: \n");
+	streamOut.flush();
+	String desc = streamIn.readLine();
+
+	streamOut.writeUTF("Enter the date of the appointment (dd/mm/yyyy) : ");
+	streamOut.flush();
+	String date = streamIn.readLine();
+
+
+	Appointment newApp = new Appointment();
+	newApp.setName(name);
+	newApp.setDate(date);
+	newApp.setDesc(desc);
+
+	appointments.add(newApp);
+
         String msg = "Appointment added. \n";
         streamOut.writeUTF(msg);
         streamOut.flush();
@@ -65,6 +84,10 @@ public class Server implements Runnable {
         if (a.getName().equals(name)) { return true; }
       }
       return false;
+    }
+
+    public void deleteAppointment() throws Exception {
+    	System.out.println("User tried to delete appointment.");
     }
 
     public void printFile(String file) throws Exception {
@@ -88,6 +111,7 @@ public class Server implements Runnable {
         case "new"     :  newAppointment();                               break;
         case "license" :  printFile("License.txt");                       break;
         case "search"  :  searchAppointments();                           break;
+	case "delete"  :  deleteAppointment();				  break;
         case "clear"   :  clearScreen();                                  break;
         case "list"    :  listAppointments();                             break;
         case "killserv":  killServer();                                   break;
@@ -103,6 +127,8 @@ public class Server implements Runnable {
       System.out.println("Server shutting down.");
       System.exit(0);
     }
+
+    // In this function we bind to a port and start.
 
     public Server(int port) {
       try {
@@ -176,7 +202,7 @@ public class Server implements Runnable {
 
       ArrayList<Appointment> results = new ArrayList<Appointment>();
       try {
-        streamOut.writeUTF("Enter a phrase to search by: \n");
+        streamOut.writeUTF("Enter a phrase to search by: ");
         streamOut.flush();
         String line = streamIn.readLine();
         for (Appointment a:appointments) {

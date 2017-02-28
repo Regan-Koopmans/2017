@@ -3,13 +3,15 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class Appointment {
-  private String name;
-  private Date date;
+  private String name = null;
+  private Date date = null;
+  private String desc = null;
 
   // Getters
 
   public String getName() { return name; }
   public Date getDate() { return date; }
+  public String getDesc() { return desc; }
 
   // Setters
 
@@ -24,11 +26,19 @@ public class Appointment {
     setDate(newDate);
   }
 
+  public void setDesc(String desc) { this.desc = desc; }
+
+
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("# " + name + "\n");
     if (date != null) {
-      sb.append("date:" + date.toString() + "\n");
+      SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
+      String dateString = sdf.format(date);
+      sb.append("date:" + dateString + "\n");
+    }
+    if (desc != null) {
+      sb.append("desc:" + desc + "\n");
     }
     return sb.toString();
   }
