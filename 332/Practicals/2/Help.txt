@@ -5,10 +5,13 @@
 new         - Create a new appointment.
 search      - Search for a particular appointment by name.
 delete      - Delete a certain appointment by name.
-list        - Shows a list of all appointments.
+list/ls     - Shows a list of all appointments.
 clear       - Clears the screen
 clearDay    - Delete all appointments on a particular day.
 clearWeek   - Delete all appointments on a particular week.
 clearMonth  - Delete all appointments on a particular month.
 license     - Print license information for this software
+killserv    - Terminates server.
+exit        - Terminates client session.
 help        - Shows this message.
+

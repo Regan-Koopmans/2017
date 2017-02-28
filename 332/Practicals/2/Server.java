@@ -48,24 +48,25 @@ public class Server implements Runnable {
     }
 
     public void newAppointment() throws Exception {
-      streamOut.writeUTF("Enter appointment name : ");
+      streamOut.writeChars("Enter appointment name : ");
       streamOut.flush();
       String name = streamIn.readLine();
       if (appointmentExists(name)) {
         String msg = "An appointment named \"" + name + "\" already exists."
           + "\n";
-        streamOut.writeUTF(msg);
+	streamOut.flush();
+        streamOut.writeChars(msg);
         streamOut.flush();
       } else {
-	streamOut.writeUTF("People attending this appointment (comma separated list): ");
+	streamOut.writeChars("People attending this appointment (comma separated list): ");
 	streamOut.flush();
 	String part = streamIn.readLine();	
 
-	streamOut.writeUTF("Write a short description of this appointment: \n");
+	streamOut.writeChars("Write a short description of this appointment: \n");
 	streamOut.flush();
 	String desc = streamIn.readLine();
 
-	streamOut.writeUTF("Enter the date of the appointment (dd/mm/yyyy) : ");
+	streamOut.writeChars("Enter the date of the appointment (dd/mm/yyyy) : ");
 	streamOut.flush();
 	String date = streamIn.readLine();
 
@@ -79,7 +80,7 @@ public class Server implements Runnable {
 	appointments.add(newApp);
 
         String msg = "Appointment added. \n";
-        streamOut.writeUTF(msg);
+        streamOut.writeChars(msg);
         streamOut.flush();
       }
     }
@@ -92,7 +93,7 @@ public class Server implements Runnable {
     }
 
     public void deleteAppointment() throws Exception {
-    	streamOut.writeUTF("Enter a phrase to search by: ");
+    	streamOut.writeChars("Enter a phrase to search by: ");
 	streamOut.flush();
 
 	String searchString = streamIn.readLine();
@@ -100,7 +101,8 @@ public class Server implements Runnable {
 		for (int x = 0; x < appointments.size(); ++x) {
 			if (appointments.get(x).getName().equals(searchString)) {
 				appointments.remove(x);
-				streamOut.writeUTF(decorate("Deleting record found by the name of : " + searchString + "\n",Decorate.GREEN));
+				streamOut.writeUTF(decorate("\nDeleting record found by the name of \" " 
+							+ searchString + "\"\n\n",Decorate.GREEN));
 				streamOut.flush();
 				return;
 			}
@@ -122,8 +124,9 @@ public class Server implements Runnable {
           sb.append(line + "\n");
           line = br.readLine();
         }
-        streamOut.writeUTF(sb.toString());
-        //streamOut.flush();
+	streamOut.flush();
+	streamOut.writeChars(sb.toString());
+	streamOut.flush();
       } catch (Exception e) { System.out.println("printFile() : " + e); }
     }
 
@@ -134,9 +137,12 @@ public class Server implements Runnable {
         case "license" :  printFile("License.txt");                       break;
         case "search"  :  searchAppointments();                           break;
 	case "delete"  :  deleteAppointment();				  break;
+	case "rm"      :  deleteAppointment();				  break;
         case "clear"   :  clearScreen();                                  break;
         case "list"    :  listAppointments();                             break;
-        case "killserv":  killServer();                                   break;
+	case "ls"      :  listAppointments();				  break;
+	case "exit"    :  close();					  break;
+        case "poweroff":  killServer();                                   break;
         default        :  unknownCommand(line);                           break;
       }
     }
@@ -178,7 +184,6 @@ public class Server implements Runnable {
                 streamOut.flush();
                 String line = streamIn.readLine();
                 handle(line);
-                done = line.equals(".bye");
               } catch (Exception e) { done = true; }
             }
             close();
@@ -224,7 +229,7 @@ public class Server implements Runnable {
 
       ArrayList<Appointment> results = new ArrayList<Appointment>();
       try {
-        streamOut.writeUTF("Enter a phrase to search by: ");
+        streamOut.writeChars("Enter a phrase to search by: ");
         streamOut.flush();
         String line = streamIn.readLine();
         for (Appointment a:appointments) {
@@ -251,7 +256,7 @@ public class Server implements Runnable {
     public void unknownCommand(String line) {
       if (!line.equals("")) {
         try {
-          streamOut.writeUTF("Unknown command  \"" + line
+          streamOut.writeChars("Unknown command  \"" + line
             + "\" . Type \"help\" to get a list of commands.\n");
           streamOut.flush();
         } catch (Exception e) { System.out.println("unknownCommand() : " + e); }
@@ -260,15 +265,15 @@ public class Server implements Runnable {
 
     public void listAppointments() {
       StringBuilder sb = new StringBuilder();
-      sb.append("\n\tALL APPOINTMENTS\n");
+      sb.append("\n\tALL APPOINTMENTS\n\t --------------\n\n");
       for (Appointment a:appointments) {
         if (a != null) {
-          sb.append(a.toString()+"\n");
+          sb.append(a.toPrettyString()+"\n");
         }
       }
       try {
         streamOut.flush();
-        streamOut.writeUTF(sb.toString());
+        streamOut.writeChars(sb.toString());
         streamOut.flush();
       } catch (Exception e) { System.out.println("listAppointments() : " + e); }
     }
@@ -324,7 +329,6 @@ public class Server implements Runnable {
       try {
         Server server = new Server(Integer.parseInt(args[0]));
       } catch(Exception e) {
-
         System.out.println(e);
       }
     }

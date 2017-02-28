@@ -47,4 +47,16 @@ public class Appointment {
     }
     return sb.toString();
   }
+
+  public String toPrettyString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("#" + name+"\n");
+
+
+    if (desc != null) { sb.append(desc+"\n"); }
+    if (participants != null) { sb.append("With: " + participants + "\n"); }
+    if (date != null) { sb.append("Date: " + (new SimpleDateFormat("dd/MM/YYYY")).format(date)) ; }
+    sb.append("\n");
+    return sb.toString();
+  }
 }

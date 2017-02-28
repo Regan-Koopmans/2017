@@ -3,7 +3,10 @@
   \subsection{Question 1}
 
     Below is a graph representing the relationships between all possible states
-    in the Wolf-Goat-Cabbage Problem. In this graphic:
+    in the Wolf-Goat-Cabbage Problem. In one depiction, error states and transitions are
+    included. This means that while traversing these is possible with the type of actions
+    available, it is ``incorrect'' in the context of the problem at hand. Therefore a second
+    graphic is provided, which eliminates states and transitions that are forbidden.
 
     \bigskip
     \bigskip
@@ -14,7 +17,8 @@
   Below is a tree representation of actions that may be taken to convert all
   actors being on one bank to another. Further, the error states (ie. all leaves that
   are not the goal state), are written $A \rightarrow B$, which reads as ``A
-  consumes B''.
+  consumes B''. States are ordered in ``BWGC'', such that a movement involving
+  only the boat will always appear as the far left child, if one exists.
 
     \bigskip
 
