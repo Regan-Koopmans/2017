@@ -31,6 +31,10 @@ public int[][] getBoard() {
   return board;
 }
 
+// Function that increases a hole by one and
+// returns any seeds that may have been captured
+// by the action.
+
 public int placeSeed(Player player, int position) {
   int captured = 0;
   if (player == Player.PLAYER_1) {
@@ -45,6 +49,11 @@ public int placeSeed(Player player, int position) {
   }
   return captured;
 }
+
+// Function that returns a list of the available
+// moves that will capture enemy seeds. A player
+// will have to pick one of these moves, if one
+// exitst.
 
 public ArrayList<Integer> getCaptureMoves(Player player) {
 
@@ -65,9 +74,19 @@ public ArrayList<Integer> getCaptureMoves(Player player) {
     return captureMoves;
 }
 
+// Function to determine whether a certain position
+// is the "house" hole for a player. This is useful
+// for handling the fact that the house disappears 
+// after it has been sown.
+
 public boolean isHouse(Player player, int position) {
   return true;
 }
+
+// This function will sow the seeds in a given direction.
+// The function handles wrapping around corners, and
+// will call itself recursively if the last seed placed
+// captures again. Still need to add "house" semantics.
 
 public void sow(Player player, int numCapturedSeeds, Direction direction) {
 
