@@ -57,6 +57,10 @@ public class Server implements Runnable {
         streamOut.writeUTF(msg);
         streamOut.flush();
       } else {
+	streamOut.writeUTF("People attending this appointment (comma separated list): ");
+	streamOut.flush();
+	String part = streamIn.readLine();	
+
 	streamOut.writeUTF("Write a short description of this appointment: \n");
 	streamOut.flush();
 	String desc = streamIn.readLine();
@@ -70,6 +74,7 @@ public class Server implements Runnable {
 	newApp.setName(name);
 	newApp.setDate(date);
 	newApp.setDesc(desc);
+	newApp.setParticipants(part);
 
 	appointments.add(newApp);
 
@@ -87,7 +92,24 @@ public class Server implements Runnable {
     }
 
     public void deleteAppointment() throws Exception {
-    	System.out.println("User tried to delete appointment.");
+    	streamOut.writeUTF("Enter a phrase to search by: ");
+	streamOut.flush();
+
+	String searchString = streamIn.readLine();
+	if (appointmentExists(searchString)) {
+		for (int x = 0; x < appointments.size(); ++x) {
+			if (appointments.get(x).getName().equals(searchString)) {
+				appointments.remove(x);
+				streamOut.writeUTF(decorate("Deleting record found by the name of : " + searchString + "\n",Decorate.GREEN));
+				streamOut.flush();
+				return;
+			}
+		}
+	} else {
+	   streamOut.writeUTF(decorate("Could not find " + 
+	"any appointments by that search string.",Decorate.RED));
+	   streamOut.flush();
+	}
     }
 
     public void printFile(String file) throws Exception {
@@ -271,6 +293,8 @@ public class Server implements Runnable {
             String [] lineArray = line.split(":");
             switch(lineArray[0]) {
               case "date" : ; prospectiveAppointment.setDate(lineArray[1]); break;
+	      case "part" : ; prospectiveAppointment.setParticipants(lineArray[1]); break;
+	      case "desc" : ; prospectiveAppointment.setDesc(lineArray[1]); break;
             }
           }
         }

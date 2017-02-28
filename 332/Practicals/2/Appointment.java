@@ -6,17 +6,19 @@ public class Appointment {
   private String name = null;
   private Date date = null;
   private String desc = null;
+  private String participants = null;
 
   // Getters
 
   public String getName() { return name; }
   public Date getDate() { return date; }
   public String getDesc() { return desc; }
-
+  public String getParticipants() { return participants; } 
   // Setters
 
   public void setName(String name) { this.name = name; }
   public void setDate(Date date) { this.date = date; }
+  public void setParticipants(String part) { participants = part;}
 
   public void setDate(String input) {
     Date newDate = null;
@@ -39,6 +41,9 @@ public class Appointment {
     }
     if (desc != null) {
       sb.append("desc:" + desc + "\n");
+    }
+    if (participants != null) {
+      sb.append("part:" + participants + "\n");
     }
     return sb.toString();
   }
