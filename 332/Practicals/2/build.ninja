@@ -1,2 +1,0 @@
-rule compile
-  command = javac $in
