@@ -63,7 +63,7 @@ public ArrayList<Integer> getCaptureMoves(Player player) {
     int self = (player == Player.PLAYER_1) ? 2 : 1;
     int position;
     for (int x = 0; x < 8; ++x) {
-	
+
 	// "If my hole has a seed and their hole has a seed"
         if (board[self][x] != 0 && board[offset][x] != 0) {
 
@@ -77,9 +77,30 @@ public ArrayList<Integer> getCaptureMoves(Player player) {
     return captureMoves;
 }
 
+public ArrayList<Integer> getNonCaptureMoves(Player player) {
+
+    ArrayList<Integer> nonCaptureMoves = new ArrayList<Integer>();
+
+    int self = (player == Player.PLAYER_1) ? 2 : 1;
+    int position;
+    for (int x = 0; x < 8; ++x) {
+
+	// "If my hole has a seed and their hole has a seed"
+        if (board[self][x] != 0) {
+
+            // Player 2 has a reversed perspective.
+
+            position = (player == Player.PLAYER_1) ? x : 7-x;
+            nonCaptureMoves.add(position);
+        }
+    }
+
+    return nonCaptureMoves;
+}
+
 // Function to determine whether a certain position
 // is the "house" hole for a player. This is useful
-// for handling the fact that the house disappears 
+// for handling the fact that the house disappears
 // after it has been sown.
 
 public boolean isHouse(Player player, int position) {

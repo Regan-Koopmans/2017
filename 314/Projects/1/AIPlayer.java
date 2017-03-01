@@ -14,8 +14,12 @@ public AIPlayer(BaoBoard board, Player playerType, int depth) {
   super(board, playerType);
 }
 
-public int getLocation(ArrayList<Integer> captureMoves) {
+public int getCaptureLocation(ArrayList<Integer> captureMoves) {
   return captureMoves.get(0);
+}
+
+public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
+  return nonCaptureMoves.get(0);
 }
 
 public Direction getDirection() {

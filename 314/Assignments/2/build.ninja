@@ -1,0 +1,11 @@
+
+rule compile
+  command = pdflatex $1
+
+rule open
+  command = epdfview $1
+
+build document.pdf : compile document.tex
+
+
+default document.pdf

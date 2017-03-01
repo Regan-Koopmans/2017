@@ -16,7 +16,7 @@ public HumanPlayer(BaoBoard board, Player playerType) {
 }
 
 
-public int getLocation(ArrayList<Integer> captureMoves) {
+public int getCaptureLocation(ArrayList<Integer> captureMoves) {
   Scanner in = new Scanner(System.in);
   System.out.print("Enter location to place seed [0-7] : ");
   int x = in.nextInt();
@@ -56,6 +56,19 @@ public Direction getCascadeDirection() {
   String answer = in.nextLine();
   Direction direction = (answer == "left") ? Direction.LEFT : Direction.RIGHT;
   return direction;
+}
+
+public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
+  Scanner in = new Scanner(System.in);
+  System.out.print("Enter location to place seed [0-15] : ");
+  int x = in.nextInt();
+  while (!nonCaptureMoves.contains(x)) {
+    System.out.println("You must place in a hole that has at least one seed already.");
+    board.printBoard();
+    System.out.print("Enter location to place seed [0-15] : ");
+    x = in.nextInt();
+  }
+  return x;
 }
 
 }
