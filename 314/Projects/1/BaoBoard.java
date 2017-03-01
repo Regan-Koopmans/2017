@@ -53,16 +53,19 @@ public int placeSeed(Player player, int position) {
 // Function that returns a list of the available
 // moves that will capture enemy seeds. A player
 // will have to pick one of these moves, if one
-// exitst.
+// exists.
 
 public ArrayList<Integer> getCaptureMoves(Player player) {
 
     ArrayList<Integer> captureMoves = new ArrayList<Integer>();
 
     int offset = (player == Player.PLAYER_1) ? 1 : 2;
+    int self = (player == Player.PLAYER_1) ? 2 : 1;
     int position;
     for (int x = 0; x < 8; ++x) {
-        if (board[offset][x] != 0) {
+	
+	// "If my hole has a seed and their hole has a seed"
+        if (board[self][x] != 0 && board[offset][x] != 0) {
 
             // Player 2 has a reversed perspective.
 

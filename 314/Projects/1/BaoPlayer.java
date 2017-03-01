@@ -32,7 +32,8 @@ public void nextTurn() {
 
     ArrayList<Integer> captureMoves = board.getCaptureMoves(playerType);
     if (captureMoves.isEmpty()) {
-      System.out.println("NO CAPTURE MOVES! :(");
+	// TAKASA
+	System.out.println("No capture moves");
     }
     int location = getLocation(captureMoves);
 
@@ -57,6 +58,7 @@ public void nextTurn() {
     System.out.println("Player has no seeds in stock.");
     int cascadeLocation = getCascadeLocation();
     Direction cascadeDirection = getCascadeDirection();
+    
   }
   System.out.println(seedsInStock);
 }
