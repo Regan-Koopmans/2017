@@ -6,5 +6,5 @@
                   more readable control structures.
 
  */
-
+package bao;
 public enum Player { PLAYER_1, PLAYER_2 }

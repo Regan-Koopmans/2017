@@ -7,6 +7,8 @@
 
  */
 
+package bao;
+
 import java.util.ArrayList;
 
 public abstract class BaoPlayer {
@@ -35,6 +37,7 @@ public void nextTurn() {
 	     // TAKASA
        ArrayList<Integer> nonCaptureMoves = board.getNonCaptureMoves(playerType);
        int location = getNonCaptureLocation(nonCaptureMoves);
+       board.spread(playerType, location, Direction.LEFT);
     }
     else {
       int location = getCaptureLocation(captureMoves);

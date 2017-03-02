@@ -6,6 +6,7 @@
                   by HumanPlayer and AI Player
 
  */
+package bao;
 
 import java.util.ArrayList;
 
@@ -85,7 +86,6 @@ public ArrayList<Integer> getNonCaptureMoves(Player player) {
     int position;
     for (int x = 0; x < 8; ++x) {
 
-	// "If my hole has a seed and their hole has a seed"
         if (board[self][x] != 0) {
 
             // Player 2 has a reversed perspective.
@@ -94,8 +94,12 @@ public ArrayList<Integer> getNonCaptureMoves(Player player) {
             nonCaptureMoves.add(position);
         }
     }
-
     return nonCaptureMoves;
+}
+
+public void spread(Player player, int location, Direction direction) {
+  int offset = (player == Player.PLAYER_1) ? 2 : 1;
+
 }
 
 // Function to determine whether a certain position
@@ -159,6 +163,9 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
     }
     --numCapturedSeeds;
   }
+
+  // If I have sowed this round and I ended on a possible capture
+
   if (sowed && board[offset][previousPosition] != 0) {
 
     // adversary is the offset for the enemy

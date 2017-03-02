@@ -21,10 +21,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
+import bao.*;
+
 public class Main extends Application {
 public static void main(String [] args) {
-  //launch(args);
-  textGame();
+  launch(args);
+  //textGame();
 }
 
 public static void textGame() {

@@ -7,6 +7,8 @@
 
  */
 
+package bao;
+
 import java.util.ArrayList;
 
 public class AIPlayer extends BaoPlayer {

@@ -6,7 +6,7 @@
                   by HumanPlayer and AI Player
 
  */
-
+package bao;
 import java.util.ArrayList;
 import java.util.Scanner;
 
