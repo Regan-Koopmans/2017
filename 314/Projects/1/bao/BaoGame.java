@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class BaoGame {
 
-BaoBoard board = new BaoBoard();
+public BaoBoard board = new BaoBoard();
 
     private Boolean hasWon(Player player) {
         int offset;

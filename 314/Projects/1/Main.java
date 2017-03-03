@@ -9,7 +9,7 @@
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
@@ -24,13 +24,16 @@ import javafx.scene.shape.ArcType;
 import bao.*;
 
 public class Main extends Application {
+
+public static BaoGame bg = null;
+
 public static void main(String [] args) {
+  bg = new BaoGame();
   launch(args);
   //textGame();
 }
 
 public static void textGame() {
-  BaoGame bg = new BaoGame();
   bg.start(true, false);
 }
 
@@ -39,9 +42,32 @@ private int BOARD_LEN = 150;
 
 public void start(Stage mainStage) {
   mainStage.setTitle("Bao");
-  Pane root = new Pane();
+  GridPane root = new GridPane();
+  root.setStyle("-fx-background-color: linear-gradient(from 0% 93% to 0% 100%, orange 0%, orange 100%)");
+
+  root.setHgap(10);
+  root.setVgap(10);
+
 
   // Declare UI Elemets
+
+
+  Hole[][] array = new Hole[4][8];
+  for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 8; y++) {
+      array[x][y] = new Hole(x,y);
+      array[x][y].setText("0");
+      array[x][y].getStyleClass().add("hole");
+
+      array[x][y].setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent event) {
+            System.out.println(bg.board.getBoard());
+          }
+      });
+    }
+  }
+
+  System.out.println(array[0][0]);
 
   Button newGameButton = new Button();
   newGameButton.setText("New Game");
@@ -80,8 +106,17 @@ public void start(Stage mainStage) {
 
   // Add all elements to central pane.
 
-  root.getChildren().addAll(newGameButton, player1Choice, player2Choice, canvas);
-  mainStage.setScene(new Scene(root, 700, 500));
+  root.add(newGameButton, 0,0);
+
+  for (int x = 0; x < 4; ++x) {
+    for (int y = 0; y < 8; ++y) {
+      root.add(array[x][y], 5+2*y, 5+2*x);
+    }
+  }
+  //.addAll(newGameButton, player1Choice, player2Choice, canvas);
+  Scene scene = new Scene(root,700,500);
+  scene.getStylesheets().add("bao/styles/main.css");
+  mainStage.setScene(scene);
   mainStage.show();
 }
 
