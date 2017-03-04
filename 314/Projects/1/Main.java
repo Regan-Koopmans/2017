@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
@@ -21,11 +22,17 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.*;
+import java.util.Optional;
+
 import bao.*;
 
 public class Main extends Application {
 
 public static BaoGame bg = null;
+public static Hole [][] array = null;
+
 
 public static void main(String [] args) {
   bg = new BaoGame();
@@ -43,7 +50,7 @@ private int BOARD_LEN = 150;
 public void start(Stage mainStage) {
   mainStage.setTitle("Bao");
   GridPane root = new GridPane();
-  root.setStyle("-fx-background-color: linear-gradient(from 0% 93% to 0% 100%, orange 0%, orange 100%)");
+  root.setStyle("-fx-background-color: orange");
 
   root.setHgap(10);
   root.setVgap(10);
@@ -52,7 +59,7 @@ public void start(Stage mainStage) {
   // Declare UI Elemets
 
 
-  Hole[][] array = new Hole[4][8];
+  array = new Hole[4][8];
   for (int x = 0; x < 4; x++) {
     for (int y = 0; y < 8; y++) {
       array[x][y] = new Hole(x,y);
@@ -61,18 +68,32 @@ public void start(Stage mainStage) {
 
       array[x][y].setOnAction(new EventHandler<ActionEvent>() {
           public void handle(ActionEvent event) {
-            System.out.println(bg.board.getBoard());
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Play Confirmation");
+            alert.setHeaderText("Play Confirmation");
+            alert.setContentText("Are you sure you want to select this location?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                System.out.println("ACCEPT");
+            }
+            updateBoard(array);
           }
       });
     }
   }
 
-  System.out.println(array[0][0]);
+  Button bankPlayerOne = new Button();
+  bankPlayerOne.getStyleClass().add("hole");
+  Button bankPlayerTwo = new Button();
+  bankPlayerTwo.getStyleClass().add("hole");
+
 
   Button newGameButton = new Button();
   newGameButton.setText("New Game");
   newGameButton.setTranslateX(MARGIN + 100);
   newGameButton.setTranslateY(MARGIN + 20);
+  newGameButton.getStyleClass().add("start");
+
 
   ChoiceBox<String> player1Choice = new ChoiceBox<String>(
     FXCollections.observableArrayList("Human", "AI"));
@@ -113,11 +134,25 @@ public void start(Stage mainStage) {
       root.add(array[x][y], 5+2*y, 5+2*x);
     }
   }
+
+  //root.add(bankPlayerOne,0,10);
+  //root.add(bankPlayerTwo,60,10);
+
   //.addAll(newGameButton, player1Choice, player2Choice, canvas);
   Scene scene = new Scene(root,700,500);
   scene.getStylesheets().add("bao/styles/main.css");
   mainStage.setScene(scene);
   mainStage.show();
+  updateBoard(array);
+}
+
+public void updateBoard(Hole [][] array) {
+  int [][] board = bg.board.getBoard();
+  for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 8; y++) {
+      array[x][y].setText(Integer.toString(board[x][y]));
+    }
+  }
 }
 
 public void drawBoard(GraphicsContext gc) {
