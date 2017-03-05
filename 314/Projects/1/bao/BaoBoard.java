@@ -94,12 +94,39 @@ public ArrayList<Integer> getNonCaptureMoves(Player player) {
             nonCaptureMoves.add(position);
         }
     }
+
     return nonCaptureMoves;
 }
+
+// The function that is called in a takasa round.
 
 public void spread(Player player, int location, Direction direction) {
   int offset = (player == Player.PLAYER_1) ? 2 : 1;
 
+  location = (player == Player.PLAYER_1) ? location : 7 - location;
+
+  int numSeed = board[offset][location];
+  board[offset][location] = 0;
+  System.out.println("Numseed : " + numSeed);
+
+  int netDirection;
+  if (direction == Direction.RIGHT) { netDirection = 1; }
+  else { netDirection = -1; }
+  if (player == Player.PLAYER_2) { netDirection *= -1; }
+
+  location += netDirection;
+  while (numSeed > 0) {
+    board[offset][location] += 1;
+    location += netDirection;
+    if (location < 0 || location > 7) {
+
+      location = (location < 0) ? 0 : 7;
+      netDirection *= -1;
+      offset = (player == Player.PLAYER_1) ? offset + 1: offset - 1;
+
+    }
+    --numSeed;
+  }
 }
 
 // Function to determine whether a certain position

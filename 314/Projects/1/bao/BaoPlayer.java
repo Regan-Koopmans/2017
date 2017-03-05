@@ -13,6 +13,12 @@ import java.util.ArrayList;
 
 public abstract class BaoPlayer {
 
+public Integer seedLocation = null;
+public Integer takasaLocation = null;
+public Direction direction = null;
+public boolean turnDone = false;
+public TurnType turnType = null;
+
 protected Player playerType;
 protected BaoBoard board;
 public int seedsInStock = 22;
@@ -30,31 +36,28 @@ public abstract Direction getCascadeDirection();
 // abstractly
 
 public void nextTurn() {
-
   if (seedsInStock > 0) {
     ArrayList<Integer> captureMoves = board.getCaptureMoves(playerType);
     if (captureMoves.isEmpty()) {
-	     // TAKASA
+       turnType = TurnType.TAKASA;
        ArrayList<Integer> nonCaptureMoves = board.getNonCaptureMoves(playerType);
+       System.out.println("Noncapture moves = " + nonCaptureMoves.toString());
        int location = getNonCaptureLocation(nonCaptureMoves);
-       board.spread(playerType, location, Direction.LEFT);
+       Direction direction = getDirection();
+       board.spread(playerType, location, direction);
     }
     else {
+      turnType = TurnType.CAPTURE;
       int location = getCaptureLocation(captureMoves);
       int captured = board.placeSeed(playerType, location);
-
       if (captured > 0) {
         int sowLocation;
         Direction sowFromDirection;
-
         // Locations 0-1 and 6-7 automatically sow from the opposite side.
-
         if (location == 0 || location == 1) { sowFromDirection = Direction.LEFT; }
         else if (location == 6 || location == 7) { sowFromDirection = Direction.RIGHT; }
         else { sowFromDirection = getDirection(); }
-
         board.sow(playerType, captured, sowFromDirection);
-
     }
     else { System.out.println("Player did not capture any seeds"); }
     --seedsInStock;
@@ -64,7 +67,6 @@ public void nextTurn() {
     System.out.println("Player has no seeds in stock.");
     int cascadeLocation = getCascadeLocation();
     Direction cascadeDirection = getCascadeDirection();
-
   }
   System.out.println(seedsInStock);
 }

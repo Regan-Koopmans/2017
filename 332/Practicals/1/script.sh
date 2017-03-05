@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Removes
+# Removes old text file
 rm listen.txt
 
 # Starts tcpdump, using icmp packets (rather than UDP), in the background.
