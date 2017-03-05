@@ -8,33 +8,20 @@
  */
 
 package bao;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HumanPlayer extends BaoPlayer {
 
-public HumanPlayer(BaoBoard board, Player playerType) {
-  super(board, playerType);
-}
-
-
+public HumanPlayer(BaoBoard board, Player playerType) { super(board, playerType); }
 public int getCaptureLocation(ArrayList<Integer> captureMoves) {
-  // Scanner in = new Scanner(System.in);
-  // System.out.print("Enter location to place seed [0-7] : ");
-  // int x = in.nextInt();
-  // while (!captureMoves.contains(x)) {
-  //   System.out.println("You are urged to capture when you are able to...");
-  //   board.printBoard();
-  //   System.out.print("Enter location to place seed [0-7] : ");
-  //   x = in.nextInt();
-  // }
-  // return x;
   System.out.println("Capture moves: " + captureMoves);
   while (seedLocation == null || !captureMoves.contains(seedLocation)) {
     try {
       Thread.currentThread().sleep(500);
       System.out.println("location");
-    } catch (Exception e) { System.out.println(e); }
+    } catch (Exception e) { System.exit(0); }
   }
   int returnValue = seedLocation;
   seedLocation = null;
@@ -42,22 +29,11 @@ public int getCaptureLocation(ArrayList<Integer> captureMoves) {
 }
 
 public Direction getDirection() {
-  // Scanner in = new Scanner(System.in);
-  // System.out.print("Enter sowing direction [left/right] : ");
-  // String answer = in.nextLine();
-  // Direction direction = (answer.equals("left")) ? Direction.LEFT : Direction.RIGHT;
-  //
-  // if (direction == Direction.LEFT) {
-  //   System.out.println("Sowing from the left");
-  // }
-  // else {
-  //   System.out.println("Sowing from the right");
-  // }
   while (direction == null) {
     try {
       Thread.currentThread().sleep(500);
       System.out.println("direction");
-    } catch (Exception e) { System.out.println(e); }
+    } catch (Exception e) { System.exit(0); }
   }
   System.out.println(direction);
   Direction returnDirection = direction;
@@ -80,19 +56,10 @@ public Direction getCascadeDirection() {
 }
 
 public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
-  // Scanner in = new Scanner(System.in);
-  // System.out.print("Enter location to place seed [0-15] : ");
-  // int x = in.nextInt();
-  // while (!nonCaptureMoves.contains(x)) {
-  //   System.out.println("You must place in a hole that has at least one seed already.");
-  //   board.printBoard();
-  //   System.out.print("Enter location to place seed [0-15] : ");
-  //   x = in.nextInt();
-  // }
   while (takasaLocation == null || !nonCaptureMoves.contains(takasaLocation)) {
     try {
       Thread.currentThread().sleep(500);
-    } catch (Exception e) { System.out.println(e); }
+    } catch (Exception e) { System.exit(0); }
   }
   int returnValue = takasaLocation;
   takasaLocation = null;

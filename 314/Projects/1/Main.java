@@ -2,45 +2,34 @@
 
     CLASS       : Main
     AUTHOR      : Regan Koopmans
-    DESCRIPTION : Defines a graphical user interface and main entry-point
-                  into the program.
+    DESCRIPTION : Defines an entry-point into the graphical program
 
  */
+import bao.*;
+
+import java.util.Optional;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.event.EventHandler;
-import javafx.event.ActionEvent;
-import javafx.collections.FXCollections;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
-
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.*;
-import java.util.Optional;
-
-import bao.*;
 
 public class Main extends Application {
-
 public static BaoGame bg = null;
 public static Hole [][] array = null;
-
-
+private static Thread gameThread = null;
 public static void main(String [] args) {
   bg = new BaoGame();
   launch(args);
-}
-
-public static void textGame() {
-  bg.start(true, false);
+  gameThread.interrupt();
 }
 
 private int MARGIN = 10;
@@ -50,10 +39,8 @@ public void start(Stage mainStage) {
   mainStage.setTitle("Bao");
   GridPane root = new GridPane();
   root.setStyle("-fx-background-color: orange");
-
   root.setHgap(10);
   root.setVgap(10);
-
 
   EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
     @Override
@@ -74,9 +61,7 @@ public void start(Stage mainStage) {
       if (result.get() == ButtonType.OK){
           if (bg.returnPlayers().get(0).turnType == TurnType.CAPTURE) {
             bg.returnPlayers().get(0).seedLocation = new Integer(num);
-          } else {
-            bg.returnPlayers().get(0).takasaLocation = new Integer(num);
-          }
+          } else { bg.returnPlayers().get(0).takasaLocation = new Integer(num); }
 
           // Direction dialog
           if (num != 0 || num != 7) {
@@ -96,14 +81,10 @@ public void start(Stage mainStage) {
             else { selectedDirection = Direction.RIGHT; }
             bg.returnPlayers().get(0).direction = selectedDirection;
           }
-          while (!bg.returnPlayers().get(0).turnDone) {
-            System.out.println("Player1");
-          }
+          while (!bg.returnPlayers().get(0).turnDone) { System.out.println("P1"); }
           System.out.println("Turn is done, updating board");
           updateBoard(array);
-          while (!bg.returnPlayers().get(1).turnDone) {
-            System.out.println("Player2");
-          }
+          while (!bg.returnPlayers().get(1).turnDone) { System.out.println("P2"); }
           System.out.println("Turn is done, updating board");
           updateBoard(array);
         }
@@ -131,32 +112,11 @@ public void start(Stage mainStage) {
   newGameButton.setTranslateY(MARGIN + 20);
   newGameButton.getStyleClass().add("start");
 
-  ChoiceBox<String> player1Choice = new ChoiceBox<String>(
-    FXCollections.observableArrayList("Human", "AI"));
-  player1Choice.setTranslateX(MARGIN);
-  player1Choice.setTranslateY(MARGIN + 10);
-
-  ChoiceBox<String> player2Choice = new ChoiceBox<String>(
-    FXCollections.observableArrayList("Human", "AI"));
-  player2Choice.setTranslateX(MARGIN);
-  player2Choice.setTranslateY(MARGIN + 50);
-
-  Canvas canvas = new Canvas(300, 250);
-  canvas.setTranslateX(MARGIN+100);
-  canvas.setTranslateY(MARGIN+100);
-  GraphicsContext gc = canvas.getGraphicsContext2D();
-  drawBoard(gc);
-
   // Add behaviors to UI Elements
 
   newGameButton.setOnAction(new EventHandler<ActionEvent>() {
       public void handle(ActionEvent event) {
-        if (player1Choice.getValue() == null || player2Choice.getValue() == null) {
-          System.out.println("Not all parameters were set!");
-          return;
-	}
-        Boolean player1Human = player1Choice.getValue() == "Human" ? true : false;
-        Boolean player2Human = player2Choice.getValue() == "Human" ? true : false;
+        System.out.println("NEW");
       }
     });
 
@@ -165,17 +125,14 @@ public void start(Stage mainStage) {
   root.add(newGameButton, 0,0);
 
   for (int x = 0; x < 4; ++x) {
-    for (int y = 0; y < 8; ++y) {
-      root.add(array[x][y], 5+2*y, 5+2*x);
-    }
+    for (int y = 0; y < 8; ++y) { root.add(array[x][y], 5+2*y, 5+2*x); }
   }
 
-  Thread gameThread = new Thread(new Runnable() {
-    public void run() {
-      bg.start(true, false);
-    }
-  });
-  gameThread.start();
+    gameThread = new Thread(new Runnable() {
+      public void run() { bg.start(true, false); }
+   });
+    gameThread.start();
+
   //root.add(bankPlayerOne,0,10);
   //root.add(bankPlayerTwo,60,10);
 
@@ -183,6 +140,8 @@ public void start(Stage mainStage) {
   Scene scene = new Scene(root,700,500);
   scene.getStylesheets().add("bao/styles/main.css");
   mainStage.setScene(scene);
+  mainStage.setResizable(false);
+  mainStage.sizeToScene();
   mainStage.show();
   updateBoard(array);
 }
@@ -194,13 +153,5 @@ public void updateBoard(Hole [][] array) {
       array[x][y].setText(Integer.toString(board[x][y]));
     }
   }
-}
-
-public void drawBoard(GraphicsContext gc) {
-  gc.setFill(Color.GREEN);
-  gc.setStroke(Color.BLACK);
-  gc.setLineWidth(2);
-  gc.strokeLine(10, 10, 10, 100);
-  gc.strokeLine(BOARD_LEN, 10, BOARD_LEN, 100);
 }
 }

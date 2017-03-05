@@ -28,9 +28,7 @@ public BaoBoard() {
   board[2][6] = 2;
 }
 
-public int[][] getBoard() {
-  return board;
-}
+public int[][] getBoard() { return board;  }
 
 // Function that increases a hole by one and
 // returns any seeds that may have been captured
@@ -74,14 +72,12 @@ public ArrayList<Integer> getCaptureMoves(Player player) {
             captureMoves.add(position);
         }
     }
-
     return captureMoves;
 }
 
 public ArrayList<Integer> getNonCaptureMoves(Player player) {
 
     ArrayList<Integer> nonCaptureMoves = new ArrayList<Integer>();
-
     int self = (player == Player.PLAYER_1) ? 2 : 1;
     int position;
     for (int x = 0; x < 8; ++x) {
@@ -94,7 +90,6 @@ public ArrayList<Integer> getNonCaptureMoves(Player player) {
             nonCaptureMoves.add(position);
         }
     }
-
     return nonCaptureMoves;
 }
 
@@ -123,7 +118,6 @@ public void spread(Player player, int location, Direction direction) {
       location = (location < 0) ? 0 : 7;
       netDirection *= -1;
       offset = (player == Player.PLAYER_1) ? offset + 1: offset - 1;
-
     }
     --numSeed;
   }
@@ -134,9 +128,7 @@ public void spread(Player player, int location, Direction direction) {
 // for handling the fact that the house disappears
 // after it has been sown.
 
-public boolean isHouse(Player player, int position) {
-  return true;
-}
+public boolean isHouse(Player player, int position) { return true; }
 
 // This function will sow the seeds in a given direction.
 // The function handles wrapping around corners, and
@@ -152,10 +144,7 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
   boolean sowed = false;
 
   position = (direction == Direction.LEFT) ? 0 : 7;
-
-  if (player == Player.PLAYER_2) {
-    position = 7-position;
-  }
+  if (player == Player.PLAYER_2) { position = 7-position; }
 
   // Player 2 has a reversed perspective.
 
@@ -178,10 +167,8 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
 
       if (direction == Direction.RIGHT) { offset += 1; }
       else                              { offset -= 1; }
-
     }
     else if (position < 0) {
-
       netDirection *= -1;
       position = 0;
 
@@ -198,28 +185,18 @@ public void sow(Player player, int numCapturedSeeds, Direction direction) {
     // adversary is the offset for the enemy
 
     int adversary = (player == Player.PLAYER_1) ? 1 : 2;
-
-    System.out.println(previousPosition);
-
     if (board[adversary][previousPosition] != 0) {
       int capture = board[adversary][previousPosition];
       board[adversary][previousPosition] = 0;
       sow(player, capture, direction);
     }
-    else {
-      System.out.println("Player's turn has ended");
-    }
-  }
-  else {
-    System.out.println("Turn ended.");
-  }
+    else { System.out.println("Player's turn has ended"); }
+  } else { System.out.println("Turn ended."); }
 }
 
 public void printBoard() {
   for (int [] arr:board) {
-    for (int x:arr) {
-      System.out.print("[" + x + "]");
-    }
+    for (int x:arr) { System.out.print("[" + x + "]"); }
     System.out.println("");
   }
 }
