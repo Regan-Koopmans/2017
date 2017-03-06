@@ -115,14 +115,14 @@ public class Server implements Runnable {
 
             editAppoint.setName(name);
             if (!date.equals("")) {
-                editAppoint.setDate(date);
+              editAppoint.setDate(date);
             }
             if (!time.equals("")) {
-                editAppoint.setTime(time);
+              editAppoint.setTime(time);
             }
             editAppoint.setDesc(desc);
 
-            streamOut.writeChars("Edit was successful. " + name + " was saved.\n");
+            streamOut.writeChars("Edit was successful. " + name + " was saved.");
             streamOut.flush();
         } else {
             streamOut.writeUTF(decorate("\nCould not find " +

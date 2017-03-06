@@ -33,10 +33,10 @@ public class Appointment {
     }
     public String getDateString() {
         if (date == null) {
-            return "none";
+          return "none";
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
-            return sdf.format(date);
+          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
+          return sdf.format(date);
         }
     }
 
