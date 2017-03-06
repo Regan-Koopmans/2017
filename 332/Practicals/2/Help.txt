@@ -11,7 +11,6 @@ clearDay    - Delete all appointments on a particular day.
 clearWeek   - Delete all appointments on a particular week.
 clearMonth  - Delete all appointments on a particular month.
 license     - Print license information for this software
-killserv    - Terminates server.
+poweroff    - Terminates server.
 exit        - Terminates client session.
 help        - Shows this message.
-
