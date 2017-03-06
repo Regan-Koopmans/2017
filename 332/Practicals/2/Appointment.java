@@ -13,7 +13,7 @@ public class Appointment {
   public String getName() { return name; }
   public Date getDate() { return date; }
   public String getDesc() { return desc; }
-  public String getParticipants() { return participants; } 
+  public String getParticipants() { return participants; }
   // Setters
 
   public void setName(String name) { this.name = name; }

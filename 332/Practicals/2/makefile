@@ -3,4 +3,3 @@ make:
 
 run:
 	java Server 3000
-

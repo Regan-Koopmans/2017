@@ -14,55 +14,63 @@ import java.util.Scanner;
 
 public class HumanPlayer extends BaoPlayer {
 
-public HumanPlayer(BaoBoard board, Player playerType) { super(board, playerType); }
-public int getCaptureLocation(ArrayList<Integer> captureMoves) {
-  System.out.println("Capture moves: " + captureMoves);
-  while (seedLocation == null || !captureMoves.contains(seedLocation)) {
-    try {
-      Thread.currentThread().sleep(500);
-      System.out.println("location");
-    } catch (Exception e) { System.exit(0); }
-  }
-  int returnValue = seedLocation;
-  seedLocation = null;
-  return returnValue;
-}
+    public HumanPlayer(BaoBoard board, Player playerType) {
+        super(board, playerType);
+    }
+    public int getCaptureLocation(ArrayList<Integer> captureMoves) {
+        System.out.println("Capture moves: " + captureMoves);
+        while (seedLocation == null || !captureMoves.contains(seedLocation)) {
+            try {
+                Thread.currentThread().sleep(500);
+                System.out.println("location");
+            } catch (Exception e) {
+                System.exit(0);
+            }
+        }
+        int returnValue = seedLocation;
+        seedLocation = null;
+        return returnValue;
+    }
 
-public Direction getDirection() {
-  while (direction == null) {
-    try {
-      Thread.currentThread().sleep(500);
-      System.out.println("direction");
-    } catch (Exception e) { System.exit(0); }
-  }
-  System.out.println(direction);
-  Direction returnDirection = direction;
-  direction = null;
-  return returnDirection;
-}
+    public Direction getDirection() {
+        while (direction == null) {
+            try {
+                Thread.currentThread().sleep(500);
+                System.out.println("direction");
+            } catch (Exception e) {
+                System.exit(0);
+            }
+        }
+        System.out.println(direction);
+        Direction returnDirection = direction;
+        direction = null;
+        return returnDirection;
+    }
 
-public int getCascadeLocation() {
-  Scanner in = new Scanner(System.in);
-  System.out.print("Enter location to cascade seeds [1-16] : ");
-  return in.nextInt();
-}
+    public int getCascadeLocation() {
+        Scanner in = new Scanner(System.in);
+        System.out.print("Enter location to cascade seeds [1-16] : ");
+        return in.nextInt();
+    }
 
-public Direction getCascadeDirection() {
-  Scanner in = new Scanner(System.in);
-  System.out.println("Enter cascade direction [left/right] : ");
-  String answer = in.nextLine();
-  Direction direction = (answer == "left") ? Direction.LEFT : Direction.RIGHT;
-  return direction;
-}
+    public Direction getCascadeDirection() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter cascade direction [left/right] : ");
+        String answer = in.nextLine();
+        Direction direction = (answer == "left") ? Direction.LEFT : Direction.RIGHT;
+        return direction;
+    }
 
-public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
-  while (takasaLocation == null || !nonCaptureMoves.contains(takasaLocation)) {
-    try {
-      Thread.currentThread().sleep(500);
-    } catch (Exception e) { System.exit(0); }
-  }
-  int returnValue = takasaLocation;
-  takasaLocation = null;
-  return returnValue;
-}
+    public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
+        while (takasaLocation == null || !nonCaptureMoves.contains(takasaLocation)) {
+            try {
+                Thread.currentThread().sleep(500);
+            } catch (Exception e) {
+                System.exit(0);
+            }
+        }
+        int returnValue = takasaLocation;
+        takasaLocation = null;
+        return returnValue;
+    }
 }
