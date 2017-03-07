@@ -89,7 +89,6 @@ public class Appointment {
     public String toPrettyString() {
         StringBuilder sb = new StringBuilder();
         sb.append("#" + name+"\n");
-
         if (desc != null) {
             sb.append(desc+"\n");
         }
@@ -100,7 +99,8 @@ public class Appointment {
             sb.append("At " + time.toString() + "\n");
         }
         if (date != null) {
-            sb.append("On " + (new SimpleDateFormat("dd/MM/YYYY")).format(date)) ;
+            sb.append("On " + (new SimpleDateFormat("dd/MM/YYYY")).
+                      format(date));
         }
         sb.append("\n");
         return sb.toString();

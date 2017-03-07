@@ -104,7 +104,6 @@ public class BaoBoard {
 
         int numSeed = board[offset][location];
         board[offset][location] = 0;
-        System.out.println("Numseed : " + numSeed);
 
         int netDirection;
         if (direction == Direction.RIGHT) {
@@ -119,14 +118,14 @@ public class BaoBoard {
 
         location += netDirection;
         while (numSeed > 0) {
-            board[offset][location] += 1;
-            location += netDirection;
             if (location < 0 || location > 7) {
-
                 location = (location < 0) ? 0 : 7;
                 netDirection *= -1;
                 offset = (player == Player.PLAYER_1) ? offset + 1: offset - 1;
             }
+            System.out.println(offset + "  : " + location);
+            board[offset][location] += 1;
+            location += netDirection;
             --numSeed;
         }
     }
@@ -191,7 +190,7 @@ public class BaoBoard {
                 if (direction == Direction.RIGHT) {
                     offset -= 1;
                 }
-                else                              {
+                else {
                     offset += 1;
                 }
             }

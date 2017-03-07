@@ -19,15 +19,16 @@ public class HumanPlayer extends BaoPlayer {
     }
     public int getCaptureLocation(ArrayList<Integer> captureMoves) {
         System.out.println("Capture moves: " + captureMoves);
-        while (seedLocation == null || !captureMoves.contains(seedLocation)) {
+        while (seedLocation == null) {
             try {
                 Thread.currentThread().sleep(500);
-                System.out.println("location");
+                // System.out.println("location");
             } catch (Exception e) {
                 System.exit(0);
             }
         }
-        int returnValue = seedLocation;
+        System.out.println("GOT LOCATION : " + seedLocation);
+        int returnValue = seedLocation.get();
         seedLocation = null;
         return returnValue;
     }
@@ -41,7 +42,7 @@ public class HumanPlayer extends BaoPlayer {
                 System.exit(0);
             }
         }
-        System.out.println(direction);
+        System.out.println("GOT DIRECTION : " + direction);
         Direction returnDirection = direction;
         direction = null;
         return returnDirection;
@@ -57,19 +58,20 @@ public class HumanPlayer extends BaoPlayer {
         Scanner in = new Scanner(System.in);
         System.out.println("Enter cascade direction [left/right] : ");
         String answer = in.nextLine();
-        Direction direction = (answer == "left") ? Direction.LEFT : Direction.RIGHT;
+        Direction direction = (answer.equals("left")) ? Direction.LEFT :
+                              Direction.RIGHT;
         return direction;
     }
 
     public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
-        while (takasaLocation == null || !nonCaptureMoves.contains(takasaLocation)) {
+        while (takasaLocation == null) {
             try {
                 Thread.currentThread().sleep(500);
             } catch (Exception e) {
                 System.exit(0);
             }
         }
-        int returnValue = takasaLocation;
+        int returnValue = takasaLocation.get();
         takasaLocation = null;
         return returnValue;
     }

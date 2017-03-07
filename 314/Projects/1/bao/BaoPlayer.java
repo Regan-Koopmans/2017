@@ -10,13 +10,14 @@
 package bao;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaoPlayer {
 
-    public Integer seedLocation = null;
-    public Integer takasaLocation = null;
+    public AtomicInteger seedLocation = null;
+    public AtomicInteger takasaLocation = null;
     public Direction direction = null;
-    public boolean turnDone = false;
+    public volatile boolean turnDone = true;
     public TurnType turnType = null;
 
     protected Player playerType;
@@ -40,11 +41,21 @@ public abstract class BaoPlayer {
             ArrayList<Integer> captureMoves = board.getCaptureMoves(playerType);
             if (captureMoves.isEmpty()) {
                 turnType = TurnType.TAKASA;
-                ArrayList<Integer> nonCaptureMoves = board.getNonCaptureMoves(playerType);
+                ArrayList<Integer> nonCaptureMoves =
+                    board.getNonCaptureMoves(playerType);
                 System.out.println("Noncapture moves = " + nonCaptureMoves.toString());
                 int location = getNonCaptureLocation(nonCaptureMoves);
-                Direction direction = getDirection();
+                if (location <= 1) {
+                    direction = Direction.LEFT;
+                }
+                else if (location >= 6) {
+                    direction = Direction.RIGHT;
+                }
+                else {
+                    direction = getDirection();
+                }
                 board.spread(playerType, location, direction);
+
             }
             else {
                 turnType = TurnType.CAPTURE;
@@ -53,11 +64,14 @@ public abstract class BaoPlayer {
                 if (captured > 0) {
                     int sowLocation;
                     Direction sowFromDirection;
-                    // Locations 0-1 and 6-7 automatically sow from the opposite side.
-                    if (location == 0 || location == 1) {
+
+                    // Locations 0-1 and 6-7 automatically sow from the
+                    // opposite side.
+
+                    if (location <= 1) {
                         sowFromDirection = Direction.LEFT;
                     }
-                    else if (location == 6 || location == 7) {
+                    else if (location >= 6) {
                         sowFromDirection = Direction.RIGHT;
                     }
                     else {
@@ -76,6 +90,7 @@ public abstract class BaoPlayer {
             int cascadeLocation = getCascadeLocation();
             Direction cascadeDirection = getCascadeDirection();
         }
+        direction = null;
         System.out.println(seedsInStock);
     }
 

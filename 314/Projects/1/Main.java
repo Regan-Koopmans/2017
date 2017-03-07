@@ -22,7 +22,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.Observer;
+import java.util.Observable;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Main extends Application implements Observer {
     public static BaoGame bg = null;
     public static Hole [][] array = null;
     private static Thread gameThread = null;
@@ -43,42 +48,49 @@ public class Main extends Application {
         root.setVgap(10);
 
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-            @Override
             public void handle(ActionEvent event) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Play Confirmation");
                 alert.setHeaderText("Play Confirmation");
-                alert.setContentText("Are you sure you want to select this location?");
+                alert.setContentText("Are you sure you want to select this"+
+                                     " location?");
 
                 int num = 0;
-
                 Object obj = event.getSource();
                 if (obj instanceof Hole) {
-                    num = Integer.parseInt(((Hole) obj).getUserData().toString());
+                    num = Integer.parseInt(((Hole) obj).getUserData().
+                                           toString());
+                    System.out.println("NUM : " + num);
                 }
-
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     if (bg.returnPlayers().get(0).turnType == TurnType.CAPTURE) {
-                        bg.returnPlayers().get(0).seedLocation = new Integer(num);
+                        bg.returnPlayers().get(0).seedLocation =
+                            new AtomicInteger(num);
                     } else {
-                        bg.returnPlayers().get(0).takasaLocation = new Integer(num);
+                        bg.returnPlayers().get(0).takasaLocation =
+                            new AtomicInteger(num);
                     }
 
-                    // Direction dialog
-                    if (num != 0 || num != 7) {
-                        Alert directionDialog = new Alert(AlertType.CONFIRMATION);
-                        directionDialog.setTitle("Choose a direction.");
-                        directionDialog.setHeaderText("Choose direction.");
-                        directionDialog.setContentText("Please select a direction to sow in:");
+                    // Direction dialog, which is used to confirm a direction
+                    // from the user.
+
+                    if (num > 1 || num < 6) {
+                        Alert directDialog = new Alert(AlertType.CONFIRMATION);
+
+                        directDialog.setTitle("Choose a direction.");
+                        directDialog.setHeaderText("Choose direction.");
+                        directDialog.setContentText("Please select a direction"+
+                                                    " to sow in:");
 
                         ButtonType buttonLeft = new ButtonType("Left");
                         ButtonType buttonRight = new ButtonType("Right");
 
-                        directionDialog.getButtonTypes().setAll(buttonLeft, buttonRight);
+                        directDialog.getButtonTypes().setAll(buttonLeft,
+                                                             buttonRight);
                         Direction selectedDirection;
 
-                        Optional<ButtonType> chosen = directionDialog.showAndWait();
+                        Optional<ButtonType> chosen = directDialog.showAndWait();
                         if (chosen.get() == buttonLeft) {
                             selectedDirection = Direction.LEFT;
                         }
@@ -87,20 +99,38 @@ public class Main extends Application {
                         }
                         bg.returnPlayers().get(0).direction = selectedDirection;
                     }
-                    while (!bg.returnPlayers().get(0).turnDone) {
-                        System.out.println("P1");
+
+                    // PROBLEM STARTS HERE
+
+                    while (bg.returnPlayers().get(0).turnDone) {
+                        try {
+                            Thread.currentThread().sleep(1000);
+                            System.out.println("P1");
+                        } catch (Exception e) {
+
+                        }
                     }
+
                     System.out.println("Turn is done, updating board");
-                    updateBoard(array);
                     while (!bg.returnPlayers().get(1).turnDone) {
-                        System.out.println("P2");
+                        try {
+                            Thread.currentThread().sleep(500);
+                            System.out.println("P2");
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
                     }
                     System.out.println("Turn is done, updating board");
+                    try {
+                        Thread.currentThread().sleep(500);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                     updateBoard(array);
                 }
             }
         };
-        // Declare UI Elemets
+        // Dynamically create buttons
         array = new Hole[4][8];
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 8; y++) {
@@ -133,12 +163,13 @@ public class Main extends Application {
         // Add all elements to central pane.
 
         root.add(newGameButton, 0,0);
-
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 8; ++y) {
                 root.add(array[x][y], 5+2*y, 5+2*x);
             }
         }
+
+        // Create thread to run game in the backend
 
         gameThread = new Thread(new Runnable() {
             public void run() {
@@ -150,7 +181,6 @@ public class Main extends Application {
         //root.add(bankPlayerOne,0,10);
         //root.add(bankPlayerTwo,60,10);
 
-        //.addAll(newGameButton, player1Choice, player2Choice, canvas);
         Scene scene = new Scene(root,700,500);
         scene.getStylesheets().add("bao/styles/main.css");
         mainStage.setScene(scene);
@@ -167,5 +197,9 @@ public class Main extends Application {
                 array[x][y].setText(Integer.toString(board[x][y]));
             }
         }
+    }
+
+    public void update(Observable o, Object ob) {
+
     }
 }

@@ -8,6 +8,8 @@ run:
 style:
 	astyle Main.java
 	astyle bao/*.java
+	rm *.orig
+	rm bao/*.orig
 
 clean:
 	rm *.class

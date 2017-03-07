@@ -12,6 +12,11 @@ package bao;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.*;
+
 public class BaoGame {
 
     public BaoBoard board = new BaoBoard();
@@ -48,10 +53,11 @@ public class BaoGame {
             }
             board.printBoard();
             player1.turnDone = true;
+            System.out.println("SET TURNDONE TO " + player1.turnDone);
             System.out.println("\n\tPlayer 2\n");
             player2.turnDone = false;
             player2.nextTurn();
-            if (hasWon(Player.PLAYER_1)) {
+            if (hasWon(Player.PLAYER_2)) {
                 notifyWinner("Player 2");
             }
             board.printBoard();
@@ -60,9 +66,12 @@ public class BaoGame {
     }
 
     public void notifyWinner(String winnerName) {
-        System.out.println(winnerName + " has won!");
-        player1.turnDone = true;
-        player2.turnDone = true;
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("Look, an Information Dialog");
+        alert.setContentText("I have a great message for you!");
+
+        alert.showAndWait();
         System.exit(0);
     }
 

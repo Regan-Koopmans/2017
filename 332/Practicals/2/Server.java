@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 
 import java.io.File;
@@ -18,7 +19,7 @@ public class Server implements Runnable {
 
     private Socket socket = null;
     private ServerSocket server = null;
-    private DataInputStream streamIn = null;
+    private BufferedReader streamIn = null;
     private DataOutputStream streamOut = null;
     private Thread thread = null;
 
@@ -39,7 +40,7 @@ public class Server implements Runnable {
             newAppointment();
             break;
         case "edit"    :
-            editAppoint();
+            editAppointment();
             break;
         case "license" :
             printFile("License.txt");
@@ -80,7 +81,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void editAppoint() throws Exception {
+    public void editAppointment() throws Exception {
         streamOut.writeChars("Enter a phrase to search by: ");
         streamOut.flush();
         String searchString = streamIn.readLine();
@@ -101,7 +102,8 @@ public class Server implements Runnable {
                                  +"]\n\n");
             streamOut.flush();
             String desc = streamIn.readLine();
-            streamOut.writeChars("Edit time ["+editAppoint.getTimeString()+"]: ");
+            streamOut.writeChars("Edit time ["+editAppoint.getTimeString()
+                                 +"]: ");
             streamOut.flush();
             String time = streamIn.readLine();
             streamOut.writeChars("Enter the date of the appointment ["+
@@ -112,7 +114,6 @@ public class Server implements Runnable {
             name = (name.equals("")) ? editAppoint.getName() : name;
             part = (part.equals("")) ? editAppoint.getParticipants() : part;
             desc = (desc.equals("")) ? editAppoint.getDesc() : desc;
-
             editAppoint.setName(name);
             if (!date.equals("")) {
                 editAppoint.setDate(date);
@@ -121,8 +122,8 @@ public class Server implements Runnable {
                 editAppoint.setTime(time);
             }
             editAppoint.setDesc(desc);
-
-            streamOut.writeChars("Edit was successful. " + name + " was saved.\n");
+            streamOut.writeChars("Edit was successful. " + name +
+                                 " was saved.\n");
             streamOut.flush();
         } else {
             streamOut.writeUTF(decorate("\nCould not find " +
@@ -174,22 +175,25 @@ public class Server implements Runnable {
             streamOut.writeChars(msg);
             streamOut.flush();
         } else {
-            streamOut.writeChars("People attending this appointment (comma separated list): ");
+            streamOut.writeChars("People attending this appointment (comma"+
+                                 " separated list): ");
             streamOut.flush();
             String part = streamIn.readLine();
 
-            streamOut.writeChars("Write a short description of this appointment: \n\n");
+            streamOut.writeChars("Write a short description of this "+
+                                 "appointment: \n\n");
             streamOut.flush();
             String desc = streamIn.readLine();
 
-            streamOut.writeChars("Enter the time of the appointment (hh:mm:ss) : ");
+            streamOut.writeChars("Enter the time of the appointment "+
+                                 "(hh:mm:ss) : ");
             streamOut.flush();
             String time = streamIn.readLine();
 
-            streamOut.writeChars("Enter the date of the appointment (dd/mm/yyyy) : ");
+            streamOut.writeChars("Enter the date of the appointment "+
+                                 "(dd/mm/yyyy) : ");
             streamOut.flush();
             String date = streamIn.readLine();
-
             Appointment newApp = new Appointment();
             newApp.setName(name);
             newApp.setDate(date);
@@ -215,21 +219,21 @@ public class Server implements Runnable {
     public void deleteAppointment() throws Exception {
         streamOut.writeChars("Enter a phrase to search by: ");
         streamOut.flush();
-
         String searchString = streamIn.readLine();
         if (appointmentExists(searchString)) {
             for (int x = 0; x < appointments.size(); ++x) {
                 if (appointments.get(x).getName().equals(searchString)) {
                     appointments.remove(x);
-                    streamOut.writeUTF(decorate("\nDeleting record found by the name of \" "
-                                                + searchString + "\"\n\n",Decorate.GREEN));
+                    streamOut.writeUTF(decorate("\nDeleting record found by "+
+                                                "the name of \" " + searchString
+                                                + "\"\n\n",Decorate.GREEN));
                     streamOut.flush();
                     return;
                 }
             }
         } else {
-            streamOut.writeUTF(decorate("Could not find " +
-                                        "any appointments by that search string.\n",Decorate.RED));
+            streamOut.writeUTF(decorate("Could not find any appointments by"+
+                                        " that search string.\n",Decorate.RED));
             streamOut.flush();
         }
     }
@@ -240,7 +244,6 @@ public class Server implements Runnable {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = br.readLine();
             while (line != null) {
-
                 sb.append(line + "\n");
                 line = br.readLine();
             }
@@ -300,7 +303,6 @@ public class Server implements Runnable {
         }
     }
 
-
     public void start() {
         if (thread == null) {
             thread = new Thread(this);
@@ -310,8 +312,9 @@ public class Server implements Runnable {
 
     public void open() {
         try {
-            streamIn = new DataInputStream(
-                new BufferedInputStream(socket.getInputStream()));
+            streamIn = new BufferedReader(new InputStreamReader(
+                                              new BufferedInputStream(
+                                                  socket.getInputStream())));
             streamOut = new DataOutputStream(socket.getOutputStream());
         }
         catch (Exception e) {
@@ -334,7 +337,6 @@ public class Server implements Runnable {
     }
 
     public void searchAppointments() {
-
         ArrayList<Appointment> results = new ArrayList<Appointment>();
         try {
             streamOut.writeChars("Enter a phrase to search by: ");
@@ -349,16 +351,15 @@ public class Server implements Runnable {
             if (results.size() > 1) {
                 message = "More than one appointment. \n";
             } else if (results.size() == 1) {
-                message =  decorate("\nOne appointment was found with this search phrase:\n\n", Decorate.GREEN) +
-                           results.get(0).toString() + "\n";
+                message = decorate("\nOne appointment was found with this "+
+                                   "search phrase:\n\n", Decorate.GREEN) +
+                          results.get(0).toString() + "\n";
             } else {
                 message = decorate("\n No appointments were found with this" +
                                    " search phrase.\n", Decorate.RED);
             }
-
             streamOut.writeUTF(message);
             streamOut.flush();
-
         } catch (Exception e) {
             System.out.println("searchAppointments: " + e);
         }
@@ -368,7 +369,8 @@ public class Server implements Runnable {
         if (!line.equals("")) {
             try {
                 streamOut.writeChars("\nUnknown command  \"" + line
-                                     + "\". Type \"help\" to get a list of commands.\n");
+                                     + "\". Type \"help\" to get a list of "+
+                                     "commands.\n");
                 streamOut.flush();
             } catch (Exception e) {
                 System.out.println("unknownCommand() : " + e);
@@ -400,7 +402,6 @@ public class Server implements Runnable {
             String line = null;
             Appointment prospectiveAppointment = null;
             while ((line = read.readLine()) != null) {
-
                 if (line.charAt(0) == '#') {
                     System.out.println("READING ONE");
                     if (prospectiveAppointment != null) {
@@ -438,7 +439,6 @@ public class Server implements Runnable {
             System.out.println("populate : " + e);
         }
     }
-
 
     public static void writeAppointmentsToFile(String fname) {
         System.out.println("Writing appointments to file.");
