@@ -43,7 +43,8 @@ public abstract class BaoPlayer {
                 turnType = TurnType.TAKASA;
                 ArrayList<Integer> nonCaptureMoves =
                     board.getNonCaptureMoves(playerType);
-                System.out.println("Noncapture moves = " + nonCaptureMoves.toString());
+                System.out.println("Noncapture moves = " +
+                                   nonCaptureMoves.toString());
                 int location = getNonCaptureLocation(nonCaptureMoves);
                 if (location <= 1) {
                     direction = Direction.LEFT;

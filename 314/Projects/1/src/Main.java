@@ -31,22 +31,27 @@ public class Main extends Application implements Observer {
     public static BaoGame bg = null;
     public static Hole [][] array = null;
     private static Thread gameThread = null;
+
     public static void main(String [] args) {
+        Main m = new Main();
+        m.init(args);
+    }
+
+    public void init(String [] args) {
         bg = new BaoGame();
+        bg.addObserver(this);
         launch(args);
         gameThread.interrupt();
     }
 
     private int MARGIN = 10;
     private int BOARD_LEN = 150;
-
     public void start(Stage mainStage) {
         mainStage.setTitle("Bao");
         GridPane root = new GridPane();
         root.setStyle("-fx-background-color: orange");
         root.setHgap(10);
         root.setVgap(10);
-
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -54,13 +59,11 @@ public class Main extends Application implements Observer {
                 alert.setHeaderText("Play Confirmation");
                 alert.setContentText("Are you sure you want to select this"+
                                      " location?");
-
                 int num = 0;
                 Object obj = event.getSource();
                 if (obj instanceof Hole) {
                     num = Integer.parseInt(((Hole) obj).getUserData().
                                            toString());
-                    System.out.println("NUM : " + num);
                 }
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -75,21 +78,19 @@ public class Main extends Application implements Observer {
                     // Direction dialog, which is used to confirm a direction
                     // from the user.
 
-                    if (num > 1 || num < 6) {
+                    if (num > 1 && num < 6) {
+                        System.out.println("ASKING DIRECTION!");
                         Alert directDialog = new Alert(AlertType.CONFIRMATION);
-
                         directDialog.setTitle("Choose a direction.");
                         directDialog.setHeaderText("Choose direction.");
                         directDialog.setContentText("Please select a direction"+
                                                     " to sow in:");
-
                         ButtonType buttonLeft = new ButtonType("Left");
                         ButtonType buttonRight = new ButtonType("Right");
 
                         directDialog.getButtonTypes().setAll(buttonLeft,
                                                              buttonRight);
                         Direction selectedDirection;
-
                         Optional<ButtonType> chosen = directDialog.showAndWait();
                         if (chosen.get() == buttonLeft) {
                             selectedDirection = Direction.LEFT;
@@ -107,7 +108,7 @@ public class Main extends Application implements Observer {
                             Thread.currentThread().sleep(1000);
                             System.out.println("P1");
                         } catch (Exception e) {
-
+                            System.out.println(e);
                         }
                     }
 
@@ -182,7 +183,7 @@ public class Main extends Application implements Observer {
         //root.add(bankPlayerTwo,60,10);
 
         Scene scene = new Scene(root,700,500);
-        scene.getStylesheets().add("bao/styles/main.css");
+        scene.getStylesheets().add("bao/main.css");
         mainStage.setScene(scene);
         mainStage.setResizable(false);
         mainStage.sizeToScene();
@@ -200,6 +201,10 @@ public class Main extends Application implements Observer {
     }
 
     public void update(Observable o, Object ob) {
-
+        try {
+            stop();
+        } catch (Exception e) {
+            System.out.println("Could not close the application!");
+        }
     }
 }

@@ -12,6 +12,9 @@ package bao;
 import java.util.ArrayList;
 
 public class AIPlayer extends BaoPlayer {
+
+    private GameTree tree = null;
+
     public AIPlayer(BaoBoard board, Player playerType, int depth) {
         super(board, playerType);
     }

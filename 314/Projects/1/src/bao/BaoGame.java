@@ -12,12 +12,13 @@ package bao;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+import java.util.Observer;
+import java.util.Observable;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.*;
 
-public class BaoGame {
+public class BaoGame extends Observable {
 
     public BaoBoard board = new BaoBoard();
     BaoPlayer player1;
@@ -43,7 +44,6 @@ public class BaoGame {
     public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
         player1 = new HumanPlayer(board, Player.PLAYER_1);
         player2 = new AIPlayer(board, Player.PLAYER_2, 20);
-
         while (true) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;
@@ -66,13 +66,8 @@ public class BaoGame {
     }
 
     public void notifyWinner(String winnerName) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Information Dialog");
-        alert.setHeaderText("Look, an Information Dialog");
-        alert.setContentText("I have a great message for you!");
-
-        alert.showAndWait();
-        System.exit(0);
+        setChanged();
+        notifyObservers(winnerName);
     }
 
     public ArrayList<BaoPlayer> returnPlayers() {
