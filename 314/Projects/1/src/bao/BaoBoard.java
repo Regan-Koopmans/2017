@@ -9,6 +9,8 @@
 package bao;
 
 import java.util.ArrayList;
+import bao.player.PlayerType;
+import bao.player.Direction;
 
 public class BaoBoard {
 
@@ -36,9 +38,9 @@ public class BaoBoard {
 // returns any seeds that may have been captured
 // by the action.
 
-    public int placeSeed(Player player, int position) {
+    public int placeSeed(PlayerType player, int position) {
         int captured = 0;
-        if (player == Player.PLAYER_1) {
+        if (player == PlayerType.PLAYER_1) {
             board[2][position] += 1;
             captured = board[1][position];
             board[1][position] = 0;
@@ -56,12 +58,12 @@ public class BaoBoard {
 // will have to pick one of these moves, if one
 // exists.
 
-    public ArrayList<Integer> getCaptureMoves(Player player) {
+    public ArrayList<Integer> getCaptureMoves(PlayerType player) {
 
         ArrayList<Integer> captureMoves = new ArrayList<Integer>();
 
-        int offset = (player == Player.PLAYER_1) ? 1 : 2;
-        int self = (player == Player.PLAYER_1) ? 2 : 1;
+        int offset = (player == PlayerType.PLAYER_1) ? 1 : 2;
+        int self = (player == PlayerType.PLAYER_1) ? 2 : 1;
         int position;
         for (int x = 0; x < 8; ++x) {
 
@@ -70,17 +72,17 @@ public class BaoBoard {
 
                 // Player 2 has a reversed perspective.
 
-                position = (player == Player.PLAYER_1) ? x : 7-x;
+                position = (player == PlayerType.PLAYER_1) ? x : 7-x;
                 captureMoves.add(position);
             }
         }
         return captureMoves;
     }
 
-    public ArrayList<Integer> getNonCaptureMoves(Player player) {
+    public ArrayList<Integer> getNonCaptureMoves(PlayerType player) {
 
         ArrayList<Integer> nonCaptureMoves = new ArrayList<Integer>();
-        int self = (player == Player.PLAYER_1) ? 2 : 1;
+        int self = (player == PlayerType.PLAYER_1) ? 2 : 1;
         int position;
         for (int x = 0; x < 8; ++x) {
 
@@ -88,7 +90,7 @@ public class BaoBoard {
 
                 // Player 2 has a reversed perspective.
 
-                position = (player == Player.PLAYER_1) ? x : 7-x;
+                position = (player == PlayerType.PLAYER_1) ? x : 7-x;
                 nonCaptureMoves.add(position);
             }
         }
@@ -97,10 +99,10 @@ public class BaoBoard {
 
 // The function that is called in a takasa round.
 
-    public void spread(Player player, int location, Direction direction) {
-        int offset = (player == Player.PLAYER_1) ? 2 : 1;
+    public void spread(PlayerType player, int location, Direction direction) {
+        int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
 
-        location = (player == Player.PLAYER_1) ? location : 7 - location;
+        location = (player == PlayerType.PLAYER_1) ? location : 7 - location;
 
         int numSeed = board[offset][location];
         board[offset][location] = 0;
@@ -112,7 +114,7 @@ public class BaoBoard {
         else {
             netDirection = -1;
         }
-        if (player == Player.PLAYER_2) {
+        if (player == PlayerType.PLAYER_2) {
             netDirection *= -1;
         }
 
@@ -121,7 +123,7 @@ public class BaoBoard {
             if (location < 0 || location > 7) {
                 location = (location < 0) ? 0 : 7;
                 netDirection *= -1;
-                offset = (player == Player.PLAYER_1) ? offset + 1: offset - 1;
+                offset = (player == PlayerType.PLAYER_1) ? offset + 1: offset - 1;
             }
             System.out.println(offset + "  : " + location);
             board[offset][location] += 1;
@@ -135,7 +137,7 @@ public class BaoBoard {
 // for handling the fact that the house disappears
 // after it has been sown.
 
-    public boolean isHouse(Player player, int position) {
+    public boolean isHouse(PlayerType player, int position) {
         return true;
     }
 
@@ -144,7 +146,7 @@ public class BaoBoard {
 // will call itself recursively if the last seed placed
 // captures again. Still need to add "house" semantics.
 
-    public void sow(Player player, int numCapturedSeeds, Direction direction) {
+    public void sow(PlayerType player, int numCapturedSeeds, Direction direction) {
 
         int netDirection = (direction.ordinal() == 0) ? 1 : -1;
         int offset = 2;
@@ -153,13 +155,13 @@ public class BaoBoard {
         boolean sowed = false;
 
         position = (direction == Direction.LEFT) ? 0 : 7;
-        if (player == Player.PLAYER_2) {
+        if (player == PlayerType.PLAYER_2) {
             position = 7-position;
         }
 
         // Player 2 has a reversed perspective.
 
-        if (player == Player.PLAYER_2) {
+        if (player == PlayerType.PLAYER_2) {
             netDirection *= -1;
             offset = 1;
         }
@@ -203,7 +205,7 @@ public class BaoBoard {
 
             // adversary is the offset for the enemy
 
-            int adversary = (player == Player.PLAYER_1) ? 1 : 2;
+            int adversary = (player == PlayerType.PLAYER_1) ? 1 : 2;
             if (board[adversary][previousPosition] != 0) {
                 int capture = board[adversary][previousPosition];
                 board[adversary][previousPosition] = 0;

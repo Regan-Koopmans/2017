@@ -7,14 +7,15 @@
 
  */
 
-package bao;
+package bao.player;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import bao.BaoBoard;
 
 public class HumanPlayer extends BaoPlayer {
 
-    public HumanPlayer(BaoBoard board, Player playerType) {
+    public HumanPlayer(BaoBoard board, PlayerType playerType) {
         super(board, playerType);
     }
     public int getCaptureLocation(ArrayList<Integer> captureMoves) {
@@ -22,7 +23,6 @@ public class HumanPlayer extends BaoPlayer {
         while (seedLocation == null) {
             try {
                 Thread.currentThread().sleep(500);
-                // System.out.println("location");
             } catch (Exception e) {
                 System.exit(0);
             }

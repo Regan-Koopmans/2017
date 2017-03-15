@@ -18,15 +18,20 @@ import java.util.Observable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.*;
 
+import bao.player.BaoPlayer;
+import bao.player.PlayerType;
+import bao.player.HumanPlayer;
+import bao.player.AIPlayer;
+
 public class BaoGame extends Observable {
 
     public BaoBoard board = new BaoBoard();
     BaoPlayer player1;
     BaoPlayer player2;
 
-    private Boolean hasWon(Player player) {
+    private Boolean hasWon(PlayerType player) {
         int offset;
-        if (player == Player.PLAYER_1) {
+        if (player == PlayerType.PLAYER_1) {
             offset = 1;
         }
         else {
@@ -42,13 +47,13 @@ public class BaoGame extends Observable {
     }
 
     public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
-        player1 = new HumanPlayer(board, Player.PLAYER_1);
-        player2 = new AIPlayer(board, Player.PLAYER_2, 20);
+        player1 = new HumanPlayer(board, PlayerType.PLAYER_1);
+        player2 = new AIPlayer(board, PlayerType.PLAYER_2, 20);
         while (true) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;
             player1.nextTurn();
-            if (hasWon(Player.PLAYER_1)) {
+            if (hasWon(PlayerType.PLAYER_1)) {
                 notifyWinner("Player 1");
             }
             board.printBoard();
@@ -57,7 +62,7 @@ public class BaoGame extends Observable {
             System.out.println("\n\tPlayer 2\n");
             player2.turnDone = false;
             player2.nextTurn();
-            if (hasWon(Player.PLAYER_2)) {
+            if (hasWon(PlayerType.PLAYER_2)) {
                 notifyWinner("Player 2");
             }
             board.printBoard();

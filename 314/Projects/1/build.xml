@@ -1,3 +1,5 @@
+<!-- build file for the bao project -->
+
 <project name="Bao">
 
   <property name="src" location="src"/>
@@ -9,6 +11,7 @@
     <javac includeantruntime="false" srcdir="${src}" destdir="${build}/classes" optimize="on"/>
     <javac includeantruntime="false" srcdir="${src}/bao" destdir="${build}/classes" optimize="on"/>
     <javac includeantruntime="false" srcdir="${src}/bao/tree" destdir="${build}/classes" optimize="on"/>
+    <javac includeantruntime="false" srcdir="${src}/bao/player" destdir="${build}/classes" optimize="on"/>
     <mkdir dir="build/jar"/>
     <copy todir="build/classes/bao">
         <fileset dir="src/bao/styles">

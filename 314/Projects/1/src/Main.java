@@ -5,7 +5,9 @@
     DESCRIPTION : Defines an entry-point into the graphical program
 
  */
+
 import bao.*;
+import bao.player.*;
 
 import java.util.Optional;
 
@@ -17,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -114,22 +117,22 @@ public class Main extends Application implements Observer {
                     while (bg.returnPlayers().get(0).turnDone) {
                         try {
                             Thread.currentThread().sleep(1000);
-                            System.out.println("P1");
+                            // System.out.println("P1");
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    }
+                    updateBoard(array);
+                    
+                    while (!bg.returnPlayers().get(1).turnDone) {
+                        try {
+                            Thread.currentThread().sleep(500);
+                            // System.out.println("P2");
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                     }
 
-                    System.out.println("Turn is done, updating board");
-                    while (!bg.returnPlayers().get(1).turnDone) {
-                        try {
-                            Thread.currentThread().sleep(500);
-                            System.out.println("P2");
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
-                    }
-                    System.out.println("Turn is done, updating board");
                     try {
                         Thread.currentThread().sleep(500);
                     } catch (Exception e) {
@@ -145,9 +148,17 @@ public class Main extends Application implements Observer {
             for (int y = 0; y < 8; y++) {
                 array[x][y] = new Hole(x,y);
                 array[x][y].setText("0");
-                array[x][y].getStyleClass().add("hole");
+                if (x > 1) {
+                    array[x][y].getStyleClass().add("playable");
+                    array[x][y].setOnAction(event);
+                }
+                else {
+                    array[x][y].getStyleClass().add("hole");
+                }
+                if (x == 2 && y == 4 || x == 1 && y == 3) {
+                   array[x][y].getStyleClass().add("house"); 
+                }
                 array[x][y].setUserData(y);
-                array[x][y].setOnAction(event);
             }
         }
         Button bankPlayerOne = new Button();
@@ -170,7 +181,16 @@ public class Main extends Application implements Observer {
 
         newGameButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
-                System.out.println("NEW");
+                Alert newGameDialog = new Alert(AlertType.CONFIRMATION);
+                newGameDialog.setTitle("New Game");
+                newGameDialog.setHeaderText("Create a New Game");
+                newGameDialog.setContentText("Choose game type:");
+
+                ButtonType btnHvA = new ButtonType("Human vs AI");
+                ButtonType btnAvA = new ButtonType("AI vs AI");
+                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                newGameDialog.getButtonTypes().setAll(btnHvA, btnAvA, buttonTypeCancel);
+                newGameDialog.showAndWait();
             }
         });
 
@@ -184,8 +204,8 @@ public class Main extends Application implements Observer {
                 root.add(array[x][y], 5+2*y, 5+2*x);
             }
         }
-        root.add(player_1_bank, 12, 3);
-        root.add(player_2_bank, 12, 15);
+        root.add(player_1_bank, 20, 3);
+        root.add(player_2_bank, 20, 15);
 
         // Create thread to run game in the backend
 
@@ -196,7 +216,7 @@ public class Main extends Application implements Observer {
         });
         gameThread.start();
 
-        Scene scene = new Scene(root,700,500);
+        Scene scene = new Scene(root,750,500);
         scene.getStylesheets().add("bao/main.css");
         mainStage.setScene(scene);
         mainStage.setResizable(false);
@@ -219,7 +239,12 @@ public class Main extends Application implements Observer {
 
     public void update(Observable o, Object ob) {
         try {
-            stop();
+            System.out.println("");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Win");
+            alert.setHeaderText((String)ob);
+            alert.setContentText("I have a great message for you!");
+            alert.showAndWait();
         } catch (Exception e) {
             System.out.println("Could not close the application!");
         }

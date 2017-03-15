@@ -6,5 +6,5 @@
                   readable control structures.
 
  */
-package bao;
+package bao.player;
 public enum Direction {LEFT, RIGHT}

@@ -7,10 +7,11 @@
 
  */
 
-package bao;
+package bao.player;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import bao.BaoBoard;
 
 public abstract class BaoPlayer {
 
@@ -20,7 +21,7 @@ public abstract class BaoPlayer {
     public volatile boolean turnDone = true;
     public TurnType turnType = null;
 
-    protected Player playerType;
+    protected PlayerType playerType;
     protected BaoBoard board;
     public int seedsInStock = 22;
 
@@ -95,7 +96,7 @@ public abstract class BaoPlayer {
         System.out.println(seedsInStock);
     }
 
-    public BaoPlayer(BaoBoard board, Player playerType) {
+    public BaoPlayer(BaoBoard board, PlayerType playerType) {
         this.board = board;
         this.playerType = playerType;
     }
