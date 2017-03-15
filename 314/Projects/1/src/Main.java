@@ -19,18 +19,28 @@ import javafx.scene.control.Alert.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.util.Observer;
 import java.util.Observable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+// Main extends Observer so that they can observe the
+// game (which  extends Observable).
+
 public class Main extends Application implements Observer {
     public static BaoGame bg = null;
     public static Hole [][] array = null;
     private static Thread gameThread = null;
+
+    final double MAX_FONT_SIZE = 30.0;
+
 
     public static void main(String [] args) {
         Main m = new Main();
@@ -101,8 +111,6 @@ public class Main extends Application implements Observer {
                         bg.returnPlayers().get(0).direction = selectedDirection;
                     }
 
-                    // PROBLEM STARTS HERE
-
                     while (bg.returnPlayers().get(0).turnDone) {
                         try {
                             Thread.currentThread().sleep(1000);
@@ -153,6 +161,11 @@ public class Main extends Application implements Observer {
         newGameButton.setTranslateY(MARGIN + 20);
         newGameButton.getStyleClass().add("start");
 
+        Button player_1_bank = new Button("22");
+        player_1_bank.getStyleClass().add("bank");
+        Button player_2_bank = new Button("22");
+        player_2_bank.getStyleClass().add("bank");
+
         // Add behaviors to UI Elements
 
         newGameButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -163,12 +176,16 @@ public class Main extends Application implements Observer {
 
         // Add all elements to central pane.
 
-        root.add(newGameButton, 0,0);
+        newGameButton.getStyleClass().add("new");
+        root.add(newGameButton, 0, 0);
+
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 8; ++y) {
                 root.add(array[x][y], 5+2*y, 5+2*x);
             }
         }
+        root.add(player_1_bank, 12, 3);
+        root.add(player_2_bank, 12, 15);
 
         // Create thread to run game in the backend
 
@@ -179,9 +196,6 @@ public class Main extends Application implements Observer {
         });
         gameThread.start();
 
-        //root.add(bankPlayerOne,0,10);
-        //root.add(bankPlayerTwo,60,10);
-
         Scene scene = new Scene(root,700,500);
         scene.getStylesheets().add("bao/main.css");
         mainStage.setScene(scene);
@@ -190,6 +204,9 @@ public class Main extends Application implements Observer {
         mainStage.show();
         updateBoard(array);
     }
+
+    // Function that updates the button array to represent
+    // the current state of the board.
 
     public void updateBoard(Hole [][] array) {
         int [][] board = bg.board.getBoard();

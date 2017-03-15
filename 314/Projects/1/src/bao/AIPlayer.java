@@ -10,6 +10,7 @@
 package bao;
 
 import java.util.ArrayList;
+import bao.tree.GameTree;
 
 public class AIPlayer extends BaoPlayer {
 

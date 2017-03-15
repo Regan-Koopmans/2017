@@ -8,6 +8,7 @@
     <mkdir dir="build/classes"/>
     <javac includeantruntime="false" srcdir="${src}" destdir="${build}/classes" optimize="on"/>
     <javac includeantruntime="false" srcdir="${src}/bao" destdir="${build}/classes" optimize="on"/>
+    <javac includeantruntime="false" srcdir="${src}/bao/tree" destdir="${build}/classes" optimize="on"/>
     <mkdir dir="build/jar"/>
     <copy todir="build/classes/bao">
         <fileset dir="src/bao/styles">
@@ -22,7 +23,7 @@
   </target>
 
   <target name="run">
-     <java jar="build/jar/bao.jar" spawn="true" fork="true"/>
+     <java jar="build/jar/bao.jar" fork="true"/>
  </target>
 
   <target name="clean" description="clean up">
