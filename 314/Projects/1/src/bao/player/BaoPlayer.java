@@ -25,6 +25,7 @@ public abstract class BaoPlayer {
     protected PlayerType playerType;
     protected BaoBoard board;
     public int seedsInStock = 22;
+    public volatile boolean inRunningInstance = true;
 
 // These methods will have different implementations, depending on whether
 // a player is human or an artificial intelligence.
