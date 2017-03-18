@@ -21,7 +21,7 @@ public class AIPlayer extends BaoPlayer {
         super(board, playerType);
     }
 
-    public int getCaptureLocation(ArrayList<Integer> captureMoves) {
+    public int getNamuaCapLoc(ArrayList<Integer> captureMoves) {
         tree = new GameTree();
         for (Integer x: captureMoves) {
             
@@ -29,7 +29,7 @@ public class AIPlayer extends BaoPlayer {
         return captureMoves.get(0);
     }
 
-    public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
+    public int getNamuaNonCapLoc(ArrayList<Integer> nonCaptureMoves) {
         tree = new GameTree();
         for (Integer x: nonCaptureMoves) {
 
@@ -42,11 +42,10 @@ public class AIPlayer extends BaoPlayer {
         return Direction.LEFT;
     }
 
-    public int getCascadeLocation() {
-        return 0;
+    public int getMtajiCapMove() {
+        return 5;
     }
-
-    public Direction getCascadeDirection() {
-        return Direction.LEFT;
+    public int getMtajiNonCapMove(){
+        return 5;
     }
 }

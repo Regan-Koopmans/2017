@@ -18,7 +18,7 @@ public class HumanPlayer extends BaoPlayer {
     public HumanPlayer(BaoBoard board, PlayerType playerType) {
         super(board, playerType);
     }
-    public int getCaptureLocation(ArrayList<Integer> captureMoves) {
+    public int getNamuaCapLoc(ArrayList<Integer> captureMoves) {
         System.out.println("Capture moves: " + captureMoves);
         while (seedLocation == null) {
             try {
@@ -48,22 +48,7 @@ public class HumanPlayer extends BaoPlayer {
         return returnDirection;
     }
 
-    public int getCascadeLocation() {
-        Scanner in = new Scanner(System.in);
-        System.out.print("Enter location to cascade seeds [1-16] : ");
-        return in.nextInt();
-    }
-
-    public Direction getCascadeDirection() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Enter cascade direction [left/right] : ");
-        String answer = in.nextLine();
-        Direction direction = (answer.equals("left")) ? Direction.LEFT :
-                              Direction.RIGHT;
-        return direction;
-    }
-
-    public int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves) {
+    public int getNamuaNonCapLoc(ArrayList<Integer> nonCaptureMoves) {
         while (takasaLocation == null) {
             try {
                 Thread.currentThread().sleep(500);
@@ -74,5 +59,12 @@ public class HumanPlayer extends BaoPlayer {
         int returnValue = takasaLocation.get();
         takasaLocation = null;
         return returnValue;
+    }
+
+    public int getMtajiCapMove() {
+        return 5;
+    }
+    public int getMtajiNonCapMove(){
+        return 5;
     }
 }

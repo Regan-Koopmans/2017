@@ -11,6 +11,7 @@ package bao;
 import java.util.ArrayList;
 import bao.player.PlayerType;
 import bao.player.Direction;
+import bao.Move;
 
 public class BaoBoard {
 
@@ -58,7 +59,7 @@ public class BaoBoard {
 // will have to pick one of these moves, if one
 // exists.
 
-    public ArrayList<Integer> getCaptureMoves(PlayerType player) {
+    public ArrayList<Integer> getNamuaCapMoves(PlayerType player) {
 
         ArrayList<Integer> captureMoves = new ArrayList<Integer>();
 
@@ -79,7 +80,37 @@ public class BaoBoard {
         return captureMoves;
     }
 
-    public ArrayList<Integer> getNonCaptureMoves(PlayerType player) {
+    public ArrayList<Move> getMtajiNonCapMoves(PlayerType player) {
+        ArrayList<Move> moves = new ArrayList<Move>();
+        int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
+
+        for (int x = 0; x < 8; x++) {
+            if (board[offset][x] > 1) {
+                
+            }
+        }
+
+        return moves;
+    }
+
+    public ArrayList<Move> getMtajiCapMoves(PlayerType player) {
+        ArrayList<Move> moves = new ArrayList<Move>();
+        
+        int offset = (player == PlayerType.PLAYER_1) ? 2 : 0;
+        for (int x = offset; x < offset+2; ++x) {
+            for (int y = 0; y < 8; ++y) {
+                
+                // can only cascade piles that have a non-singleton value
+
+                if (board[x][y] > 1) {
+                    System.out.println(board[x][y]);
+                }
+            }
+        }
+        return moves;
+    }
+
+    public ArrayList<Integer> getNamuaNonCapMoves(PlayerType player) {
 
         ArrayList<Integer> nonCaptureMoves = new ArrayList<Integer>();
         int self = (player == PlayerType.PLAYER_1) ? 2 : 1;

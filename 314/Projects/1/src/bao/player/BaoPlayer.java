@@ -12,6 +12,7 @@ package bao.player;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import bao.BaoBoard;
+import bao.Move;
 
 public abstract class BaoPlayer {
 
@@ -28,25 +29,35 @@ public abstract class BaoPlayer {
 // These methods will have different implementations, depending on whether
 // a player is human or an artificial intelligence.
 
-    public abstract int getCaptureLocation(ArrayList<Integer> captureMoves);
-    public abstract int getNonCaptureLocation(ArrayList<Integer> nonCaptureMoves);
+    // Functions to handle actions in the Numua stage
+
+    public abstract int getNamuaCapLoc(ArrayList<Integer> captureMoves);
+    public abstract int getNamuaNonCapLoc(ArrayList<Integer> nonCaptureMoves);
+    
+    // Functions to handle actions in the Mtaji stage
+
+    public abstract int getMtajiCapMove();
+    public abstract int getMtajiNonCapMove();
+
     public abstract Direction getDirection();
-    public abstract int getCascadeLocation();
-    public abstract Direction getCascadeDirection();
 
 // The concept of a turn is concrete for both, and hence can be described
 // abstractly
 
     public void nextTurn() {
         if (seedsInStock > 0) {
-            ArrayList<Integer> captureMoves = board.getCaptureMoves(playerType);
+
+            // Numua Turn
+
+            ArrayList<Integer> captureMoves = board.getNamuaCapMoves(playerType);
             if (captureMoves.isEmpty()) {
+                
                 turnType = TurnType.TAKASA;
                 ArrayList<Integer> nonCaptureMoves =
-                    board.getNonCaptureMoves(playerType);
+                    board.getNamuaNonCapMoves(playerType);
                 System.out.println("Noncapture moves = " +
                                    nonCaptureMoves.toString());
-                int location = getNonCaptureLocation(nonCaptureMoves);
+                int location = getNamuaNonCapLoc(nonCaptureMoves);
                 if (location <= 1) {
                     direction = Direction.LEFT;
                 }
@@ -60,8 +71,9 @@ public abstract class BaoPlayer {
 
             }
             else {
+                
                 turnType = TurnType.CAPTURE;
-                int location = getCaptureLocation(captureMoves);
+                int location = getNamuaCapLoc(captureMoves);
                 int captured = board.placeSeed(playerType, location);
                 if (captured > 0) {
                     int sowLocation;
@@ -88,9 +100,17 @@ public abstract class BaoPlayer {
             }
         }
         else {
+
+            // Mtaji Turn
+
             System.out.println("Player has no seeds in stock.");
-            int cascadeLocation = getCascadeLocation();
-            Direction cascadeDirection = getCascadeDirection();
+            ArrayList<Move> captureMoves = board.getMtajiCapMoves(playerType);
+            if (!captureMoves.isEmpty()) {
+                // yay!
+            } else {
+                ArrayList<Move> nonCaptureMoves = board.getMtajiNonCapMoves(playerType);
+            }
+            
         }
         direction = null;
         System.out.println(seedsInStock);
