@@ -1,3 +1,11 @@
+/*
+
+    CLASS       : Move
+    AUTHOR      : Regan Koopmans
+    DESCRIPTION : Encapsulates a location and direction into a single
+    			  object.
+
+ */
 package bao;
 
 import bao.player.Direction;

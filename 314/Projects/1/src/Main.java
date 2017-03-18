@@ -65,6 +65,12 @@ public class Main extends Application implements Observer {
         root.setStyle("-fx-background-color: orange");
         root.setHgap(10);
         root.setVgap(10);
+
+        Button player_1_bank = new Button("22");
+        player_1_bank.getStyleClass().add("bank");
+        Button player_2_bank = new Button("22");
+        player_2_bank.getStyleClass().add("bank");
+
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -122,6 +128,10 @@ public class Main extends Application implements Observer {
                             System.out.println(e);
                         }
                     }
+                    int player_1_num_seeds = Integer.parseInt(player_1_bank.getText());
+                    if (player_1_num_seeds > 0) {
+                        player_1_bank.setText(Integer.toString(player_1_num_seeds-1));
+                    }
                     updateBoard(array);
                     
                     while (!bg.returnPlayers().get(1).turnDone) {
@@ -131,6 +141,10 @@ public class Main extends Application implements Observer {
                         } catch (Exception e) {
                             System.out.println(e);
                         }
+                    }
+                     int player_2_num_seeds = Integer.parseInt(player_2_bank.getText());
+                    if (player_2_num_seeds > 0) {
+                        player_2_bank.setText(Integer.toString(player_2_num_seeds-1));
                     }
 
                     try {
@@ -172,11 +186,6 @@ public class Main extends Application implements Observer {
         newGameButton.setTranslateY(MARGIN + 20);
         newGameButton.getStyleClass().add("start");
 
-        Button player_1_bank = new Button("22");
-        player_1_bank.getStyleClass().add("bank");
-        Button player_2_bank = new Button("22");
-        player_2_bank.getStyleClass().add("bank");
-
         // Add behaviors to UI Elements
 
         newGameButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -191,6 +200,8 @@ public class Main extends Application implements Observer {
                 ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
                 newGameDialog.getButtonTypes().setAll(btnHvA, btnAvA, buttonTypeCancel);
                 newGameDialog.showAndWait();
+
+                
             }
         });
 
@@ -204,8 +215,8 @@ public class Main extends Application implements Observer {
                 root.add(array[x][y], 5+2*y, 5+2*x);
             }
         }
-        root.add(player_1_bank, 20, 3);
-        root.add(player_2_bank, 20, 15);
+        root.add(player_1_bank, 20, 15);
+        root.add(player_2_bank, 20, 3);
 
         // Create thread to run game in the backend
 
@@ -236,6 +247,9 @@ public class Main extends Application implements Observer {
             }
         }
     }
+
+    // Observer function that reacts when the observed
+    // (the game) notifies that someone has won the game.
 
     public void update(Observable o, Object ob) {
         try {

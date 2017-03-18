@@ -80,6 +80,9 @@ public class BaoBoard {
         return captureMoves;
     }
 
+    // Function used to get the legal moves in a Mtjai round when
+    // there are no legal capture moves.
+
     public ArrayList<Move> getMtajiNonCapMoves(PlayerType player) {
         ArrayList<Move> moves = new ArrayList<Move>();
         int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
@@ -92,6 +95,10 @@ public class BaoBoard {
 
         return moves;
     }
+
+    // Function that obtains the moves that would capture in a Mtaji stage turn. If 
+    // this ArrayList is empty, this is an indiction that a non-capture (takasa)
+    // move is required.
 
     public ArrayList<Move> getMtajiCapMoves(PlayerType player) {
         ArrayList<Move> moves = new ArrayList<Move>();
@@ -128,7 +135,7 @@ public class BaoBoard {
         return nonCaptureMoves;
     }
 
-// The function that is called in a takasa round.
+    // The function that is called in a Numua Takasa round.
 
     public void spread(PlayerType player, int location, Direction direction) {
         int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
@@ -249,6 +256,8 @@ public class BaoBoard {
             System.out.println("Turn ended.");
         }
     }
+
+    // Helper function to print the board to the console.
 
     public void printBoard() {
         for (int [] arr:board) {
