@@ -199,9 +199,33 @@ public class Main extends Application implements Observer {
                 ButtonType btnAvA = new ButtonType("AI vs AI");
                 ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
                 newGameDialog.getButtonTypes().setAll(btnHvA, btnAvA, buttonTypeCancel);
-                newGameDialog.showAndWait();
-
-                
+                Optional<ButtonType> result = newGameDialog.showAndWait();
+                final boolean p1_isHuman;
+                final boolean p2_isHuman = false;
+                if (result.get() == btnHvA) {
+                    System.out.println("HUMAN VS AI");
+                    p1_isHuman = true;
+                } else if (result.get() == btnAvA) {
+                    System.out.println("AI VS AI");
+                    p1_isHuman = false;
+                } else {
+                    p1_isHuman = true;
+                }
+                bg.stop();
+                bg = new BaoGame();
+                try {
+                    gameThread.join();
+                    System.out.println("Joined the thread!");
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                gameThread = new Thread(new Runnable() {
+                    public void run() {
+                        bg.start(p1_isHuman, p2_isHuman);
+                    }
+                });
+                gameThread.start();
+                updateBoard(array);
             }
         });
 
