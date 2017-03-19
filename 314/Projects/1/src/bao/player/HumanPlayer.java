@@ -20,7 +20,7 @@ public class HumanPlayer extends BaoPlayer {
     }
     public int getNamuaCapLoc(ArrayList<Integer> captureMoves) {
         System.out.println("Capture moves: " + captureMoves);
-        while (seedLocation == null) {
+        while (seedLocation == null && inRunningInstance) {
             try {
                 Thread.currentThread().sleep(500);
             } catch (Exception e) {
@@ -34,7 +34,7 @@ public class HumanPlayer extends BaoPlayer {
     }
 
     public Direction getDirection() {
-        while (direction == null) {
+        while (direction == null && inRunningInstance) {
             try {
                 Thread.currentThread().sleep(500);
                 System.out.println("direction");
@@ -49,7 +49,7 @@ public class HumanPlayer extends BaoPlayer {
     }
 
     public int getNamuaNonCapLoc(ArrayList<Integer> nonCaptureMoves) {
-        while (takasaLocation == null) {
+        while (takasaLocation == null && inRunningInstance) {
             try {
                 Thread.currentThread().sleep(500);
             } catch (Exception e) {

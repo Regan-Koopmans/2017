@@ -28,6 +28,7 @@ public class BaoGame extends Observable {
     public BaoBoard board = new BaoBoard();
     BaoPlayer player1;
     BaoPlayer player2;
+    private boolean running = true;
 
     private Boolean hasWon(PlayerType player) {
         int offset;
@@ -49,7 +50,7 @@ public class BaoGame extends Observable {
     public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
         player1 = new HumanPlayer(board, PlayerType.PLAYER_1);
         player2 = new AIPlayer(board, PlayerType.PLAYER_2, 20);
-        while (true) {
+        while (running) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;
             player1.nextTurn();
@@ -68,6 +69,13 @@ public class BaoGame extends Observable {
             board.printBoard();
             player2.turnDone = true;
         }
+    }
+
+    public void stop() {
+        System.out.println("stopping game instance.");
+        player1.inRunningInstance = false;
+        player2.inRunningInstance = false;
+        running = false;
     }
 
     public void notifyWinner(String winnerName) {

@@ -110,7 +110,6 @@ public class Server implements Runnable {
                                  editAppoint.getDateString()+"]: ");
             streamOut.flush();
             String date = streamIn.readLine();
-
             name = (name.equals("")) ? editAppoint.getName() : name;
             part = (part.equals("")) ? editAppoint.getParticipants() : part;
             desc = (desc.equals("")) ? editAppoint.getDesc() : desc;
@@ -179,17 +178,14 @@ public class Server implements Runnable {
                                  " separated list): ");
             streamOut.flush();
             String part = streamIn.readLine();
-
             streamOut.writeChars("Write a short description of this "+
                                  "appointment: \n\n");
             streamOut.flush();
             String desc = streamIn.readLine();
-
             streamOut.writeChars("Enter the time of the appointment "+
                                  "(hh:mm:ss) : ");
             streamOut.flush();
             String time = streamIn.readLine();
-
             streamOut.writeChars("Enter the date of the appointment "+
                                  "(dd/mm/yyyy) : ");
             streamOut.flush();
