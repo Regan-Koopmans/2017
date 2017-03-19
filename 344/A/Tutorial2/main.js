@@ -167,8 +167,6 @@ var init = function() {
 
     allVertices = boxVertices.concat(pyramidVertices);
     allIndices = boxIndices.concat(pyramidIndices.map(x => x + 24));
-    console.log(allVertices);
-    console.log(allIndices);
 
     var vertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
@@ -242,11 +240,15 @@ var init = function() {
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
     var angle = 0;
+    console.log(worldMatrix);
     var loop = function() {
 
+        // mat4.rotate(worldMatrix, identityMatrix,angle, [1,0,0]);
         angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-        mat4.rotate(worldMatrix, identityMatrix, angle, [0,1,0]);
-        // update code
+        // rotateY(worldMatrix, identityMatrix, angle);
+        rotateX(worldMatrix, identityMatrix, angle);
+        rotateY(worldMatrix, identityMatrix, angle);
+        rotateZ(worldMatrix, identityMatrix, angle);
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
         gl.clearColor(0.9, 0.9, 0.9, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -260,3 +262,91 @@ function get_shader_text(id) {
     text = document.getElementById(id).innerHTML;
     return text;
 }
+
+// Transformation functions
+
+function rotateX(m, a, angle) {
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+    m[4] = a10 * cos - a20 * sin;
+    m[5] = a11 * cos - a21 * sin;
+    m[6] = a12 * cos - a22 * sin;
+    m[7] = a13 * cos - a23 * sin;
+
+    m[8] = a10 * sin + a20 * cos;
+    m[9] = a11 * sin + a21 * cos;
+    m[10] = a12 * sin + a22 * cos;
+    m[11] = a13 * sin + a23 * cos;
+}
+
+function rotateY(m, a, angle) {
+
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+        m[0] = a00 * cos - a20 * sin;
+        m[1] = a01 * cos - a21 * sin;
+        m[2] = a02 * cos - a22 * sin;
+        m[3] = a03 * cos - a23 * sin;
+        m[8] = a00 * sin + a20 * cos;
+        m[9] = a01 * sin + a21 * cos;
+        m[10] = a02 * sin + a22 * cos;
+        m[11] = a03 * sin + a23 * cos;
+}
+
+function rotateZ(m, a, angle) {
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+    m[0] = a00 * cos - a10 * sin;
+    m[1] = a01 * cos - a11 * sin;
+    m[2] = a02 * cos - a12 * sin;
+    m[3] = a03 * cos - a13 * sin;
+
+    m[4] = a00 * sin + a10 * cos;
+    m[5] = a01 * sin + a11 * cos;
+    m[6] = a02 * sin + a12 * cos;
+    m[7] = a03 * sin + a13 * cos;
+}
+
+
