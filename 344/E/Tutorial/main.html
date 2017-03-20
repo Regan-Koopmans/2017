@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Learning WebGl</title>
+  </head>
+  <body onload="init()">
+    <div align="center">
+      <canvas id="canvas-gl" width="500" height="500">
+        Your browser does not support WebGL.
+      </canvas>
+    </div>
+  </body>
+  <script id="shader-vs" type="text/plain">
+  /*
+    This is the vertex shader for the graphics
+    program.
+  */
+    precision mediump float;
+
+    attribute vec2 vertPosition;
+    // attribute vec3 vertColor;
+    // varying vec3 fragColor;
+    void main() {
+      // fragColor = vertColor;
+      gl_Position = vec4(vertPosition, 0.0, 1.0);
+    }
+
+  </script>
+  <script id="shader-fs" type="text/plain">
+    precision mediump float;
+
+    // varying vec3 fragColor;
+
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  </script>
+  <script type="text/javascript" src="main.js"></script>
+</html>

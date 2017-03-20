@@ -4,11 +4,16 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 public class Appointment {
+
+    // The fields of an Appointment
+
     private String name = null;
     private Date date = null;
     private Time time = null;
     private String desc = null;
     private String participants = null;
+
+    // Getters
 
     public String getName() {
         return name;
@@ -52,6 +57,10 @@ public class Appointment {
         participants = part;
     }
 
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     public void setDate(String input) {
         Date newDate = null;
         try {
@@ -62,9 +71,7 @@ public class Appointment {
         setDate(newDate);
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+    // Used to print Appointment into file format
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -85,6 +92,8 @@ public class Appointment {
         }
         return sb.toString();
     }
+
+    // Used to print a better-looking string for the user
 
     public String toPrettyString() {
         StringBuilder sb = new StringBuilder();
