@@ -37,7 +37,6 @@ public class HumanPlayer extends BaoPlayer {
         while (direction == null && inRunningInstance) {
             try {
                 Thread.currentThread().sleep(500);
-                System.out.println("direction");
             } catch (Exception e) {
                 System.exit(0);
             }
@@ -62,9 +61,27 @@ public class HumanPlayer extends BaoPlayer {
     }
 
     public int getMtajiCapMove() {
-        return 5;
+        while (mtajiCapLocation == null && inRunningInstance) {
+            try {
+                Thread.currentThread().sleep(500);
+            } catch (Exception e) {
+                System.exit(0);
+            }
+        }
+        int returnValue = mtajiCapLocation.get();
+        mtajiCapLocation = null;
+        return returnValue;
     }
     public int getMtajiNonCapMove(){
-        return 5;
+        while (mtajiNonCapLocation == null && inRunningInstance) {
+            try {
+                Thread.currentThread().sleep(500);
+            } catch (Exception e) {
+                System.exit(0);
+            }
+        }
+        int returnValue = mtajiNonCapLocation.get();
+        mtajiNonCapLocation = null;
+        return returnValue;
     }
 }

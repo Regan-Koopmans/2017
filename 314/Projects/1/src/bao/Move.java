@@ -14,10 +14,12 @@ public class Move {
 	
 	private int location;
 	private Direction direction;
+	private MoveType moveType;
 
-	public Move(int location, Direction direction) {
+	public Move(int location, Direction direction, MoveType moveType) {
 		this.location = location;
 		this.direction = direction;
+		this.moveType = moveType;
 	}
 
 	public Direction getDirection() {
@@ -26,5 +28,9 @@ public class Move {
 
 	public int getLocation() {
 		return this.location;
+	}
+
+	public MoveType getMoveType() {
+		return this.moveType;
 	}
 }

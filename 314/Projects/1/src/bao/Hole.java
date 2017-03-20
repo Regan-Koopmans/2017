@@ -2,7 +2,8 @@
 
     CLASS       : Hole
     AUTHOR      : Regan Koopmans
-    DESCRIPTION : Encapsulates a button that interfaces with the program.
+    DESCRIPTION : Encapsulates a button that represents a Bao hole in the 
+                  program.
 
  */
 package bao;

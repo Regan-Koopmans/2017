@@ -18,6 +18,10 @@ public abstract class BaoPlayer {
 
     public AtomicInteger seedLocation = null;
     public AtomicInteger takasaLocation = null;
+
+    public AtomicInteger mtajiCapLocation = null;
+    public AtomicInteger mtajiNonCapLocation = null;
+    
     public Direction direction = null;
     public volatile boolean turnDone = true;
     public TurnType turnType = null;
@@ -59,16 +63,29 @@ public abstract class BaoPlayer {
                 System.out.println("Noncapture moves = " +
                                    nonCaptureMoves.toString());
                 int location = getNamuaNonCapLoc(nonCaptureMoves);
+                int offset  = (playerType == PlayerType.PLAYER_1) ? 2 : 1; 
                 if (location <= 1) {
+
+                    System.out.println("SOWING");
                     direction = Direction.LEFT;
+                    int num_seeds = board.getBoard()[offset][location] + 1; 
+                    board.getBoard()[offset][location] = 0;
+                    board.sow(playerType, num_seeds,direction);
+                    seedsInStock--;
                 }
                 else if (location >= 6) {
+
+                    System.out.println("SOWING");
                     direction = Direction.RIGHT;
+                    int num_seeds = board.getBoard()[offset][location] + 1; 
+                    board.getBoard()[offset][location] = 0;
+                    board.sow(playerType, num_seeds,direction);
+                    seedsInStock--;
                 }
                 else {
                     direction = getDirection();
+                    board.spread(playerType, location, direction);
                 }
-                board.spread(playerType, location, direction);
 
             }
             else {
@@ -109,7 +126,8 @@ public abstract class BaoPlayer {
             if (!captureMoves.isEmpty()) {
                 // yay!
             } else {
-                ArrayList<Move> nonCaptureMoves = board.getMtajiNonCapMoves(playerType);
+                ArrayList<Move> nonCaptureMoves = 
+                                board.getMtajiNonCapMoves(playerType);
             }
             
         }

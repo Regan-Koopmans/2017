@@ -24,7 +24,9 @@ public class AIPlayer extends BaoPlayer {
     public int getNamuaCapLoc(ArrayList<Integer> captureMoves) {
         tree = new GameTree();
         for (Integer x: captureMoves) {
-            
+            System.out.println("AI IS TESTING AN OPTION");
+            BaoBoard state = new BaoBoard(board);
+            state.sow(playerType, 2, Direction.LEFT);
         }
         return captureMoves.get(0);
     }

@@ -5,7 +5,6 @@
     DESCRIPTION : Defines an entry-point into the graphical program
 
  */
-
 import bao.*;
 import bao.player.*;
 
@@ -32,6 +31,8 @@ import javafx.scene.text.Font;
 import java.util.Observer;
 import java.util.Observable;
 
+import javafx.application.Platform;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 // Main extends Observer so that they can observe the
@@ -41,9 +42,9 @@ public class Main extends Application implements Observer {
     public static BaoGame bg = null;
     public static Hole [][] array = null;
     private static Thread gameThread = null;
+    boolean hasWon = false;
 
     final double MAX_FONT_SIZE = 30.0;
-
 
     public static void main(String [] args) {
         Main m = new Main();
@@ -98,7 +99,6 @@ public class Main extends Application implements Observer {
                     // from the user.
 
                     if (num > 1 && num < 6) {
-                        System.out.println("ASKING DIRECTION!");
                         Alert directDialog = new Alert(AlertType.CONFIRMATION);
                         directDialog.setTitle("Choose a direction.");
                         directDialog.setHeaderText("Choose direction.");
@@ -120,39 +120,14 @@ public class Main extends Application implements Observer {
                         bg.returnPlayers().get(0).direction = selectedDirection;
                     }
 
-                    while (bg.returnPlayers().get(0).turnDone) {
-                        try {
-                            Thread.currentThread().sleep(1000);
-                            // System.out.println("P1");
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
-                    }
                     int player_1_num_seeds = Integer.parseInt(player_1_bank.getText());
                     if (player_1_num_seeds > 0) {
                         player_1_bank.setText(Integer.toString(player_1_num_seeds-1));
                     }
-                    updateBoard(array);
-                    
-                    while (!bg.returnPlayers().get(1).turnDone) {
-                        try {
-                            Thread.currentThread().sleep(500);
-                            // System.out.println("P2");
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
-                    }
-                     int player_2_num_seeds = Integer.parseInt(player_2_bank.getText());
+                    int player_2_num_seeds = Integer.parseInt(player_2_bank.getText());
                     if (player_2_num_seeds > 0) {
                         player_2_bank.setText(Integer.toString(player_2_num_seeds-1));
                     }
-
-                    try {
-                        Thread.currentThread().sleep(500);
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                    updateBoard(array);
                 }
             }
         };
@@ -197,8 +172,8 @@ public class Main extends Application implements Observer {
 
                 ButtonType btnHvA = new ButtonType("Human vs AI");
                 ButtonType btnAvA = new ButtonType("AI vs AI");
-                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-                newGameDialog.getButtonTypes().setAll(btnHvA, btnAvA, buttonTypeCancel);
+                ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                newGameDialog.getButtonTypes().setAll(btnHvA, btnAvA, cancel);
                 Optional<ButtonType> result = newGameDialog.showAndWait();
                 final boolean p1_isHuman;
                 final boolean p2_isHuman = false;
@@ -211,21 +186,24 @@ public class Main extends Application implements Observer {
                 } else {
                     p1_isHuman = true;
                 }
-                bg.stop();
-                bg = new BaoGame();
-                try {
-                    gameThread.join();
-                    System.out.println("Joined the thread!");
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                gameThread = new Thread(new Runnable() {
-                    public void run() {
+                if (result.get() != cancel) {
+                    bg.stop();
+                    bg = new BaoGame();
+                    try {
+                        gameThread.join();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    gameThread = new Thread(new Runnable() {
+                        public void run() {
                         bg.start(p1_isHuman, p2_isHuman);
                     }
-                });
-                gameThread.start();
-                updateBoard(array);
+                    });
+                    gameThread.start();
+                    player_1_bank.setText("22");
+                    player_2_bank.setText("22");
+                    updateBoard(array);
+                }
             }
         });
 
@@ -251,7 +229,27 @@ public class Main extends Application implements Observer {
         });
         gameThread.start();
 
+        Thread updateThread = new Thread(new Runnable() {
+            public void run() {
+                Runnable update = new Runnable() {
+                    @Override public void run() {
+                        updateBoard(array);
+                    }
+                };
+                while(true) {
+                    try {
+                        Thread.currentThread().sleep(400);
+                        Platform.runLater(update);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                }
+            }  
+        });
+        updateThread.start();
+
         Scene scene = new Scene(root,750,500);
+
         scene.getStylesheets().add("bao/main.css");
         mainStage.setScene(scene);
         mainStage.setResizable(false);
@@ -277,14 +275,18 @@ public class Main extends Application implements Observer {
 
     public void update(Observable o, Object ob) {
         try {
-            System.out.println("");
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Win");
-            alert.setHeaderText((String)ob);
-            alert.setContentText("I have a great message for you!");
-            alert.showAndWait();
+           Platform.runLater(new Runnable() {
+            @Override 
+            public void run() {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Win");
+                alert.setHeaderText("Winner!");
+                alert.setContentText((String)ob + " has won.");
+                alert.showAndWait();
+            }
+        });
         } catch (Exception e) {
-            System.out.println("Could not close the application!");
+            System.out.println(e);
         }
     }
 }

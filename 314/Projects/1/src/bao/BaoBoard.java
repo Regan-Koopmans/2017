@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import bao.player.PlayerType;
 import bao.player.Direction;
 import bao.Move;
+import bao.MoveType;
 
 public class BaoBoard {
 
@@ -33,6 +34,31 @@ public class BaoBoard {
 
     public int[][] getBoard() {
         return board;
+    }
+
+    public BaoBoard(BaoBoard from) {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 8; y++) {
+                board[x][y] = from.getBoard()[x][y];
+            }
+        }
+    }
+
+// Function that abstracts all the following move functions into
+// a single entry-point, that takes a move object. Facilitates the
+// construction of the game tree. Returns a new BaoBoard representing
+// the board after the move was made.
+
+    public BaoBoard makeMove(Move move) {
+        if (move.getMoveType() == MoveType.NamuaCapture) {
+
+        } else if (move.getMoveType() == MoveType.NamuaTakasa) {
+
+        } else if (move.getMoveType() == MoveType.MtajiCapture) {
+
+        } else if (move.getMoveType() == MoveType.MtajiTakasa) {
+
+        }
     }
 
 // Function that increases a hole by one and
@@ -80,6 +106,7 @@ public class BaoBoard {
         return captureMoves;
     }
 
+    // TODO: this
     // Function used to get the legal moves in a Mtjai round when
     // there are no legal capture moves.
 
@@ -96,6 +123,7 @@ public class BaoBoard {
         return moves;
     }
 
+    // TODO: this
     // Function that obtains the moves that would capture in a Mtaji stage turn. If 
     // this ArrayList is empty, this is an indiction that a non-capture (takasa)
     // move is required.
@@ -183,6 +211,7 @@ public class BaoBoard {
 // The function handles wrapping around corners, and
 // will call itself recursively if the last seed placed
 // captures again. Still need to add "house" semantics.
+
 
     public void sow(PlayerType player, int numCapturedSeeds, Direction direction) {
 
