@@ -1,12 +1,14 @@
-/*
+/**
+*
+*    CLASS       : BaoGame
+*    @author Regan Koopmans
+*    
+*    Encapsulates the procession of a typical Bao game,
+*    including turns and winning conditions, and allows for
+*    games of different Human/Computer players.
+*
+*/
 
-    CLASS       : BaoGame
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Encapsulates the procession of a typical Bao game,
-                  including turns and winning conditions, and allows for
-                  games of different Human/Computer players.
-
- */
 package bao;
 
 import java.util.ArrayList;
@@ -41,12 +43,14 @@ public class BaoGame extends Observable {
         return true;
     }
 
+    /** Controls the flow of a idiomatic Bao game, handles turn and win-checking
+    * @param isHumanPlayer1 Whether Player 1 in this particular game is played by a human.
+    * @param isHumanPlayer2 Whether Player 2 in this particular game is played by a human.
+    */
     public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
-        
         player1 = isHumanPlayer1 ? new HumanPlayer(board, PlayerType.PLAYER_1) : 
                                     new AIPlayer(board, PlayerType.PLAYER_2, 20);
         player2 = new AIPlayer(board, PlayerType.PLAYER_2, 20);
-
         while (running) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;
@@ -78,8 +82,7 @@ public class BaoGame extends Observable {
         }
     }
 
-    // Function that sets flags to stop the running of the game.
-
+    /** Function that sets flags to stop the running of the game. */
     public void stop() {
         System.out.println("stopping game instance.");
         player1.inRunningInstance = false;
@@ -87,9 +90,11 @@ public class BaoGame extends Observable {
         running = false;
     }
 
-    // Observable function to notify that someone has won the game
-    // in this instance.
-
+    /** Function to notify that someone has won the game in this instance. 
+    *
+    * @param winnerName the name of the player that has won.
+    *
+    */
     public void notifyWinner(String winnerName) {
         setChanged();
         notifyObservers(winnerName);

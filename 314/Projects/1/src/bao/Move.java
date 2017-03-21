@@ -9,6 +9,7 @@
 package bao;
 
 import bao.player.Direction;
+import java.lang.StringBuilder;
 
 public class Move {
 	
@@ -32,5 +33,21 @@ public class Move {
 
 	public MoveType getMoveType() {
 		return this.moveType;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		sb.append(location);
+		sb.append(",");
+		switch(moveType) {
+			case NamuaCapture : sb.append("NamuaCapture"); break;
+			case NamuaTakasa : sb.append("NamuaTakasa"); break;
+			case MtajiCapture : sb.append("MtajiCapture"); break;
+			case MtajiTakasa : sb.append("MtajiTakasa"); break;
+		}
+		sb.append(",");
+		sb.append(")");
+		return sb.toString();
 	}
 }

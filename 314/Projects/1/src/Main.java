@@ -1,10 +1,5 @@
-/*
+package main;
 
-    CLASS       : Main
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Defines an entry-point into the graphical program
-
- */
 import bao.*;
 import bao.player.*;
 
@@ -35,13 +30,21 @@ import javafx.application.Platform;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-// Main extends Observer so that they can observe the
-// game (which  extends Observable).
-
+/**
+* Defines a graphical entry-point to the Bao game.
+* @author Regan Koopmans
+*/
 public class Main extends Application implements Observer {
+    
+    /** The game instance that the front-end interfaces with. */
     public static BaoGame bg = null;
+
+    /** The array of Holes (buttons) that represent the board state.*/
     public static Hole [][] array = null;
+    
+    /** A thread to run the game independently of the application. */
     private static Thread gameThread = null;
+    
     boolean hasWon = false;
 
     final double MAX_FONT_SIZE = 30.0;
@@ -131,7 +134,9 @@ public class Main extends Application implements Observer {
                 }
             }
         };
+
         // Dynamically create buttons
+
         array = new Hole[4][8];
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 8; y++) {
@@ -258,9 +263,11 @@ public class Main extends Application implements Observer {
         updateBoard(array);
     }
 
-    // Function that updates the button array to represent
-    // the current state of the board.
-
+    /** 
+    * Function that updates the button array to represent
+    * the current state of the board.
+    * @param array The array of Holes to be updated.
+    */
     public void updateBoard(Hole [][] array) {
         int [][] board = bg.board.getBoard();
         for (int x = 0; x < 4; x++) {
@@ -270,9 +277,10 @@ public class Main extends Application implements Observer {
         }
     }
 
-    // Observer function that reacts when the observed
-    // (the game) notifies that someone has won the game.
-
+    /**
+    * Observer function that reacts when the observed
+    * (the game) notifies that someone has won the game.
+    */
     public void update(Observable o, Object ob) {
         try {
            Platform.runLater(new Runnable() {

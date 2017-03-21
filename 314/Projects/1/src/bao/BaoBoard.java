@@ -1,11 +1,3 @@
-/*
-
-    CLASS       : BaoBoard
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Defines an abstract Bao player, which is fully implemented
-                  by HumanPlayer and AI Player
-
- */
 package bao;
 
 import java.util.ArrayList;
@@ -14,10 +6,18 @@ import bao.player.Direction;
 import bao.Move;
 import bao.MoveType;
 
+
+/**
+* Defines a Bao board, which contains state information, 
+* and for which moves can be made by players.
+* 
+* @author Regan Koopmans
+*/
+
 public class BaoBoard {
 
     private int[][] board = new int[4][8];
-    private boolean[] hasBoard = {true, true};
+    private static boolean[] hasBoard = {true, true};
 
     public BaoBoard() {
 
@@ -59,11 +59,16 @@ public class BaoBoard {
         } else if (move.getMoveType() == MoveType.MtajiTakasa) {
 
         }
+        return new BaoBoard();
     }
 
-// Function that increases a hole by one and
-// returns any seeds that may have been captured
-// by the action.
+/** Function that increases a hole contents by one and
+* returns any seeds that may have been captured
+* by the action.
+* @param player The player placing the seed.
+* @param position The position at which the player wishes to place the seed.
+* @return an integer containing the number of seeds captured.
+*/
 
     public int placeSeed(PlayerType player, int position) {
         int captured = 0;
@@ -80,10 +85,16 @@ public class BaoBoard {
         return captured;
     }
 
-// Function that returns a list of the available
-// moves that will capture enemy seeds. A player
-// will have to pick one of these moves, if one
-// exists.
+/** Function that returns a list of the available
+* moves that will capture enemy seeds. A player
+* will have to pick one of these moves, if one
+* exists.
+*
+* @param player The player requesting to know which moves are 
+* avaliable
+*
+* @return An ArrayList containing integer locations of possible moves.
+*/
 
     public ArrayList<Integer> getNamuaCapMoves(PlayerType player) {
 
@@ -163,8 +174,11 @@ public class BaoBoard {
         return nonCaptureMoves;
     }
 
-    // The function that is called in a Numua Takasa round.
-
+    /** 
+    * The function that is called in a Numua Takasa round.
+    *
+    *
+    */
     public void spread(PlayerType player, int location, Direction direction) {
         int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
 
@@ -198,20 +212,38 @@ public class BaoBoard {
         }
     }
 
-// Function to determine whether a certain position
-// is the "house" hole for a player. This is useful
-// for handling the fact that the house disappears
-// after it has been sown.
+    public int filledHolesInFrontRow(PlayerType player) {
+        int count = 0;
+        int offset = (player == PlayerType.PLAYER_1) ? 2 : 1;
+        for (int x = 0; x < 8; x++) {
+            if (board[offset][x] > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
 
+/** Function to determine whether a certain position
+* is the "house" hole for a player. This is used
+* for handling the fact that the house disappears
+* after it has been sown.
+
+* @param player The player who is a asking whether their house exists.
+* @param position The position at which the player is asking whether their house exists.
+*/
     public boolean isHouse(PlayerType player, int position) {
         return true;
     }
 
-// This function will sow the seeds in a given direction.
-// The function handles wrapping around corners, and
-// will call itself recursively if the last seed placed
-// captures again. Still need to add "house" semantics.
-
+/** This function will sow the seeds in a given direction.
+* The function handles wrapping around corners, and
+* will call itself recursively if the last seed placed
+* captures again. Still need to add "house" semantics.
+*
+* @param
+* @param
+* @param
+*/
 
     public void sow(PlayerType player, int numCapturedSeeds, Direction direction) {
 
@@ -286,8 +318,31 @@ public class BaoBoard {
         }
     }
 
-    // Helper function to print the board to the console.
+    /** Function that calculates the total number of seeds
+    * that a player has on the board. Used in the evaluation
+    * function.
+    *
+    * @param player The player who is asking how many seeds they have 
+    * on the board
+    *
+    * @return The number of seeds that the given player has on 
+    * the board.
+    */
 
+    public int seedsOnBoard(PlayerType player) {
+        int seedCount = 0;
+        int offset = (player == PlayerType.PLAYER_1) ? 2 : 0;
+        for (int x = offset; x < offset+2; x++) {
+            for (int y = 0; y < 8; y++) {
+                seedCount += board[x][y];
+            }
+        }
+        return seedCount;
+    }
+
+    /**
+    * Helper function to print the board graphically to the console.
+    */
     public void printBoard() {
         for (int [] arr:board) {
             for (int x:arr) {
