@@ -47,6 +47,11 @@ public class Move {
 			case MtajiTakasa : sb.append("MtajiTakasa"); break;
 		}
 		sb.append(",");
+		if (direction == Direction.LEFT) {
+			sb.append("LEFT");
+		} else {
+			sb.append("RIGHT");
+		}
 		sb.append(")");
 		return sb.toString();
 	}

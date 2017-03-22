@@ -15,15 +15,15 @@ import bao.MoveType;
 *  and suitable heuristics to determine next moves.
 *
 *
-*  @author Regan Koopmans
+*  @author Regan Koopmans.
 */
-
 
 public class AIPlayer extends BaoPlayer {
 
     /** The GameTree which the class uses to calculate moves */
     private GameTree tree = null;
 
+    /** Constructor, currently does not use the depth parameter */
     public AIPlayer(BaoBoard board, PlayerType playerType, int depth) {
         super(board, playerType);
     }
@@ -33,30 +33,13 @@ public class AIPlayer extends BaoPlayer {
     // based on its immediate results. Greedy.
 
     public Move getNamuaCapMove(ArrayList<Integer> captureMoves) {
-        tree = new GameTree();
-        int best_move_location = 0;
-        Direction best_move_direction = Direction.RIGHT;
-        GameNode state;
-        
-        double greatest_payoff = 0;
-
-        for (int x = 0; x < captureMoves.size(); x++) {
-            state = new GameNode(board, NodeType.MAX);
-            int captured = state.board.placeSeed(playerType, captureMoves.get(x));
-            state.board.sow(playerType, captured, Direction.RIGHT);
-            double stateValue = state.getValue(playerType);
-            if (stateValue > greatest_payoff) {
-                greatest_payoff = stateValue;
-                best_move_location = x;
-            }
-        }
-        System.out.println("Selecting " + captureMoves.get(best_move_location));
-        return new Move(captureMoves.get(best_move_location), best_move_direction, 
-                            MoveType.NamuaCapture);
+        tree = new GameTree(board);
+        Move bestMove = tree.getBestMove(captureMoves);
+        return bestMove;
     }
 
     public Move getNamuaNonCapMove(ArrayList<Integer> nonCaptureMoves) {
-        tree = new GameTree();
+        tree = new GameTree(board);
         for (Integer x: nonCaptureMoves) {
 
         }
@@ -64,9 +47,11 @@ public class AIPlayer extends BaoPlayer {
     }
 
     /**
+    * Function that determines the optimal direction for a move to be made in.
     *
     * @return Direction The direction that the algorithm has selected.
     */
+
     public Direction getDirection() {
         System.out.println("AI HAS CHOSEN TO SOW FROM THE LEFT");
         return Direction.LEFT;

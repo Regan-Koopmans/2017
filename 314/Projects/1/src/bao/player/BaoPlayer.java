@@ -25,7 +25,9 @@ public abstract class BaoPlayer {
     public volatile boolean turnDone = true;
     public TurnType turnType = null;
 
-    protected PlayerType playerType;
+    public BaoPlayer opponent = null;
+
+    public PlayerType playerType;
     protected BaoBoard board;
     public int seedsInStock = 22;
     public volatile boolean inRunningInstance = true;
@@ -47,11 +49,12 @@ public abstract class BaoPlayer {
 
 
 /**
-* Function that controls the structure of a Bao turn, and directs behaviour based on the
-* type of turn that is occuring.
+* Function that controls the structure of a Bao turn, and directs behaviour 
+* based on the type of turn that is occuring.
 *
-* The concept of a turn is fixed for both Human and AI players, and hence can be described
-* abstractly
+* The concept of a turn is fixed for both Human and AI players, and hence can 
+* be described abstractly, and only the method of obtaining moves directions can 
+* be specified for concrete Bao players.
 */ 
     public void nextTurn() {
         if (seedsInStock > 0) {
@@ -144,6 +147,7 @@ public abstract class BaoPlayer {
 
     /**
     * Constructor for BaoPlayer.
+    *
     * @param board the board that this player will bind to and play on.
     *
     * @param playerType the type of player (Player1/Player2) that the player 
@@ -153,5 +157,9 @@ public abstract class BaoPlayer {
     public BaoPlayer(BaoBoard board, PlayerType playerType) {
         this.board = board;
         this.playerType = playerType;
+    }
+
+    public void attachOpponent(BaoPlayer opponent) {
+        this.opponent = opponent;
     }
 }

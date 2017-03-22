@@ -62,9 +62,52 @@ public class BaoBoard {
         return new BaoBoard();
     }
 
+    public ArrayList<Move> getMoves(PlayerType player, int numBankSeeds) {
+
+        ArrayList<Move> moves = new ArrayList<Move>();
+        if (numBankSeeds > 0) {
+
+            // Namua Turn
+
+            ArrayList<Integer> numuaCapMoves = getNamuaCapMoves(player);
+            if (!numuaCapMoves.isEmpty()) {
+                for (Integer location:numuaCapMoves) {
+
+                    moves.add(new Move(location, Direction.LEFT, MoveType.NamuaCapture));
+                    moves.add(new Move(location, Direction.RIGHT, MoveType.NamuaCapture));
+                
+                }
+            } else {
+                ArrayList<Integer> namuaNonCapMoves = getNamuaNonCapMoves(player);
+                for (Integer location:namuaNonCapMoves) {
+
+                    moves.add(new Move(location, Direction.LEFT, MoveType.NamuaTakasa));
+                    moves.add(new Move(location, Direction.RIGHT, MoveType.NamuaTakasa));
+                }
+            }
+        
+        } else {
+
+            // Mtaji Turn
+
+            ArrayList<Move> mtajiCapMoves = getMtajiCapMoves(player);
+            if (!mtajiCapMoves.isEmpty()) {
+
+                moves = mtajiCapMoves;
+
+            } else {
+                moves = getMtajiNonCapMoves(player);
+            }
+
+        }
+        
+        return moves;
+    }
+
 /** Function that increases a hole contents by one and
 * returns any seeds that may have been captured
 * by the action.
+* 
 * @param player The player placing the seed.
 * @param position The position at which the player wishes to place the seed.
 * @return an integer containing the number of seeds captured.
@@ -229,7 +272,8 @@ public class BaoBoard {
 * after it has been sown.
 
 * @param player The player who is a asking whether their house exists.
-* @param position The position at which the player is asking whether their house exists.
+* @param position The position at which the player is asking whether their 
+*        house exists.
 */
     public boolean isHouse(PlayerType player, int position) {
         return true;
@@ -240,9 +284,9 @@ public class BaoBoard {
 * will call itself recursively if the last seed placed
 * captures again. Still need to add "house" semantics.
 *
-* @param
-* @param
-* @param
+* @param player yep
+* @param numCapturedSeeds
+* @param direction
 */
 
     public void sow(PlayerType player, int numCapturedSeeds, Direction direction) {

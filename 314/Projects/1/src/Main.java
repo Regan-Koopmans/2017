@@ -1,5 +1,3 @@
-package main;
-
 import bao.*;
 import bao.player.*;
 

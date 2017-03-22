@@ -1,14 +1,3 @@
-/**
-*
-*    CLASS       : BaoGame
-*    @author Regan Koopmans
-*    
-*    Encapsulates the procession of a typical Bao game,
-*    including turns and winning conditions, and allows for
-*    games of different Human/Computer players.
-*
-*/
-
 package bao;
 
 import java.util.ArrayList;
@@ -25,6 +14,14 @@ import bao.player.PlayerType;
 import bao.player.HumanPlayer;
 import bao.player.AIPlayer;
 
+/**
+*  Encapsulates the procession of a typical Bao game,
+*  including turns and winning conditions, and allows for
+*  games of different Human/Computer players. 
+*   
+*  @author Regan Koopmans
+*
+*/
 public class BaoGame extends Observable {
 
     public BaoBoard board = new BaoBoard();
@@ -43,7 +40,9 @@ public class BaoGame extends Observable {
         return true;
     }
 
-    /** Controls the flow of a idiomatic Bao game, handles turn and win-checking
+    /** 
+    * Controls the flow of a idiomatic Bao game, handles turn and win-checking.
+    *
     * @param isHumanPlayer1 Whether Player 1 in this particular game is played by a human.
     * @param isHumanPlayer2 Whether Player 2 in this particular game is played by a human.
     */
@@ -51,6 +50,10 @@ public class BaoGame extends Observable {
         player1 = isHumanPlayer1 ? new HumanPlayer(board, PlayerType.PLAYER_1) : 
                                     new AIPlayer(board, PlayerType.PLAYER_2, 20);
         player2 = new AIPlayer(board, PlayerType.PLAYER_2, 20);
+
+        player1.attachOpponent(player2);
+        player2.attachOpponent(player1);
+
         while (running) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;

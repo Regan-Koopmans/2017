@@ -35,4 +35,6 @@ public class GameNode {
         int seedsOnBoard  = board.seedsOnBoard(player);
     	return seedsOnBoard + frontRow + 0.5*(numCapture+numNonCapture);
     }
+
+    // public Move 
 }
