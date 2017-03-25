@@ -34,16 +34,14 @@ public class AIPlayer extends BaoPlayer {
 
     public Move getNamuaCapMove(ArrayList<Integer> captureMoves) {
         tree = new GameTree(board);
-        Move bestMove = tree.getBestMove(captureMoves);
+        Move bestMove = tree.getBestMove(playerType);
         return bestMove;
     }
 
     public Move getNamuaNonCapMove(ArrayList<Integer> nonCaptureMoves) {
         tree = new GameTree(board);
-        for (Integer x: nonCaptureMoves) {
-
-        }
-        return new Move(nonCaptureMoves.get(0), Direction.RIGHT, MoveType.NamuaTakasa);
+        Move bestMove = tree.getBestMove(playerType);
+        return bestMove;
     }
 
     /**
@@ -53,14 +51,18 @@ public class AIPlayer extends BaoPlayer {
     */
 
     public Direction getDirection() {
-        System.out.println("AI HAS CHOSEN TO SOW FROM THE LEFT");
+        // System.out.println("AI HAS CHOSEN TO SOW FROM THE LEFT");
         return Direction.LEFT;
     }
 
     public Move getMtajiCapMove() {
-        return new Move(0, Direction.LEFT, MoveType.MtajiCapture);
+        tree = new GameTree(board);
+        Move bestMove = tree.getBestMove(playerType);
+        return bestMove;
     }
     public Move getMtajiNonCapMove(){
-        return new Move(0, Direction.LEFT, MoveType.MtajiTakasa);
+        tree = new GameTree(board);
+        Move bestMove = tree.getBestMove(playerType);
+        return bestMove;
     }
 }

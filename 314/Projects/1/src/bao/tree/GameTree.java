@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import bao.Move;
 import bao.MoveType;
 import bao.player.Direction;
+import bao.player.PlayerType;
 
 public class GameTree {
     private GameNode root = null;
@@ -22,7 +23,7 @@ public class GameTree {
     	root = new GameNode(board, NodeType.MAX);
     }
 
-    public Move getBestMove(ArrayList<Integer> captureMoves) {
-    	// root.getBestMoveRecursive()
+    public Move getBestMove(PlayerType playerType) {
+    	return root.getBestMoveRecursive(playerType, 0);
     }
 }

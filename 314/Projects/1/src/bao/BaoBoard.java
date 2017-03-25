@@ -49,16 +49,27 @@ public class BaoBoard {
 // construction of the game tree. Returns a new BaoBoard representing
 // the board after the move was made.
 
-    public BaoBoard makeMove(Move move) {
+    public BaoBoard makeMove(Move move, PlayerType player) {
+
         if (move.getMoveType() == MoveType.NamuaCapture) {
+            
+            int numCaptured = placeSeed(player, move.getLocation());
+            sow(player, numCaptured, move.getDirection());
 
         } else if (move.getMoveType() == MoveType.NamuaTakasa) {
 
+            spread(player,move.getLocation(), move.getDirection());
+
         } else if (move.getMoveType() == MoveType.MtajiCapture) {
+
+            // spread
 
         } else if (move.getMoveType() == MoveType.MtajiTakasa) {
 
+            // spread
+
         }
+
         return new BaoBoard();
     }
 
@@ -170,10 +181,8 @@ public class BaoBoard {
 
         for (int x = 0; x < 8; x++) {
             if (board[offset][x] > 1) {
-                
             }
         }
-
         return moves;
     }
 
@@ -355,10 +364,10 @@ public class BaoBoard {
                 sow(player, capture, direction);
             }
             else {
-                System.out.println("Player's turn has ended");
+                // System.out.println("Player's turn has ended");
             }
         } else {
-            System.out.println("Turn ended.");
+            // System.out.println("Turn ended.");
         }
     }
 

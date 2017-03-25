@@ -7,5 +7,12 @@ package bao.player;
 * @author Regan Koopmans
 */
 
-public enum PlayerType { PLAYER_1, PLAYER_2 }
+public enum PlayerType { 
+	PLAYER_1, PLAYER_2; 
+
+	public static PlayerType opposite(PlayerType input) {
+		if (input == PLAYER_1) { return PLAYER_2; }
+		else { return PLAYER_1; }
+	}
+}
 
