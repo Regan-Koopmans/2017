@@ -92,7 +92,7 @@ public abstract class BaoPlayer {
                 }
                 else {
                     direction = namuaNonCapMove.getDirection();
-                    board.spread(playerType, location, direction);
+                    board.spread(playerType, location, direction, true);
                 }
 
             }

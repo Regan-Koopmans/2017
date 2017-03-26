@@ -42,7 +42,6 @@ public class HumanPlayer extends BaoPlayer {
                 System.exit(0);
             }
         }
-        System.out.println("GOT DIRECTION : " + direction);
         Direction returnDirection = direction;
         direction = null;
         return returnDirection;

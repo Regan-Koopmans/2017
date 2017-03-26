@@ -4,6 +4,9 @@ import bao.BaoBoard;
 import bao.player.PlayerType;
 import java.util.ArrayList;
 import bao.Move;
+import static bao.tree.NodeType.*;
+
+import static java.lang.System.out;
 
 public class GameNode {
     public BaoBoard board = null;
@@ -14,7 +17,7 @@ public class GameNode {
     public GameNode(BaoBoard board, NodeType type) {
     	this.type = type;
     	this.board = new BaoBoard(board);
-    	if (type == NodeType.MAX) {
+    	if (type == MAX) {
     		value = Double.NEGATIVE_INFINITY;
     	} else {
     		value = Double.POSITIVE_INFINITY;
@@ -37,7 +40,8 @@ public class GameNode {
         int numNonCapture = board.getNamuaNonCapMoves(player).size();
         int frontRow      = board.filledHolesInFrontRow(player);
         int seedsOnBoard  = board.seedsOnBoard(player);
-    	return seedsOnBoard + frontRow + 0.5*(numCapture+numNonCapture);
+        int holesGreaterThan6 = board.sumHolesGreaterThan(player, 6);
+    	return 2*seedsOnBoard + frontRow + 0.5*(numCapture+numNonCapture) - holesGreaterThan6;
     }
 
     public Move getBestMoveRecursive(PlayerType playerType, int level) {
@@ -46,11 +50,14 @@ public class GameNode {
 
         /* Tree is hard coded to depth of 4 */
 
-        if (level < 4) {
+        if (level < 2) {
 
             ArrayList<Double> childValues = new ArrayList<Double>();
-
             ArrayList<Move> moves = board.getMoves(playerType,1); 
+            if (moves.isEmpty()) { 
+                // out.println("I couldn't find a move! :(");
+                return null; 
+            }
 
             for (Move m:moves) {
                 GameNode child = new GameNode(board, NodeType.opposite(type));
@@ -87,11 +94,8 @@ public class GameNode {
 
             // base case: set node value at level 4 to current
             // value according to heuristic.
-
             value = getValue(playerType);
         }
-
         return returnMove;
-    
     }
 }
