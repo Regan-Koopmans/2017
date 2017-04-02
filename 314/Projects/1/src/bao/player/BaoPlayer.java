@@ -1,12 +1,3 @@
-/*
-
-    CLASS       : BaoPlayer
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Defines an abstract Bao player, which is fully implemented
-                  by HumanPlayer and AI Player
-
- */
-
 package bao.player;
 
 import java.util.ArrayList;
@@ -14,15 +5,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 import bao.BaoBoard;
 import bao.Move;
 
+/**
+*
+* Defines an abstract Bao player, which is fully implemented
+* by HumanPlayer and AI Player  
+*
+*
+* @author Regan Koopmans
+*/
 public abstract class BaoPlayer {
 
     public AtomicInteger seedLocation = null;
     public AtomicInteger takasaLocation = null;
+
+    public AtomicInteger mtajiCapLocation = null;
+    public AtomicInteger mtajiNonCapLocation = null;
+    
     public Direction direction = null;
     public volatile boolean turnDone = true;
     public TurnType turnType = null;
 
-    protected PlayerType playerType;
+    public BaoPlayer opponent = null;
+
+    public PlayerType playerType;
     protected BaoBoard board;
     public int seedsInStock = 22;
     public volatile boolean inRunningInstance = true;
@@ -32,19 +37,25 @@ public abstract class BaoPlayer {
 
     // Functions to handle actions in the Numua stage
 
-    public abstract int getNamuaCapLoc(ArrayList<Integer> captureMoves);
-    public abstract int getNamuaNonCapLoc(ArrayList<Integer> nonCaptureMoves);
+    public abstract Move getNamuaCapMove(ArrayList<Integer> captureMoves);
+    public abstract Move getNamuaNonCapMove(ArrayList<Integer> nonCaptureMoves);
     
     // Functions to handle actions in the Mtaji stage
 
-    public abstract int getMtajiCapMove();
-    public abstract int getMtajiNonCapMove();
+    public abstract Move getMtajiCapMove();
+    public abstract Move getMtajiNonCapMove();
 
     public abstract Direction getDirection();
 
-// The concept of a turn is concrete for both, and hence can be described
-// abstractly
 
+/**
+* Function that controls the structure of a Bao turn, and directs behaviour 
+* based on the type of turn that is occuring.
+*
+* The concept of a turn is fixed for both Human and AI players, and hence can 
+* be described abstractly, and only the method of obtaining moves directions can 
+* be specified for concrete Bao players.
+*/ 
     public void nextTurn() {
         if (seedsInStock > 0) {
 
@@ -58,26 +69,43 @@ public abstract class BaoPlayer {
                     board.getNamuaNonCapMoves(playerType);
                 System.out.println("Noncapture moves = " +
                                    nonCaptureMoves.toString());
-                int location = getNamuaNonCapLoc(nonCaptureMoves);
+                Move namuaNonCapMove = getNamuaNonCapMove(nonCaptureMoves);
+                int offset  = (playerType == PlayerType.PLAYER_1) ? 2 : 1; 
+                int location = namuaNonCapMove.getLocation();
                 if (location <= 1) {
+
+                    System.out.println("SOWING");
                     direction = Direction.LEFT;
+                    int num_seeds = board.getBoard()[offset][location] + 1; 
+                    board.getBoard()[offset][location] = 0;
+                    board.sow(playerType, num_seeds,direction);
+                    seedsInStock--;
                 }
                 else if (location >= 6) {
+
+                    System.out.println("SOWING");
                     direction = Direction.RIGHT;
+                    int num_seeds = board.getBoard()[offset][location] + 1; 
+                    board.getBoard()[offset][location] = 0;
+                    board.sow(playerType, num_seeds,direction);
+                    seedsInStock--;
                 }
                 else {
-                    direction = getDirection();
+                    direction = namuaNonCapMove.getDirection();
+                    board.spread(playerType, location, direction, true);
                 }
-                board.spread(playerType, location, direction);
 
             }
             else {
                 
+                System.out.println("Capture moves: " + captureMoves);
                 turnType = TurnType.CAPTURE;
-                int location = getNamuaCapLoc(captureMoves);
+                Move namuaCapMove = getNamuaCapMove(captureMoves);
+                int location = namuaCapMove.getLocation();
+
                 int captured = board.placeSeed(playerType, location);
+
                 if (captured > 0) {
-                    int sowLocation;
                     Direction sowFromDirection;
 
                     // Locations 0-1 and 6-7 automatically sow from the
@@ -90,7 +118,7 @@ public abstract class BaoPlayer {
                         sowFromDirection = Direction.RIGHT;
                     }
                     else {
-                        sowFromDirection = getDirection();
+                        sowFromDirection = namuaCapMove.getDirection();
                     }
                     board.sow(playerType, captured, sowFromDirection);
                 }
@@ -109,16 +137,29 @@ public abstract class BaoPlayer {
             if (!captureMoves.isEmpty()) {
                 // yay!
             } else {
-                ArrayList<Move> nonCaptureMoves = board.getMtajiNonCapMoves(playerType);
+                ArrayList<Move> nonCaptureMoves = 
+                                board.getMtajiNonCapMoves(playerType);
             }
             
         }
         direction = null;
-        System.out.println(seedsInStock);
     }
+
+    /**
+    * Constructor for BaoPlayer.
+    *
+    * @param board the board that this player will bind to and play on.
+    *
+    * @param playerType the type of player (Player1/Player2) that the player 
+    * will play as.
+    */
 
     public BaoPlayer(BaoBoard board, PlayerType playerType) {
         this.board = board;
         this.playerType = playerType;
+    }
+
+    public void attachOpponent(BaoPlayer opponent) {
+        this.opponent = opponent;
     }
 }

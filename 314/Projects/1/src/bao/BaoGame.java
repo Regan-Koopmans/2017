@@ -1,12 +1,3 @@
-/*
-
-    CLASS       : BaoGame
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Encapsulates the procession of a typical Bao game,
-                  including turns and winning conditions, and allows for
-                  games of different Human/Computer players.
-
- */
 package bao;
 
 import java.util.ArrayList;
@@ -23,6 +14,14 @@ import bao.player.PlayerType;
 import bao.player.HumanPlayer;
 import bao.player.AIPlayer;
 
+/**
+*  Encapsulates the procession of a typical Bao game,
+*  including turns and winning conditions, and allows for
+*  games of different Human/Computer players. 
+*   
+*  @author Regan Koopmans
+*
+*/
 public class BaoGame extends Observable {
 
     public BaoBoard board = new BaoBoard();
@@ -31,13 +30,7 @@ public class BaoGame extends Observable {
     private boolean running = true;
 
     private Boolean hasWon(PlayerType player) {
-        int offset;
-        if (player == PlayerType.PLAYER_1) {
-            offset = 1;
-        }
-        else {
-            offset = 2;
-        }
+        int offset = (player == PlayerType.PLAYER_1)? 1 : 2;
         int [] array = board.getBoard()[offset];
         for (int item:array) {
             if (item != 0) {
@@ -47,22 +40,43 @@ public class BaoGame extends Observable {
         return true;
     }
 
+    /** 
+    * Controls the flow of a idiomatic Bao game, handles turn and win-checking.
+    *
+    * @param isHumanPlayer1 Whether Player 1 in this particular game is played by a human.
+    * @param isHumanPlayer2 Whether Player 2 in this particular game is played by a human.
+    */
     public void start(Boolean isHumanPlayer1, Boolean isHumanPlayer2) {
-        player1 = new HumanPlayer(board, PlayerType.PLAYER_1);
+        player1 = isHumanPlayer1 ? new HumanPlayer(board, PlayerType.PLAYER_1) : 
+                                    new AIPlayer(board, PlayerType.PLAYER_2, 20);
         player2 = new AIPlayer(board, PlayerType.PLAYER_2, 20);
+
+        player1.attachOpponent(player2);
+        player2.attachOpponent(player1);
+
         while (running) {
             System.out.println("\n\tPlayer 1\n");
             player1.turnDone = false;
+            if (!running) { return; }
             player1.nextTurn();
             if (hasWon(PlayerType.PLAYER_1)) {
+                System.out.println("Player 1 has won.");
                 notifyWinner("Player 1");
+            }
+            if (hasWon(PlayerType.PLAYER_2)) {
+                System.out.println("Player 2 has won.");
+                notifyWinner("Player 2");
             }
             board.printBoard();
             player1.turnDone = true;
-            System.out.println("SET TURNDONE TO " + player1.turnDone);
             System.out.println("\n\tPlayer 2\n");
             player2.turnDone = false;
+            if (!running) { return; }
             player2.nextTurn();
+            if (hasWon(PlayerType.PLAYER_1)) {
+                System.out.println("Player 1 has won.");
+                notifyWinner("Player 1");
+            }
             if (hasWon(PlayerType.PLAYER_2)) {
                 notifyWinner("Player 2");
             }
@@ -71,6 +85,7 @@ public class BaoGame extends Observable {
         }
     }
 
+    /** Function that sets flags to stop the running of the game. */
     public void stop() {
         System.out.println("stopping game instance.");
         player1.inRunningInstance = false;
@@ -78,6 +93,11 @@ public class BaoGame extends Observable {
         running = false;
     }
 
+    /** Function to notify that someone has won the game in this instance. 
+    *
+    * @param winnerName the name of the player that has won.
+    *
+    */
     public void notifyWinner(String winnerName) {
         setChanged();
         notifyObservers(winnerName);
