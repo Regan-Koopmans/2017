@@ -29,6 +29,8 @@ var pyramid_shear_x = 0;
 var pyramid_shear_y = 0;
 var pyramid_shear_z = 0;
 
+var flip = false;
+
 // Scaling Functions
 
 function scaleX(matrix, amount) {
@@ -169,6 +171,36 @@ function rotateZ(m, a, angle) {
 }
 
 var init = function() {
+    worldMatrix = mat4.create();
+    mvMatrixStack = [];
+    viewMatrix = mat4.create();
+    projMatrix = mat4.create();
+    gl;
+    canvas;
+    matWorldUniformLocation;
+    matViewUniformLocation;
+    matProjUniformLocation;
+    rotate_direction = 1;
+    is_house = false;
+    x_is_down = false;
+    y_is_down = false;
+    z_is_down = false;
+
+    a_is_down = false;
+    b_is_down = false;
+    c_is_down = false;
+
+    one_is_down = false;
+    two_is_down = false;
+
+    box_scale_x = 1;
+    box_scale_y = 1;
+    box_scale_z = 1;
+
+    pyramid_shear_x = 0;
+    pyramid_shear_y = 0;
+    pyramid_shear_z = 0;
+
     canvas = document.getElementById("canvas-gl");
     gl = canvas.getContext("webgl");
 
@@ -178,12 +210,12 @@ var init = function() {
 
     // This code sets the canvas and context to the window size.
     
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // canvas.width = window.innerWidth;
+      // canvas.height = window.innerHeight;
       document.addEventListener("keypress", handleKeyPress);
       document.addEventListener("keydown", handleKeyDown);
       document.addEventListener("keyup", handleKeyUp);
-      gl.viewport(0,0, window.innerWidth, window.innerHeight);
+      gl.viewport(0,0, canvas.width, canvas.height);
     
 
     // set color
@@ -417,7 +449,10 @@ var init = function() {
         mat4.identity(worldMatrix);
 
         if (is_house) {
-                rotateX(worldMatrix, identityMatrix, angle_house_x);       
+                rotateX(worldMatrix, identityMatrix, angle_house_x);
+                if (flip) {
+                    rotateZ(worldMatrix, identityMatrix, Math.PI);
+                }
         }
 
         /// BOX //////////
@@ -464,7 +499,6 @@ var init = function() {
                 scaleZ(worldMatrix, box_scale_z);
             }
 
-
             gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
             gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
@@ -481,7 +515,6 @@ var init = function() {
        //  }
 
         mvPushMatrix();
-
 
             if (is_house) {
                 translate(worldMatrix, [0, 1, 0.0]);
@@ -542,8 +575,6 @@ var init = function() {
             gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length, gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
 
-        
-
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -573,15 +604,15 @@ function mvPushMatrix() {
 }
 
 function handleKeyPress(event) {
-    console.log(event.key);
     switch(event.key) {
         case 'r' : rotate_direction *= -1; break;
         case 'h' : is_house = !is_house; break;
+        case 'i' : init(); break;
+        case 'f' : toggleFlip(); break;
     }
 }
 
 function handleKeyDown(event) {
-    console.log(event.key);
     switch(event.key) {
         case 'x' : x_is_down = true; break;
         case 'y' : y_is_down = true; break;
@@ -596,7 +627,6 @@ function handleKeyDown(event) {
 }
 
 function handleKeyUp(event) {
-    console.log(event.key);
     switch(event.key) {
         case 'x' : x_is_down = false; break;
         case 'y' : y_is_down = false; break;
@@ -607,4 +637,8 @@ function handleKeyUp(event) {
         case '1' : one_is_down = false; break;
         case '2' : two_is_down = false; break;
     }
+}
+
+function toggleFlip() {
+    flip = (flip == true) ? false : true;
 }
