@@ -18,18 +18,39 @@ var a_is_down = false;
 var b_is_down = false;
 var c_is_down = false;
 
+// Maintains whether the "1","2" or "3" are pressed, rotation keys
+
 var one_is_down = false;
 var two_is_down = false;
+var three_is_down = false;
+
+// Maintains scaling of cube in program
 
 var box_scale_x = 1;
 var box_scale_y = 1;
 var box_scale_z = 1;
+
+// Maintains shearing of pyramid in program
 
 var pyramid_shear_x = 0;
 var pyramid_shear_y = 0;
 var pyramid_shear_z = 0;
 
 var flip = false;
+
+// Mouse interactivity
+
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+var cubeTranslateMatrix = mat4.create();
+mat4.identity(cubeTranslateMatrix);
+
+
+var rotateXMatrix = mat4.create();
+var rotateYMatrix = mat4.create();
+var rotateZMatrix = mat4.create();
+var rotationMatrix = mat4.create();
 
 // Scaling Functions
 
@@ -200,6 +221,12 @@ var init = function() {
     pyramid_shear_x = 0;
     pyramid_shear_y = 0;
     pyramid_shear_z = 0;
+    mouseDown = false;
+    cubeTranslateMatrix = mat4.create();
+    mat4.identity(cubeTranslateMatrix);
+
+
+    
 
     canvas = document.getElementById("canvas-gl");
     gl = canvas.getContext("webgl");
@@ -215,8 +242,10 @@ var init = function() {
       document.addEventListener("keypress", handleKeyPress);
       document.addEventListener("keydown", handleKeyDown);
       document.addEventListener("keyup", handleKeyUp);
+      document.addEventListener("mousedown", handleMouseDown);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
       gl.viewport(0,0, canvas.width, canvas.height);
-    
 
     // set color
     gl.clearColor(0.9,0.9,0.9,1.0);
@@ -436,9 +465,11 @@ var init = function() {
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
     var angle_box = 0;
-    var angle_pyramid = 0;
+    var angle_pyramid_x = 0;
+    var angle_pyramid_z = 0;
     var angle_house_x = 0;
     var angle_house_y = 0;
+    var angle_house_z = 0;
     gl.clearColor(0.9, 0.9, 0.9, 1.0);
     var loop = function() {
         // angle = performance.now() / 1000 / 6 * 2 * Math.PI;
@@ -449,7 +480,23 @@ var init = function() {
         mat4.identity(worldMatrix);
 
         if (is_house) {
-                rotateX(worldMatrix, identityMatrix, angle_house_x);
+                rotateXMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotateYMatrix = mat4.create();
+                mat4.identity(rotateYMatrix);
+                rotateZMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotationMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+
+                rotateX(rotateXMatrix, identityMatrix, angle_house_x);
+                rotateY(rotateYMatrix, identityMatrix, angle_house_y);
+                rotateZ(rotateZMatrix, identityMatrix, angle_house_z);
+
+                mat4.multiply(rotationMatrix, rotateYMatrix, rotateXMatrix);
+                mat4.multiply(rotationMatrix, rotateZMatrix, rotationMatrix);
+                mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
+                
                 if (flip) {
                     rotateZ(worldMatrix, identityMatrix, Math.PI);
                 }
@@ -459,6 +506,7 @@ var init = function() {
 
         mvPushMatrix();   
             
+            mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
             if (is_house) {
                 if (one_is_down) {
                     angle_house_y =  angle_house_y + rotate_direction*(1/128)*Math.PI % 4;
@@ -518,16 +566,39 @@ var init = function() {
 
             if (is_house) {
                 translate(worldMatrix, [0, 1, 0.0]);
+                mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
                 if (two_is_down) {
                     angle_house_x =  angle_house_x + rotate_direction*(1/128)*Math.PI % 4;
                 }
+
+                if (three_is_down) {
+                    angle_house_z =  angle_house_z + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
             } else {
                 translate(worldMatrix, [-2, 0, 0.0]);
+                
 
                 if (two_is_down) {
-                    angle_pyramid =  angle_pyramid + rotate_direction*(1/128)*Math.PI % 4;
+                    angle_pyramid_x =  angle_pyramid_x + rotate_direction*(1/128)*Math.PI % 4;
                 }
-                rotateX(worldMatrix, identityMatrix, angle_pyramid);
+
+                if (three_is_down) {
+                    angle_pyramid_z =  angle_pyramid_z + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
+                rotateXMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotateZMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotationMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+
+                rotateX(rotateXMatrix, identityMatrix, angle_pyramid_x);
+                rotateZ(rotateZMatrix, identityMatrix, angle_pyramid_z);
+
+                mat4.multiply(rotationMatrix, rotateZMatrix, rotateXMatrix)
+                mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
 
                 scaleY(worldMatrix, 2);
 
@@ -622,6 +693,7 @@ function handleKeyDown(event) {
         case 'c' : c_is_down = true; break;
         case '1' : one_is_down = true; break;
         case '2' : two_is_down = true; break;
+        case '3' : three_is_down = true; break;
 
     }
 }
@@ -636,9 +708,39 @@ function handleKeyUp(event) {
         case 'c' : c_is_down = false; break;
         case '1' : one_is_down = false; break;
         case '2' : two_is_down = false; break;
+        case '3' : three_is_down = false; break;
     }
 }
 
 function toggleFlip() {
     flip = (flip == true) ? false : true;
+}
+
+function handleMouseDown(event) {
+    mouseDown = true;
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+}
+
+function handleMouseUp(event) {
+    mouseDown = false;
+}
+
+function handleMouseMove(event) {
+    
+    if (mouseDown) {
+        var newX = event.clientX;
+        var newY = event.clientY;
+        var deltaX = newX - lastMouseX;
+        var deltaY = newY - lastMouseY;
+        var newTranslationMatrix = mat4.create();
+        mat4.identity(newTranslationMatrix);
+
+        translate(newTranslationMatrix, [deltaX/10, -deltaY/10, 0]);
+
+        mat4.multiply(newTranslationMatrix, cubeTranslateMatrix, cubeTranslateMatrix);
+        translate(cubeTranslateMatrix, [-deltaX/50, -deltaY/50, 0]);
+        lastMouseX = newX
+        lastMouseY = newY;
+    }
 }
