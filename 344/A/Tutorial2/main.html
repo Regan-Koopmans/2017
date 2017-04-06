@@ -2,14 +2,57 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Rotating Cube</title>
+    <title>Assignment 1</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body onload="init()">
     <div align="center">
+    <h1>Assignment 1</h1>
       <canvas id="canvas-gl" width="500" height="500">
         Your browser does not support WebGL.
       </canvas>
+
     </div>
+
+    <h2>General</h2>
+
+    <ul>
+        <li>To reset the scene, press <tt>i</tt></li>
+    </ul>
+
+    <h2>Rotation</h2>
+    <ul>
+        <li>To rotate the cube by Y, press <tt>1</tt></li>
+        <li>To rotate the cube by X, press <tt>2</tt></li>
+        <li>To reverse the rotation direction, press <tt>R</tt></li>
+    </ul>
+    <h2>Translation</h2>
+    <ul>
+        <li>To translate the cube, <tt>click and drag.</tt></li>
+    </ul>
+
+
+    <h2>Scaling</h2>
+    <ul>
+        <li>To scale the cube by X, press <tt>X</tt></li>
+        <li>To scale the cube by Y, press <tt>Y</tt></li>
+        <li>To scale the cube by Z, press <tt>Z</tt></li>
+    </ul>
+
+    <h2>Shearing</h2>
+    <ul>
+        <li>To shear the pyramid by X, hold <tt>A</tt></li>
+        <li>To shear the pyramid by Y, hold <tt>B</tt></li>
+        <li>To shear the pyramid by Z, hold <tt>C</tt></li>
+    </ul>
+
+    <h2>House</h2>
+    <ul>
+        <li>To transform the objects into a house, press <tt>H</tt></li>
+        <li>To flip the house, press <tt>F</tt></li>
+        <li>All transformations (translations, rotations, scaling and shearing) should work as described above</li>
+    </ul>
+
   </body>
   <script id="shader-vs" type="text/plain">
   /*

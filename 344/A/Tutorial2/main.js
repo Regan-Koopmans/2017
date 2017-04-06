@@ -1,18 +1,251 @@
+var worldMatrix = mat4.create();
+var mvMatrixStack = [];
+var viewMatrix = mat4.create();
+var projMatrix = mat4.create();
+var gl;
+var canvas;
+var matWorldUniformLocation;
+var matViewUniformLocation;
+var matProjUniformLocation;
+var rotate_direction = 1;
+var is_house = false;
+
+var x_is_down = false;
+var y_is_down = false;
+var z_is_down = false;
+
+var a_is_down = false;
+var b_is_down = false;
+var c_is_down = false;
+
+// Maintains whether the "1","2" or "3" are pressed, rotation keys
+
+var one_is_down = false;
+var two_is_down = false;
+var three_is_down = false;
+
+// Maintains scaling of cube in program
+
+var box_scale_x = 1;
+var box_scale_y = 1;
+var box_scale_z = 1;
+
+// Maintains shearing of pyramid in program
+
+var pyramid_shear_x = 0;
+var pyramid_shear_y = 0;
+var pyramid_shear_z = 0;
+
+var flip = false;
+
+// Mouse interactivity
+
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+var cubeTranslateMatrix = mat4.create();
+mat4.identity(cubeTranslateMatrix);
+
+
+var rotateXMatrix = mat4.create();
+var rotateYMatrix = mat4.create();
+var rotateZMatrix = mat4.create();
+var rotationMatrix = mat4.create();
+
+// Scaling Functions
+
+function scaleX(matrix, amount) {
+    var translation_matrix = mat4.create();
+    translation_matrix[0] = amount
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+function scaleY(matrix, amount) {
+    var translation_matrix = mat4.create();
+    translation_matrix[5] = amount
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+function scaleZ(matrix, amount) {
+    var translation_matrix = mat4.create();
+    translation_matrix[10] = amount
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+
+// Shearing Functions
+
+function shearX(matrix, angle) {
+    var translation_matrix = mat4.create();
+    translation_matrix[4] = 1 / Math.tan(angle);
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+function shearY(matrix, angle) {
+    var translation_matrix = mat4.create();
+    translation_matrix[1] = 1 / Math.tan(angle);
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+function shearZ(matrix, angle) {
+    var translation_matrix = mat4.create();
+    translation_matrix[8] = 1 / Math.tan(angle);
+    mat4.multiply(matrix, matrix, translation_matrix);
+}
+
+// Translate Function
+
+function translate(matrix, vector) {
+    if (vector != null) {
+        var translation_matrix = mat4.create();
+        translation_matrix[12] = vector[0];
+        translation_matrix[13] = vector[1];
+        translation_matrix[14] = vector[2];
+        mat4.multiply(matrix, matrix, translation_matrix);
+    }
+}
+
+// Rotate functions
+
+function rotateX(m, a, angle) {
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+    m[4] = a10 * cos - a20 * sin;
+    m[5] = a11 * cos - a21 * sin;
+    m[6] = a12 * cos - a22 * sin;
+    m[7] = a13 * cos - a23 * sin;
+
+    m[8] = a10 * sin + a20 * cos;
+    m[9] = a11 * sin + a21 * cos;
+    m[10] = a12 * sin + a22 * cos;
+    m[11] = a13 * sin + a23 * cos;
+}
+
+function rotateY(m, a, angle) {
+
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+        m[0] = a00 * cos - a20 * sin;
+        m[1] = a01 * cos - a21 * sin;
+        m[2] = a02 * cos - a22 * sin;
+        m[3] = a03 * cos - a23 * sin;
+        m[8] = a00 * sin + a20 * cos;
+        m[9] = a01 * sin + a21 * cos;
+        m[10] = a02 * sin + a22 * cos;
+        m[11] = a03 * sin + a23 * cos;
+}
+
+function rotateZ(m, a, angle) {
+    var sin = Math.sin(angle),
+        cos = Math.cos(angle);
+    
+    var a00 = a[0],
+        a01 = a[1],
+        a02 = a[2],
+        a03 = a[3],
+        a10 = a[4],
+        a11 = a[5],
+        a12 = a[6],
+        a13 = a[7],
+        a20 = a[8],
+        a21 = a[9],
+        a22 = a[10],
+        a23 = a[11];
+
+    m[0] = a00 * cos - a10 * sin;
+    m[1] = a01 * cos - a11 * sin;
+    m[2] = a02 * cos - a12 * sin;
+    m[3] = a03 * cos - a13 * sin;
+
+    m[4] = a00 * sin + a10 * cos;
+    m[5] = a01 * sin + a11 * cos;
+    m[6] = a02 * sin + a12 * cos;
+    m[7] = a03 * sin + a13 * cos;
+}
+
 var init = function() {
-    var canvas = document.getElementById("canvas-gl");
-    var gl = canvas.getContext("webgl");
+    worldMatrix = mat4.create();
+    mvMatrixStack = [];
+    viewMatrix = mat4.create();
+    projMatrix = mat4.create();
+    gl;
+    canvas;
+    matWorldUniformLocation;
+    matViewUniformLocation;
+    matProjUniformLocation;
+    rotate_direction = 1;
+    is_house = false;
+    x_is_down = false;
+    y_is_down = false;
+    z_is_down = false;
+
+    a_is_down = false;
+    b_is_down = false;
+    c_is_down = false;
+
+    one_is_down = false;
+    two_is_down = false;
+
+    box_scale_x = 1;
+    box_scale_y = 1;
+    box_scale_z = 1;
+
+    pyramid_shear_x = 0;
+    pyramid_shear_y = 0;
+    pyramid_shear_z = 0;
+    mouseDown = false;
+    cubeTranslateMatrix = mat4.create();
+    mat4.identity(cubeTranslateMatrix);
+
+
+    
+
+    canvas = document.getElementById("canvas-gl");
+    gl = canvas.getContext("webgl");
 
     if (!gl) {
         alert("Could not get WebGL context!");
     }
 
-
     // This code sets the canvas and context to the window size.
     
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      gl.viewport(0,0, window.innerWidth, window.innerHeight);
-    
+      // canvas.width = window.innerWidth;
+      // canvas.height = window.innerHeight;
+      document.addEventListener("keypress", handleKeyPress);
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keyup", handleKeyUp);
+      document.addEventListener("mousedown", handleMouseDown);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      gl.viewport(0,0, canvas.width, canvas.height);
 
     // set color
     gl.clearColor(0.9,0.9,0.9,1.0);
@@ -134,25 +367,26 @@ var init = function() {
             22, 20, 23
         ];
 
+
+
     var pyramidVertices = 
     [
-          0.0,  2.0,  0.0,      1.0,0.0,0.0,
-        -1.0, 1.0, 1.0,       1.0,0.0,0.0,
-         1.0, 1.0, 1.0,       1.0,0.0,0.0,
+          0.0,  1.0,  0.0,      1.0,0.0,0.0,
+        -1.0, 0.0, 1.0,       1.0,0.0,0.0,
+         1.0, 0.0, 1.0,       1.0,0.0,0.0,
         // Right face
-         0.0,  2.0,  0.0,       0.0,1.0,0.0,
-         1.0, 1.0,  1.0,       0.0,1.0,0.0,
-         1.0, 1.0, -1.0,       0.0,1.0,0.0,
+         0.0,  1.0,  0.0,       0.0,1.0,0.0,
+         1.0, 0.0,  1.0,       0.0,1.0,0.0,
+         1.0, 0.0, -1.0,       0.0,1.0,0.0,
         // Back face
-         0.0,  2.0,  0.0,       0.0,0.0,1.0,
-         -1.0, 1.0, -1.0,       0.0,0.0,1.0,
-         1.0, 1.0, -1.0,       0.0,0.0,1.0,
+         0.0,  1.0,  0.0,       0.0,0.0,1.0,
+         -1.0, 0.0, -1.0,       0.0,0.0,1.0,
+         1.0, 0.0, -1.0,       0.0,0.0,1.0,
         // Left face
-         0.0,  2.0,  0.0,       0.0,1.0,1.0,
-        -1.0, 1.0, -1.0,       0.0,1.0,1.0,
-        -1.0, 1.0,  1.0,       0.0,1.0,1.0,
+         0.0,  1.0,  0.0,       0.0,1.0,1.0,
+        -1.0, 0.0, -1.0,       0.0,1.0,1.0,
+        -1.0, 0.0,  1.0,       0.0,1.0,1.0,
     ];
-    var offset = boxVertices.size;
 
     var pyramidIndices = 
     [
@@ -165,71 +399,62 @@ var init = function() {
 
     // Bind box to array buffer
 
-    allVertices = boxVertices.concat(pyramidVertices);
-    allIndices = boxIndices.concat(pyramidIndices.map(x => x + 24));
+    var boxVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
 
-    var vertexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allVertices), gl.STATIC_DRAW);
+    var boxIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
 
-    var indexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(allIndices), gl.STATIC_DRAW);
+    // PYRAMID
+
+    var pyramidVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pyramidVertices), gl.STATIC_DRAW);
+
+    var pyramidIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(pyramidIndices), gl.STATIC_DRAW);
 
     // Bind pyramid to array buffer
-    
 
-    var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-    var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+    var box_positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+    var box_colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+    var pyramid_positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+    var pyramid_colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
 
-    gl.vertexAttribPointer(
-        positionAttribLocation,             // Attribute location
-        3,                                  // Number of elements per Attribute
-        gl.FLOAT,                           // type of data
-        gl.FALSE,                           // normalised?
-        6 * Float32Array.BYTES_PER_ELEMENT, // Size of individual vertex
-        0                                   // Offset from the beginning vertex 
-                                            // to this attribute
-    );
+    gl.enableVertexAttribArray(box_positionAttribLocation);
+    gl.enableVertexAttribArray(box_colorAttribLocation);
+    gl.enableVertexAttribArray(pyramid_positionAttribLocation);
+    gl.enableVertexAttribArray(pyramid_colorAttribLocation);
 
-
-    gl.vertexAttribPointer(
-      colorAttribLocation,                // Attribute location
-      3,                                  // Number of elements per Attribute
-      gl.FLOAT,                           // type of data
-      gl.FALSE,                           // normalised?
-      6 * Float32Array.BYTES_PER_ELEMENT, // Size of individual vertex
-      3 * Float32Array.BYTES_PER_ELEMENT  // Offset from the beginning vertex 
-                                          // to this attribute
-    );
-
-    gl.enableVertexAttribArray(positionAttribLocation);
-    gl.enableVertexAttribArray(colorAttribLocation);
+    gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
+    gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
+    gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
    
 
     // Tell WebGL state machine which program should be active
     gl.useProgram(program);
 
     // set matrices
-    var matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
-    var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
-    var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
+    matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
+    matViewUniformLocation = gl.getUniformLocation(program, 'mView');
+    matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
 
 
     // init matrices (4x4 = 16)
-    var worldMatrix =   new Float32Array(16);
-    var viewMatrix =    new Float32Array(16);
-    var projMatrix =    new Float32Array(16);
+    worldMatrix = mat4.create();
+    viewMatrix =  mat4.create();
+    projMatrix =  mat4.create();
 
     mat4.identity(worldMatrix);
 
     // [camera] [look at] [direction of up]
     mat4.lookAt(viewMatrix, [0,0,-10], [0,0,0], [0,1,0]);
-
-
     // perspective matrix
     mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width/canvas.height, 0.1, 1000.0);
-
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
     gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
     gl.uniformMatrix4fv(matProjUniformLocation,  gl.FALSE, projMatrix);
@@ -239,20 +464,188 @@ var init = function() {
     ///
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
-    var angle = 0;
-    console.log(worldMatrix);
+    var angle_box = 0;
+    var angle_pyramid_x = 0;
+    var angle_pyramid_z = 0;
+    var angle_house_x = 0;
+    var angle_house_y = 0;
+    var angle_house_z = 0;
+    gl.clearColor(0.9, 0.9, 0.9, 1.0);
     var loop = function() {
-
-        // mat4.rotate(worldMatrix, identityMatrix,angle, [1,0,0]);
-        angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-        // rotateY(worldMatrix, identityMatrix, angle);
-        rotateX(worldMatrix, identityMatrix, angle);
-        rotateY(worldMatrix, identityMatrix, angle);
-        rotateZ(worldMatrix, identityMatrix, angle);
-        gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-        gl.clearColor(0.9, 0.9, 0.9, 1.0);
+        // angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+        
+        
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.drawElements(gl.TRIANGLES, allIndices.length, gl.UNSIGNED_SHORT, 0);   
+        mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, projMatrix);
+        mat4.identity(worldMatrix);
+
+        if (is_house) {
+                rotateXMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotateYMatrix = mat4.create();
+                mat4.identity(rotateYMatrix);
+                rotateZMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotationMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+
+                rotateX(rotateXMatrix, identityMatrix, angle_house_x);
+                rotateY(rotateYMatrix, identityMatrix, angle_house_y);
+                rotateZ(rotateZMatrix, identityMatrix, angle_house_z);
+
+                mat4.multiply(rotationMatrix, rotateYMatrix, rotateXMatrix);
+                mat4.multiply(rotationMatrix, rotateZMatrix, rotationMatrix);
+                mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
+                
+                if (flip) {
+                    rotateZ(worldMatrix, identityMatrix, Math.PI);
+                }
+        }
+
+        /// BOX //////////
+
+        mvPushMatrix();   
+            
+            mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
+            if (is_house) {
+                if (one_is_down) {
+                    angle_house_y =  angle_house_y + rotate_direction*(1/128)*Math.PI % 4;
+                }
+            } else {
+                translate(worldMatrix, [2, 0, 0]);
+                
+                if (one_is_down) {
+                    angle_box =  angle_box + rotate_direction*(1/128)*Math.PI % 4;
+                }
+                rotateY(worldMatrix, identityMatrix, angle_box);
+
+                if (x_is_down) {
+                    box_scale_x += 0.1;
+                } else {
+                    if (box_scale_x > 1) {
+                        box_scale_x -= 0.2 * (box_scale_x - 1);
+                    }
+                }
+
+                if (y_is_down) {
+                    box_scale_y += 0.1;
+                } else {
+                    if (box_scale_y > 1) {
+                        box_scale_y -= 0.2 * (box_scale_y - 1);
+                    }
+                }
+
+                if (z_is_down) {
+                    box_scale_z += 0.1;
+                } else {
+                    if (box_scale_z > 1) {
+                        box_scale_z -= 0.2 * (box_scale_z - 1);
+                    }
+                }
+                scaleX(worldMatrix, box_scale_x);
+                scaleY(worldMatrix, box_scale_y);
+                scaleZ(worldMatrix, box_scale_z);
+            }
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+            gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+            gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);   
+            setMatrixUniforms();
+            gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        //// PYRAMID ////////////////////
+
+       // if (is_house) {
+       //          rotateX(worldMatrix, identityMatrix, angle_house_x);
+       //          rotateY(worldMatrix, identityMatrix, angle_house_y);
+       //  }
+
+        mvPushMatrix();
+
+            if (is_house) {
+                translate(worldMatrix, [0, 1, 0.0]);
+                mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
+                if (two_is_down) {
+                    angle_house_x =  angle_house_x + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
+                if (three_is_down) {
+                    angle_house_z =  angle_house_z + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
+            } else {
+                translate(worldMatrix, [-2, 0, 0.0]);
+                
+
+                if (two_is_down) {
+                    angle_pyramid_x =  angle_pyramid_x + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
+                if (three_is_down) {
+                    angle_pyramid_z =  angle_pyramid_z + rotate_direction*(1/128)*Math.PI % 4;
+                }
+
+                rotateXMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotateZMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+                rotationMatrix = mat4.create();
+                mat4.identity(rotateXMatrix);
+
+                rotateX(rotateXMatrix, identityMatrix, angle_pyramid_x);
+                rotateZ(rotateZMatrix, identityMatrix, angle_pyramid_z);
+
+                mat4.multiply(rotationMatrix, rotateZMatrix, rotateXMatrix)
+                mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
+
+                scaleY(worldMatrix, 2);
+
+                if (a_is_down) {
+                        pyramid_shear_x -= 0.01;
+
+                } else {
+                    pyramid_shear_x = 0;
+                }
+
+                if (b_is_down) {
+                        pyramid_shear_y -= 0.01;
+
+                } else {
+                    pyramid_shear_y = 0;
+                }
+
+                if (c_is_down) {
+                        pyramid_shear_z -= 0.01;
+
+                } else {
+                    pyramid_shear_z = 0;
+                }
+
+
+                if (pyramid_shear_x != 0) {
+                    shearX(worldMatrix, Math.PI - pyramid_shear_x);
+                }
+
+                if (pyramid_shear_y != 0) {
+                    shearY(worldMatrix, Math.PI - pyramid_shear_y);
+                }
+
+                if (pyramid_shear_z != 0) {
+                    shearZ(worldMatrix, Math.PI - pyramid_shear_z);
+                }
+
+            }
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
+            gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
+            gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
+            setMatrixUniforms();
+            gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length, gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -263,90 +656,91 @@ function get_shader_text(id) {
     return text;
 }
 
-// Transformation functions
-
-function rotateX(m, a, angle) {
-    var sin = Math.sin(angle),
-        cos = Math.cos(angle);
-    
-    var a00 = a[0],
-        a01 = a[1],
-        a02 = a[2],
-        a03 = a[3],
-        a10 = a[4],
-        a11 = a[5],
-        a12 = a[6],
-        a13 = a[7],
-        a20 = a[8],
-        a21 = a[9],
-        a22 = a[10],
-        a23 = a[11];
-
-    m[4] = a10 * cos - a20 * sin;
-    m[5] = a11 * cos - a21 * sin;
-    m[6] = a12 * cos - a22 * sin;
-    m[7] = a13 * cos - a23 * sin;
-
-    m[8] = a10 * sin + a20 * cos;
-    m[9] = a11 * sin + a21 * cos;
-    m[10] = a12 * sin + a22 * cos;
-    m[11] = a13 * sin + a23 * cos;
+function mvPopMatrix() {
+    if (mvMatrixStack.length == 0) {
+        console.log("empty!");
+    }
+    worldMatrix = mvMatrixStack.pop();
 }
 
-function rotateY(m, a, angle) {
-
-    var sin = Math.sin(angle),
-        cos = Math.cos(angle);
-    
-    var a00 = a[0],
-        a01 = a[1],
-        a02 = a[2],
-        a03 = a[3],
-        a10 = a[4],
-        a11 = a[5],
-        a12 = a[6],
-        a13 = a[7],
-        a20 = a[8],
-        a21 = a[9],
-        a22 = a[10],
-        a23 = a[11];
-
-        m[0] = a00 * cos - a20 * sin;
-        m[1] = a01 * cos - a21 * sin;
-        m[2] = a02 * cos - a22 * sin;
-        m[3] = a03 * cos - a23 * sin;
-        m[8] = a00 * sin + a20 * cos;
-        m[9] = a01 * sin + a21 * cos;
-        m[10] = a02 * sin + a22 * cos;
-        m[11] = a03 * sin + a23 * cos;
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+    gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
 }
 
-function rotateZ(m, a, angle) {
-    var sin = Math.sin(angle),
-        cos = Math.cos(angle);
-    
-    var a00 = a[0],
-        a01 = a[1],
-        a02 = a[2],
-        a03 = a[3],
-        a10 = a[4],
-        a11 = a[5],
-        a12 = a[6],
-        a13 = a[7],
-        a20 = a[8],
-        a21 = a[9],
-        a22 = a[10],
-        a23 = a[11];
-
-    m[0] = a00 * cos - a10 * sin;
-    m[1] = a01 * cos - a11 * sin;
-    m[2] = a02 * cos - a12 * sin;
-    m[3] = a03 * cos - a13 * sin;
-
-    m[4] = a00 * sin + a10 * cos;
-    m[5] = a01 * sin + a11 * cos;
-    m[6] = a02 * sin + a12 * cos;
-    m[7] = a03 * sin + a13 * cos;
+function mvPushMatrix() {
+    var copy = mat4.create();
+    copy = worldMatrix.slice();
+    mvMatrixStack.push(copy);
 }
 
+function handleKeyPress(event) {
+    switch(event.key) {
+        case 'r' : rotate_direction *= -1; break;
+        case 'h' : is_house = !is_house; break;
+        case 'i' : init(); break;
+        case 'f' : toggleFlip(); break;
+    }
+}
 
+function handleKeyDown(event) {
+    switch(event.key) {
+        case 'x' : x_is_down = true; break;
+        case 'y' : y_is_down = true; break;
+        case 'z' : z_is_down = true; break;
+        case 'a' : a_is_down = true; break;
+        case 'b' : b_is_down = true; break;
+        case 'c' : c_is_down = true; break;
+        case '1' : one_is_down = true; break;
+        case '2' : two_is_down = true; break;
+        case '3' : three_is_down = true; break;
+
+    }
+}
+
+function handleKeyUp(event) {
+    switch(event.key) {
+        case 'x' : x_is_down = false; break;
+        case 'y' : y_is_down = false; break;
+        case 'z' : z_is_down = false; break;
+        case 'a' : a_is_down = false; break;
+        case 'b' : b_is_down = false; break;
+        case 'c' : c_is_down = false; break;
+        case '1' : one_is_down = false; break;
+        case '2' : two_is_down = false; break;
+        case '3' : three_is_down = false; break;
+    }
+}
+
+function toggleFlip() {
+    flip = (flip == true) ? false : true;
+}
+
+function handleMouseDown(event) {
+    mouseDown = true;
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+}
+
+function handleMouseUp(event) {
+    mouseDown = false;
+}
+
+function handleMouseMove(event) {
+    
+    if (mouseDown) {
+        var newX = event.clientX;
+        var newY = event.clientY;
+        var deltaX = newX - lastMouseX;
+        var deltaY = newY - lastMouseY;
+        var newTranslationMatrix = mat4.create();
+        mat4.identity(newTranslationMatrix);
+
+        translate(newTranslationMatrix, [deltaX/10, -deltaY/10, 0]);
+
+        mat4.multiply(newTranslationMatrix, cubeTranslateMatrix, cubeTranslateMatrix);
+        translate(cubeTranslateMatrix, [-deltaX/50, -deltaY/50, 0]);
+        lastMouseX = newX
+        lastMouseY = newY;
+    }
+}
