@@ -9,9 +9,21 @@ import static bao.tree.NodeType.*;
 import static java.lang.System.out;
 
 public class GameNode {
+    
+    /** A BaoBoard encapsulating the node's most important internal state. */
+
     public BaoBoard board = null;
+   
+    /** */
+
     private NodeType type = null;
+    
+    /** The value of the node state, used to calculate next moves. */
+
     private Double value = null;
+    
+    /** An array list */
+
     public ArrayList<GameNode> children =  null;
 
     public GameNode(BaoBoard board, NodeType type) {
@@ -25,8 +37,11 @@ public class GameNode {
         children = new ArrayList<GameNode>();
     }
 
-    // get the relative value of this game state, with regards
-    // to a certain players perspective.
+    /** 
+    * Function that calculates the value
+    * @param player the "perspective" we are calculating the state value for.
+    * @return the value of the current state of the board for a given player.
+    */
 
     public double getValue(PlayerType player) {
 
@@ -40,7 +55,6 @@ public class GameNode {
 
         int numCapture    = board.getNamuaCapMoves(player).size();
         int frontRow      = board.filledHolesInFrontRow(player);
-        int numNonCapture = board.getNamuaNonCapMoves(player).size();
         int seedsOnBoard  = board.seedsOnBoard(player);
         
         int opposeCapture = board.getNamuaCapMoves(PlayerType.opposite(player)).size();
@@ -51,8 +65,19 @@ public class GameNode {
 
     	// return seedsOnBoard + frontRow + numCapture 
                 // - holesGreaterThan6 - opposeCapture - frontRowOpponent - seedsOnBoardOp - amountVulnerable;
-        return frontRow+seedsOnBoard-amountVulnerable;
+        return frontRow+seedsOnBoard-amountVulnerable-0.2*holesGreaterThan6 -opposeCapture;
     }
+
+    /**
+    * Main alpha-beta function, performs recursive search for next move.
+    * @param node the first value.
+    * @param depth the current depth of the search, decrements from max to zero before terminating.
+    * @param alpha the maintained alpha value, as per algorithm.
+    * @param beta the maintained beta value, as per algorithm.
+    * @param maxPlayer boolean flag determining whether the current play is done by the MAX participle.
+    * @param player The type of player in terms of the Bao game (ie PLAYER_1 or PLAYER_2).
+    * @return A double containing the value of a given move, with respect the the alpha beta algorithm.
+    */
 
     public double alphabeta(GameNode node, int depth, double alpha, double beta, boolean maxPlayer, PlayerType player) {
         if (depth == 0) { 
@@ -90,13 +115,32 @@ public class GameNode {
         }
     }
 
+    /**
+    * Helper function to determine the greater of two doubles
+    * @param a the first value.
+    * @param b the second value.
+    */
+
     public static double max(double a, double b) {
         if (a >= b) { return a; } else { return b; }
     }
 
+    /**
+    * Helper function to determine the lesser of two doubles
+    * @param a the first value.
+    * @param b the second value.
+    */
+
     public static double min(double a, double b) {
         if (a < b) { return a; } else { return b; }
     }
+
+    /**
+    * The main pure MINIMAX function. <b>No longer used</b>, <tt>alphabeta</tt> is now 
+    * used to calculate next moves. Function has been kept for comparison purposes. 
+    * @param playerType the type of player asking for the move.
+    * @param level an integer maintaining the current depth of the recursive search.
+    */
 
     public Move getBestMoveRecursive(PlayerType playerType, int level) {
         
@@ -142,9 +186,6 @@ public class GameNode {
                 returnMove = moves.get(min_child);
             }
         } else {
-
-            // base case: set node value at level 4 to current
-            // value according to heuristic.
             value = getValue(playerType);
         }
         return returnMove;

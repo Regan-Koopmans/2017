@@ -1,0 +1,2 @@
+make:
+	javadoc -docletpath TeXDoclet.jar -doclet org.stfm.texdoclet.TeXDoclet -title "Bao Documentation" -subtitle "Implementation and Program Structure" -author "Regan Koopmans, 15043143" -output implementation -createpdf -sourcepath src/ -subpackages bao 

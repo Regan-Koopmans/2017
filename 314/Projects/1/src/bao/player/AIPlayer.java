@@ -9,8 +9,7 @@ import bao.Move;
 import bao.MoveType;
 
 /**
-*  <h1> AIPlayer </h1>
-*
+*  
 *  Defines a concrete BaoPlayer, which uses a game tree
 *  and suitable heuristics to determine next moves.
 *
@@ -28,14 +27,22 @@ public class AIPlayer extends BaoPlayer {
         super(board, playerType);
     }
 
-    // At the moment this function only creates a tree of height 1.
-    // This means that the function chooses the best current option
-    // based on its immediate results. Greedy.
+    /** 
+    * Gets next Numua capture move. Invokes GameTree's abprune method.
+    * @param captureMoves an ArrayList of integers listing the possible capture locations.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
 
     public Move getNamuaCapMove(ArrayList<Integer> captureMoves) {
         tree = new GameTree(board);
         return tree.abprune(playerType);
     }
+
+    /** 
+    * Gets next Numua capture move. Invokes GameTree's abprune method.
+    * @param nonCaptureMoves an ArrayList of integers listing the possible capture locations.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
 
     public Move getNamuaNonCapMove(ArrayList<Integer> nonCaptureMoves) {
         tree = new GameTree(board);
@@ -53,10 +60,23 @@ public class AIPlayer extends BaoPlayer {
         return Direction.LEFT;
     }
 
+    /** 
+    * Gets next Mtaji capture move. Invokes GameTree's abprune method.
+    * @param captureMoves an ArrayList of integers listing the possible capture locations.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
+
     public Move getMtajiCapMove() {
         tree = new GameTree(board);
         return tree.abprune(playerType);
     }
+
+    /** 
+    * Gets next Mtaji Takasa move. Invokes GameTree's abprune method.
+    * @param captureMoves an ArrayList of integers listing the possible capture locations.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
+
     public Move getMtajiNonCapMove(){
         tree = new GameTree(board);
         return tree.abprune(playerType);

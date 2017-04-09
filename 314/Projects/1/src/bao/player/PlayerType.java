@@ -1,7 +1,7 @@
 package bao.player;
 
 /**
-* ENUMerates the options PLAYER_1 and PLAYER_2 to enable cleaner,
+* Enumerates the options PLAYER_1 and PLAYER_2 to enable cleaner,
 * more readable control structures.
 *
 * @author Regan Koopmans

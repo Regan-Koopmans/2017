@@ -1,9 +1,5 @@
-/*
-
-    ENUM        : TurnType
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Encapsulates the logical kinds of turns in the game.
-
- */
 package bao.player;
+/** 
+* An enum that enumerates the two major types of turns in the game procession.
+*/
 public enum TurnType {CAPTURE,TAKASA}

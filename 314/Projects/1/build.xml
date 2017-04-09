@@ -30,6 +30,10 @@
   </target>
 
   <target name="run">
+     <java jar="build/jar/bao.jar" spawn="true" fork="true"/>
+ </target>
+
+  <target name="debug">
      <java jar="build/jar/bao.jar" fork="true"/>
  </target>
  
@@ -41,13 +45,6 @@
 
   <target name="doc" description="generate documentation">
     <mkdir dir="docs"/>
-    
-    <javadoc destdir="${docs}">
-      <fileset dir="src/"/>
-      <fileset dir="src/bao"/>
-      <fileset dir="src/bao/player"/>
-      <fileset dir="src/bao/tree"/>
-    </javadoc>
   </target>
 
 </project>

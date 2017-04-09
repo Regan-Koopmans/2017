@@ -1,15 +1,14 @@
-/*
 
-    CLASS       : Move
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Encapsulates a location and direction into a single
-    			  object.
-
- */
 package bao;
 
 import bao.player.Direction;
 import java.lang.StringBuilder;
+
+/** 
+* A helper class that encapsulates details 
+* about a move, namely direction, position and the
+* move type.
+*/
 
 public class Move {
 	
@@ -34,6 +33,11 @@ public class Move {
 	public MoveType getMoveType() {
 		return this.moveType;
 	}
+
+	/** 
+	* A helper function to generate a human-readable representation of the Move.
+	* @return a string containing the printable version of the Move.
+	*/
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

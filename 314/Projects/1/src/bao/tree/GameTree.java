@@ -15,7 +15,6 @@ import bao.MoveType;
 import bao.player.Direction;
 import bao.player.PlayerType;
 
-
 public class GameTree {
 
     public static int DEPTH = 7;
