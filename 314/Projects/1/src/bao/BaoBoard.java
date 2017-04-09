@@ -491,6 +491,18 @@ public class BaoBoard {
         return seedCount;
     }
 
+    public int numVulnerable(PlayerType player) {
+        int seedCount = 0;
+        int offset = (player == PLAYER_1) ? 2 : 1;
+        int opponent = (offset == 2) ? 1 : 2;
+        for (int x = offset; x < 8; ++x) {
+            if (board[opponent][x] > 0) {
+                seedCount += board[offset][x];
+            }
+        }
+        return seedCount;
+    }
+
     public int sumHolesGreaterThan(PlayerType player, int z) {
         int seedCount = 0;
         int offset = (player == PLAYER_1) ? 2 : 0;

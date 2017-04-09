@@ -34,14 +34,12 @@ public class AIPlayer extends BaoPlayer {
 
     public Move getNamuaCapMove(ArrayList<Integer> captureMoves) {
         tree = new GameTree(board);
-        Move bestMove = tree.getBestMove(playerType);
-        return bestMove;
+        return tree.abprune(playerType);
     }
 
     public Move getNamuaNonCapMove(ArrayList<Integer> nonCaptureMoves) {
         tree = new GameTree(board);
-        Move bestMove = tree.getBestMove(playerType);
-        return bestMove;
+        return tree.abprune(playerType);
     }
 
     /**
@@ -57,12 +55,10 @@ public class AIPlayer extends BaoPlayer {
 
     public Move getMtajiCapMove() {
         tree = new GameTree(board);
-        Move bestMove = tree.getBestMove(playerType);
-        return bestMove;
+        return tree.abprune(playerType);
     }
     public Move getMtajiNonCapMove(){
         tree = new GameTree(board);
-        Move bestMove = tree.getBestMove(playerType);
-        return bestMove;
+        return tree.abprune(playerType);
     }
 }

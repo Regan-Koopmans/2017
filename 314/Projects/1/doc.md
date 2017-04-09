@@ -1,27 +1,18 @@
 # Bao Project Documentation
-
 ### Regan Koopmans, 15043143
 
- ## How To Compile and Run the Project 
+## How To Compile and Run the Project 
 
 To compile and run this project, enter the following commands in the root of the project. In addition, the `ant` build system and the JavaFX UI framework will need to be installed as dependencies.
-
- 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 ant compile
 ant run
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- 
 
 If everything works correctly, you should be greeted with a window that looks as
 follows:
-
- 
-
-![](screenshot.JPG)
-
  
 
  
@@ -40,7 +31,6 @@ To play a certain hold you need only to *click* on that hole, after which a dial
 Summary of Work Done
 --------------------
 
- 
 
 For this project I successfully completed the following.
 

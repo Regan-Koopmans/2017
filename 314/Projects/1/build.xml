@@ -30,7 +30,7 @@
   </target>
 
   <target name="run">
-     <java jar="build/jar/bao.jar" spawn="yes" fork="true"/>
+     <java jar="build/jar/bao.jar" fork="true"/>
  </target>
  
   <target name="clean" description="clean up">
