@@ -24,6 +24,9 @@ var one_is_down = false;
 var two_is_down = false;
 var three_is_down = false;
 
+var n_is_down = false;
+var m_is_down = false;
+
 // Maintains scaling of cube in program
 
 var box_scale_x = 1;
@@ -470,9 +473,32 @@ var init = function() {
     var angle_house_x = 0;
     var angle_house_y = 0;
     var angle_house_z = 0;
+    var house_scale_x = 1;
+    var house_scale_y = 1;
+    var house_scale_z = 1;
+    var house_shear_x = 0;
+    var house_shear_y = 0;
+    var house_shear_z = 0;
+
+    var house_translate_z = 0;
+    var pyramid_translate_z = 0;
+
+    var negative_identity = mat4.create();
+    mat4.identity(negative_identity);
+    mat4.multiplyScalar(negative_identity,negative_identity,-1);
+
     gl.clearColor(0.9, 0.9, 0.9, 1.0);
     var loop = function() {
-        // angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+        
+        if (n_is_down) {
+            house_translate_z += 0.5;
+            pyramid_translate_z += 0.5;
+        } 
+
+        if (m_is_down) {
+            house_translate_z -= 0.5;
+            pyramid_translate_z -= 0.5;
+        }
         
         
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -480,6 +506,11 @@ var init = function() {
         mat4.identity(worldMatrix);
 
         if (is_house) {
+                translate(worldMatrix, [0,0, house_translate_z]);
+                if (flip) {
+                    scaleY(worldMatrix, -1);
+                }
+
                 rotateXMatrix = mat4.create();
                 mat4.identity(rotateXMatrix);
                 rotateYMatrix = mat4.create();
@@ -497,8 +528,67 @@ var init = function() {
                 mat4.multiply(rotationMatrix, rotateZMatrix, rotationMatrix);
                 mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
                 
-                if (flip) {
-                    rotateZ(worldMatrix, identityMatrix, Math.PI);
+
+                if (x_is_down) {
+                    house_scale_x += 0.1;
+                } else {
+                    if (house_scale_x > 1) {
+                        house_scale_x -= 0.2 * (house_scale_x - 1);
+                    }
+                }
+
+                if (y_is_down) {
+                    house_scale_y += 0.1;
+                } else {
+                    if (house_scale_y > 1) {
+                        house_scale_y -= 0.2 * (house_scale_y - 1);
+                    }
+                }
+
+                if (z_is_down) {
+                    house_scale_z += 0.1;
+                } else {
+                    if (house_scale_z > 1) {
+                        house_scale_z -= 0.2 * (house_scale_z - 1);
+                    }
+                }
+
+                scaleX(worldMatrix, house_scale_x);
+                scaleY(worldMatrix, house_scale_y);
+                scaleZ(worldMatrix, house_scale_z);
+
+                if (a_is_down) {
+                        house_shear_x -= 0.01;
+
+                } else {
+                    house_shear_x = 0;
+                }
+
+                if (b_is_down) {
+                        house_shear_y -= 0.01;
+
+                } else {
+                    house_shear_y = 0;
+                }
+
+                if (c_is_down) {
+                        house_shear_z -= 0.01;
+
+                } else {
+                    house_shear_z = 0;
+                }
+
+
+                if (house_shear_x != 0) {
+                    shearX(worldMatrix, Math.PI - house_shear_x);
+                }
+
+                if (house_shear_y != 0) {
+                    shearY(worldMatrix, Math.PI - house_shear_y);
+                }
+
+                if (house_shear_z != 0) {
+                    shearZ(worldMatrix, Math.PI - house_shear_z);
                 }
         }
 
@@ -506,8 +596,11 @@ var init = function() {
 
         mvPushMatrix();   
             
+            
+
             mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
             if (is_house) {
+                translate(worldMatrix, [0,0,house_translate_z]);
                 if (one_is_down) {
                     angle_house_y =  angle_house_y + rotate_direction*(1/128)*Math.PI % 4;
                 }
@@ -557,15 +650,12 @@ var init = function() {
 
         //// PYRAMID ////////////////////
 
-       // if (is_house) {
-       //          rotateX(worldMatrix, identityMatrix, angle_house_x);
-       //          rotateY(worldMatrix, identityMatrix, angle_house_y);
-       //  }
-
         mvPushMatrix();
 
+            
+
             if (is_house) {
-                translate(worldMatrix, [0, 1, 0.0]);
+                translate(worldMatrix, [0, 1, pyramid_translate_z]);
                 mat4.multiply(worldMatrix, cubeTranslateMatrix, worldMatrix);
                 if (two_is_down) {
                     angle_house_x =  angle_house_x + rotate_direction*(1/128)*Math.PI % 4;
@@ -576,9 +666,9 @@ var init = function() {
                 }
 
             } else {
-                translate(worldMatrix, [-2, 0, 0.0]);
-                
+                translate(worldMatrix, [-2,-1,pyramid_translate_z]);
 
+            
                 if (two_is_down) {
                     angle_pyramid_x =  angle_pyramid_x + rotate_direction*(1/128)*Math.PI % 4;
                 }
@@ -645,7 +735,7 @@ var init = function() {
             setMatrixUniforms();
             gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length, gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
-
+        
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -694,6 +784,8 @@ function handleKeyDown(event) {
         case '1' : one_is_down = true; break;
         case '2' : two_is_down = true; break;
         case '3' : three_is_down = true; break;
+        case 'n' : n_is_down = true; break;
+        case 'm' : m_is_down = true; break;
 
     }
 }
@@ -709,6 +801,8 @@ function handleKeyUp(event) {
         case '1' : one_is_down = false; break;
         case '2' : two_is_down = false; break;
         case '3' : three_is_down = false; break;
+        case 'n' : n_is_down = false; break;
+        case 'm' : m_is_down = false; break;
     }
 }
 
