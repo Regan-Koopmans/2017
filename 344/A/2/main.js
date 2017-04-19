@@ -1,3 +1,11 @@
+
+  /////////////////////////////////
+  // COS 344 - Computer Graphics //
+  // ASSIGNMENT 2 - Projections  //
+  // Author : Regan Koopmans     //
+  /////////////////////////////////
+
+
 var worldMatrix = mat4.create();
 var mvMatrixStack = [];
 var viewMatrix = mat4.create();
@@ -16,6 +24,8 @@ var init = function() {
 
     canvas = document.getElementById("canvas-gl");
     gl = canvas.getContext("webgl");
+
+    document.addEventListener("keypress", handleKeyPress);
 
     if (!gl) { alert("Could not get WebGL context!"); }
 
@@ -66,43 +76,38 @@ var init = function() {
     }
 
     var boxVertices= [
-        // TOP
 
+        // TOP
         -1.0, 1.0, -1.0,     1.0,0.0,0.0,
         -1.0, 1.0, 1.0,      1.0,0.0,0.0,
         1.0, 1.0, 1.0,       1.0,0.0,0.0,
         1.0, 1.0, -1.0,      1.0,0.0,0.0,
 
         // LEFT
-
         -1.0, 1.0, 1.0,       1.0,1.0,0.5,
         -1.0, -1.0, 1.0,      1.0,1.0,0.5,
         -1.0, -1.0, -1.0,     1.0,1.0,0.5,
         -1.0, 1.0, -1.0,      1.0,1.0,0.5,
 
         // RIGHT
-
         1.0, 1.0, 1.0,       1,0.5,0.5,
         1.0, -1.0, 1.0,      1.0,0.5,0.5,
         1.0, -1.0, -1.0,     1.0,0.5,0.5,
         1.0, 1.0, -1.0,      1.0,0.5,0.5,
 
         // FRONT
-
         1.0, 1.0, 1.0,        0.3,0.1,1.0,
          1.0, -1.0, 1.0,      0.3,0.1,1.0,
         -1.0, -1.0, 1.0,      0.3,0.1,1.0,
         -1.0, 1.0, 1.0,       0.3,0.1,1.0,
 
         // BACK
-
         1.0, 1.0, -1.0,       0.5,1.0,0.5,
         1.0, -1.0, -1.0,      0.5,1.0,0.5,
         -1.0, -1.0, -1.0,     0.5,1.0,0.5,
         -1.0, 1.0, -1.0,      0.5,1.0,0.5,
 
         // BOTTOM
-
         -1.0, -1.0, -1.0,     0.5,0.5,0.5,
         -1.0, -1.0, 1.0,      0.5,0.5,0.5,
         1.0, -1.0, 1.0,       0.5,0.5,0.5,
@@ -166,70 +171,79 @@ var init = function() {
 
     ];
 
-    // Bind box to array buffer
-
     var boxVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices),
+                  gl.STATIC_DRAW);
 
     var boxIndexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices),
+                  gl.STATIC_DRAW);
 
     // PYRAMID
 
     var pyramidVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pyramidVertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pyramidVertices),
+                  gl.STATIC_DRAW);
 
     var pyramidIndexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(pyramidIndices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(pyramidIndices),
+                  gl.STATIC_DRAW);
 
     // Bind pyramid to array buffer
 
-    var box_positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-    var box_colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
-    var pyramid_positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-    var pyramid_colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+    var box_positionAttribLocation =
+        gl.getAttribLocation(program, 'vertPosition');
+
+    var box_colorAttribLocation =
+        gl.getAttribLocation(program, 'vertColor');
+
+    var pyramid_positionAttribLocation =
+        gl.getAttribLocation(program, 'vertPosition');
+
+    var pyramid_colorAttribLocation =
+        gl.getAttribLocation(program, 'vertColor');
 
     gl.enableVertexAttribArray(box_positionAttribLocation);
     gl.enableVertexAttribArray(box_colorAttribLocation);
     gl.enableVertexAttribArray(pyramid_positionAttribLocation);
     gl.enableVertexAttribArray(pyramid_colorAttribLocation);
 
-    gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
-    gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
-    gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
-    gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                           6 * Float32Array.BYTES_PER_ELEMENT, 0);
 
-    // Tell WebGL state machine which program should be active
+    gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
+                           6 * Float32Array.BYTES_PER_ELEMENT,3 *
+                           Float32Array.BYTES_PER_ELEMENT);
+
+    gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                           6 * Float32Array.BYTES_PER_ELEMENT, 0);
+
+    gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
+                           6 * Float32Array.BYTES_PER_ELEMENT,3 *
+                           Float32Array.BYTES_PER_ELEMENT);
+
     gl.useProgram(program);
 
-    // set matrices
     matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
     matViewUniformLocation = gl.getUniformLocation(program, 'mView');
     matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
 
-    // init matrices (4x4 = 16)
     worldMatrix = mat4.create();
     viewMatrix =  mat4.create();
     projMatrix =  mat4.create();
 
     mat4.identity(worldMatrix);
 
-    // [camera] [look at] [direction of up]
     mat4.lookAt(viewMatrix, [0,0,-10], [0,0,0], [0,1,0]);
-    // perspective matrix
-    //mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width/canvas.height, 0.1, 1000.0);
-    projMatrix = ortho(projMatrix,-5.0, 5.0, -5.0, 5.0, -5.0, 5.0);
-    gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-    gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
-    gl.uniformMatrix4fv(matProjUniformLocation,  gl.FALSE, projMatrix);
+    projMatrix = ortho(-5.0, 5.0, -5.0, 5.0, -5.0, 5.0);
 
-    ///
-    /// MAIN RENDER LOOP
-    ///
+    //projMatrix = oblique(-10, 10, -10, 10, -10, 10, Math.PI/4, Math.PI/4);
+
+    setMatrixUniforms();
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
 
@@ -237,34 +251,49 @@ var init = function() {
     var loop = function() {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        //mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, projMatrix);
         mat4.identity(worldMatrix);
 
         /// BOX //////////
 
         mvPushMatrix();
-        mat4.translate(worldMatrix, worldMatrix, [2, 0, -10]);
+        mat4.translate(worldMatrix, worldMatrix, [2, 0, -5]);
         gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-        gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
+
+        gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               6 * Float32Array.BYTES_PER_ELEMENT, 0);
+
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-        gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
+
+        gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               6 * Float32Array.BYTES_PER_ELEMENT,3 *
+                               Float32Array.BYTES_PER_ELEMENT);
+
         setMatrixUniforms();
-        gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
 
         //// PYRAMID ////////////////////
 
         mvPushMatrix();
         mat4.translate(worldMatrix, worldMatrix, [-2, 0, -10]);
-        mat4.rotateY(worldMatrix, worldMatrix, Math.PI / 4);
+        //console.log(worldMatrix);
+        //mat4.rotate(worldMatrix, worldMatrix, Math.PI / 4);
         gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
-        gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT, 0);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
-        gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,6 * Float32Array.BYTES_PER_ELEMENT,3 * Float32Array.BYTES_PER_ELEMENT);
-        setMatrixUniforms();
-        gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length, gl.UNSIGNED_SHORT, 0);
-        mvPopMatrix();
 
+        gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,
+                               gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
+
+        gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               6 * Float32Array.BYTES_PER_ELEMENT,3 *
+                               Float32Array.BYTES_PER_ELEMENT);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+
+        mvPopMatrix();
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -275,24 +304,49 @@ var init = function() {
 // function to create an orthographic parallel projectoin to be
 // stored in "dest".
 
-function ortho(dest, left, right, bottom, top, near, far) {
+function ortho(left, right, bottom, top, near, far) {
+    dest = mat4.create();
     mat4.identity(dest);
     dest[0] = 2 / (right - left);
     dest[5] = 2 / (top - bottom);
     dest[10] = -2 / (far - near);
-
     dest[12] = - ((left + right)/(right - left));
     dest[13] = - ((top + bottom)/(top - bottom));
     dest[14] = - ((far + near)/(far - near));
     return dest;
 }
 
-function oblique() {
-    // TODO: implement
+function oblique(left, right, bottom, top, near, far, theta, phi) {
+    var st = ortho(left, right, bottom, top, near, far);
+    h_matrix = mat4.create();
+    morth = mat4.create();
+    mat4.identity(h_matrix);
+    mat4.identity(morth);
+
+    // Changes to MORTH
+
+    morth[10] = 0;
+
+    // Changes to H (shear matrix)
+
+    h_matrix[8] = 1 / (Math.tan(theta));
+    h_matrix[9] = 1 / (Math.tan(phi));
+
+    mat4.multiply(st,st,h_matrix);
+    mat4.multiply(morth, morth, st);
+
+    return morth;
 }
 
-function perspective() {
-    // TODO: implement
+function perspective(fov, far, near) {
+    var pMatrix = mat4.create();
+    var s = 1 / ( Math.tan ( (fov / 2) * (Math.PI / 180)) );
+    pMatrix[0] = s;
+    pMatrix[5] = s;
+    pMatrix[10] = - far / (far - near);
+    pMatrix[11] = - (far * near) / (far - near);
+    pMatrix[14] = -1;
+    return pMatrix;
 }
 
 function get_shader_text(id) { return document.getElementById(id).innerHTML; }
@@ -307,10 +361,19 @@ function mvPopMatrix() {
 function setMatrixUniforms() {
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
     gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
+    gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 }
 
 function mvPushMatrix() {
     var copy = mat4.create();
     copy = worldMatrix.slice();
     mvMatrixStack.push(copy);
+}
+
+function handleKeyPress(event) {
+    switch(event.key) {
+    case '1' : projMatrix = ortho(-5, 5, -5, 5, -5, 5); break;
+    case '2' : projMatrix = oblique(-10, 10, -10, 10, -10, 10, Math.PI / 4, Math.PI / 2); break;
+    case '3' : projMatrix = perspective(45, 100, 2); break;
+    }
 }

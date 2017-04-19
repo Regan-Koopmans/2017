@@ -1,11 +1,3 @@
-/*
-
-    CLASS       : GameTree
-    AUTHOR      : Regan Koopmans
-    DESCRIPTION : Defines a MINIMAX tree, using GameNodes. Used by AIPlayer to
-    			  make a decision.
-
- */
 package bao.tree;
 
 import bao.BaoBoard;
@@ -15,20 +7,38 @@ import bao.MoveType;
 import bao.player.Direction;
 import bao.player.PlayerType;
 
+/** 
+* Class that is concerned with the construction and various operations of a game tree,
+* as used by an artificially intelligent player.
+*/
+
 public class GameTree {
+
+    /** The constant max depth of the tree. */
 
     public static int DEPTH = 7;
     
     private GameNode root = null;
-    int ply_depth = 2;
 
     public GameTree(BaoBoard board) {
     	root = new GameNode(board, NodeType.MAX);
     }
 
+    /** 
+    * Function to perform pure MINIMAX, no longer used in main program. Kept for comparison purposes.
+    * @param player The type of player performing the recursive move search.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
+
     public Move getBestMove(PlayerType playerType) {
     	return root.getBestMoveRecursive(playerType, 0);
     }
+
+    /** 
+    * Performs alpha-beta pruning to determine a beneficial next move. 
+    * @param player The type of player performing the recursive move search.
+    * @return A Move object representing the most ideal move as identified by the algorithm.
+    */
 
     public Move abprune(PlayerType player) {
         double v = Double.NEGATIVE_INFINITY;

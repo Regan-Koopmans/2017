@@ -56,16 +56,13 @@ public class GameNode {
         int numCapture    = board.getNamuaCapMoves(player).size();
         int frontRow      = board.filledHolesInFrontRow(player);
         int seedsOnBoard  = board.seedsOnBoard(player);
-        
         int opposeCapture = board.getNamuaCapMoves(PlayerType.opposite(player)).size();
         int frontRowOpponent = board.filledHolesInFrontRow(opponent);
         int seedsOnBoardOp  = board.seedsOnBoard(opponent);
         int amountVulnerable = board.numVulnerable(player);
         int holesGreaterThan6 = board.sumHolesGreaterThan(player, 6);
 
-    	// return seedsOnBoard + frontRow + numCapture 
-                // - holesGreaterThan6 - opposeCapture - frontRowOpponent - seedsOnBoardOp - amountVulnerable;
-        return frontRow+seedsOnBoard-amountVulnerable-0.2*holesGreaterThan6 -opposeCapture;
+        return 5*frontRow+8*numCapture+seedsOnBoard-2*amountVulnerable-0.2*holesGreaterThan6 -opposeCapture - frontRowOpponent;
     }
 
     /**
