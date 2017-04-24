@@ -1,183 +1,49 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8">
-    <title>Practical 1</title>
-    <script src="glMatrix-0.9.5.min.js" type="text/javascript"></script>
-    <script type="text/javascript">
+    <title>Assignment 2</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+  </head>
+  <body onload="init()">
 
-        // gl contains the WebGL canvas context
-        var gl;
+      <canvas id="canvas-gl" width="500" height="500">
+        Your browser does not support WebGL.
+      </canvas>
 
-        function initGL(canvas) {
-            try {
+  </body>
+  <script id="shader-vs" type="text/plain">
+  /*
+    This is the vertex shader for the graphics
+    program.
+  */
+  precision mediump float;
 
-                // Initialize the gl object
+  attribute vec3 vertPosition;
+  attribute vec3 vertColor;
+  varying vec3 fragColor;
+  uniform mat4 mWorld;
+  uniform mat4 mView;
+  uniform mat4 mProj;
 
-                gl = canvas.getContext("webgl");
+  void main() {
+  // not doing anything exciting.
+  fragColor = vertColor;
+  // operations happen left-to-right
+  gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
 
-                // Setting the width and height of the viewport
+  }
 
-                gl.viewportWidth = canvas.width;
-                gl.viewportHeight = canvas.height;
+  </script>
+  <script id="shader-fs" type="text/plain">
+    precision mediump float;
 
-            }
-            catch (e) {}
-            if (!gl) {
-                alert("Could not initialize WebGL!")
-            }
-        }
-    </script>
+    varying vec3 fragColor;
 
-    <script id="shader-vs" type="x-shader/x-vertex">
-
-        attribute vec3 vertexPosition;
-
-        uniform mat4 uMVMatrix;
-        uniform mat4 uPMatrix;
-
-        void main(void) {
-          gl_Position = uPMatrix * uMVMatrix * vec4(vertexPosition,1.0);
-        }
-    </script>
-
-    <script id="shader-fs" type="x-shader/x-fragment">
-
-        precision mediump float;
-
-        void main(void) {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        }
-    </script>
-
-    <script type="text/javascript">
-
-        // Helper function that takes shader text and compiles it into a gl
-        // shader.
-
-        function getShader(gl, id) {
-          var shaderScript = document.getElementById(id);
-
-          if (!shaderScript) { return null; }
-
-          var str = "";
-          var k = shaderScript.firstChild;
-          while (k) {
-            if (k.nodeType == 3) {
-              str += k.textContent;
-            }
-            k = k.nextSibling;
-          }
-
-          var shader;
-
-          if (shaderScript.type == "x-shader/x-fragment") {
-            shader = gl.createShader(gl.FRAGMENT_SHADER)
-          } else if (shaderScript.type == "x-shader/x-vertex") {
-            shader = gl.createShader(gl.VERTEX_SHADER);
-          } else {
-            return null;
-          }
-          gl.shaderSource(shader, str);
-          gl.compileShader(shader);
-
-          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            alert(gl.getShaderInfoLog(shader));
-            return null;
-          }
-
-          return shader;
-
-        }
-
-        var shader_program;
-
-        function initShaders() {
-          var vertexShader = getShader(gl, "shader-vs");
-          var fragmentShader = getShader(gl, "shader-fs");
-
-          shader_program = gl.createProgram();
-          gl.attachShader(shader_program, vertexShader);
-          gl.attachShader(shader_program, fragmentShader);
-          gl.linkProgram(shader_program);
-
-          gl.useProgram(shader_program);
-
-          shader_program.vertexPositionAttribute = gl.getAttribLocation(
-            shader_program, "vertexPosition");
-          gl.enableVertexAttribArray(shader_program.vertexPositionAttribute);
-
-          shader_program.pMatrixLocation = gl.getUniformLocation(shader_program,
-            "uPMatrix");
-          shader_program.mvMatrixLocation = gl.getUniformLocation(shader_program,
-            "uMVMatrix");
-        }
-
-        var mvMatrix = mat4.create();
-        var pMatrix = mat4.create();
-
-        function setMatrixUniforms() {
-          // This tells WebGl to take the current model-view and projection
-          // matrices into account
-
-          gl.uniformMatrix4fv(shader_program.pMatrixLocation, false, pMatrix);
-          gl.uniformMatrix4fv(shader_program.mvMatrixLocation, false, mvMatrix);
-        }
-
-        var triangleVertexPositionBuffer;
-
-        function initBuffers() {
-          triangleVertexPositionBuffer = gl.createBuffer();
-          gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-          var vertices = [
-             1.0,  1.0, 0.0,
-            -1.0, -1.0, 0.0,
-             1.0, -1.0, 0.0
-          ];
-          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),
-          gl.STATIC_DRAW)
-
-          triangleVertexPositionBuffer.itemSize = 3;
-          triangleVertexPositionBuffer.numItems = 3;
-        }
-
-        function drawScene() {
-          gl.viewport(0,0, gl.viewportWidth, gl.viewportHeight);
-          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-          mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0,
-             pMatrix);
-
-          mat4.identity(mvMatrix);
-          mat4.translate(mvMatrix, [0.0,0.0,-10.0]);
-          gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-          gl.vertexAttribPointer(shader_program.vertexPositionAttribute,
-            triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-          setMatrixUniforms();
-          gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
-        }
-
-        function webGLStart() {
-          var canvas = document.getElementById("canvas-main");
-          initGL(canvas);
-          initShaders();
-          initBuffers();
-
-          gl.clearColor(0.0,0.0,0.0,1.0);
-
-          // Ensures that objects behind other objects are hidden.
-
-          gl.enable(gl.DEPTH_TEST);
-
-          drawScene();
-        }
-    </script>
-</head>
-
-<body onload="webGLStart()">
-    <canvas id="canvas-main" width="500" height="500"></canvas>
-</body>
-
+    void main() {
+      gl_FragColor = vec4(fragColor, 1.0);
+    }
+  </script>
+  <script type="text/javascript" src="gl-matrix-min.js"></script>
+  <script type="text/javascript" src="main.js"></script>
 </html>
