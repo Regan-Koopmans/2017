@@ -11,39 +11,37 @@
         Your browser does not support WebGL.
       </canvas>
 
+    <img width="0" height="0" id="tex" src="tex.png">
   </body>
   <script id="shader-vs" type="text/plain">
-  /*
-    This is the vertex shader for the graphics
-    program.
-  */
   precision mediump float;
 
   attribute vec3 vertPosition;
-  attribute vec3 vertColor;
-  varying vec3 fragColor;
+  attribute vec2 vertTexCoord;
+  varying vec2 fragTexCoord;
   uniform mat4 mWorld;
   uniform mat4 mView;
   uniform mat4 mProj;
 
   void main() {
-  // not doing anything exciting.
-  fragColor = vertColor;
-  // operations happen left-to-right
-  gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
-
+    fragTexCoord = vertTexCoord;
+    gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
   }
 
   </script>
   <script id="shader-fs" type="text/plain">
     precision mediump float;
 
-    varying vec3 fragColor;
+    varying vec2 fragTexCoord;
+    uniform sampler2D sampler;
 
     void main() {
-      gl_FragColor = vec4(fragColor, 1.0);
+      gl_FragColor = texture2D(sampler, fragTexCoord);
     }
   </script>
+
+  <script id="ship" type="text/json"></script>
+  <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="gl-matrix-min.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </html>

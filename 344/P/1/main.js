@@ -5,7 +5,6 @@
   // Author : Regan Koopmans     //
   /////////////////////////////////
 
-
 var worldMatrix = mat4.create();
 var mvMatrixStack = [];
 var viewMatrix = mat4.create();
@@ -79,40 +78,40 @@ var init = function() {
     var boxVertices= [
 
         // TOP
-        -1.0, 1.0, -1.0,     1.0,0.0,0.0,
-        -1.0, 1.0, 1.0,      1.0,0.0,0.0,
-        1.0, 1.0, 1.0,       1.0,0.0,0.0,
-        1.0, 1.0, -1.0,      1.0,0.0,0.0,
+        -1.0, 1.0, -1.0,     0, 0,
+        -1.0, 1.0, 1.0,      0, 1,
+        1.0, 1.0, 1.0,       1, 1,
+        1.0, 1.0, -1.0,      1, 0,
 
         // LEFT
-        -1.0, 1.0, 1.0,       1.0,1.0,0.5,
-        -1.0, -1.0, 1.0,      1.0,1.0,0.5,
-        -1.0, -1.0, -1.0,     1.0,1.0,0.5,
-        -1.0, 1.0, -1.0,      1.0,1.0,0.5,
+        -1.0, 1.0, 1.0,      0, 0,
+        -1.0, -1.0, 1.0,     1, 0,
+        -1.0, -1.0, -1.0,    1, 1,
+        -1.0, 1.0, -1.0,     0, 1,
 
         // RIGHT
-        1.0, 1.0, 1.0,       1,0.5,0.5,
-        1.0, -1.0, 1.0,      1.0,0.5,0.5,
-        1.0, -1.0, -1.0,     1.0,0.5,0.5,
-        1.0, 1.0, -1.0,      1.0,0.5,0.5,
+        1.0, 1.0, 1.0,       1, 1,
+        1.0, -1.0, 1.0,      0, 1,
+        1.0, -1.0, -1.0,     0, 0,
+        1.0, 1.0, -1.0,      1, 0,
 
         // FRONT
-        1.0, 1.0, 1.0,        0.3,0.1,1.0,
-         1.0, -1.0, 1.0,      0.3,0.1,1.0,
-        -1.0, -1.0, 1.0,      0.3,0.1,1.0,
-        -1.0, 1.0, 1.0,       0.3,0.1,1.0,
+        1.0, 1.0, 1.0,       1, 1, 
+         1.0, -1.0, 1.0,     1, 0, 
+        -1.0, -1.0, 1.0,     0, 0,
+        -1.0, 1.0, 1.0,      0, 1, 
 
         // BACK
-        1.0, 1.0, -1.0,       0.5,1.0,0.5,
-        1.0, -1.0, -1.0,      0.5,1.0,0.5,
-        -1.0, -1.0, -1.0,     0.5,1.0,0.5,
-        -1.0, 1.0, -1.0,      0.5,1.0,0.5,
+        1.0, 1.0, -1.0,      0, 0, 
+        1.0, -1.0, -1.0,     0, 1, 
+        -1.0, -1.0, -1.0,    1, 1, 
+        -1.0, 1.0, -1.0,     1, 0,
 
         // BOTTOM
-        -1.0, -1.0, -1.0,     0.5,0.5,0.5,
-        -1.0, -1.0, 1.0,      0.5,0.5,0.5,
-        1.0, -1.0, 1.0,       0.5,0.5,0.5,
-        1.0, -1.0, -1.0,      0.5,0.5,0.5,
+        -1.0, -1.0, -1.0,    1, 1, 
+        -1.0, -1.0, 1.0,     1, 0, 
+        1.0, -1.0, 1.0,      0, 0,
+        1.0, -1.0, -1.0,     0, 1, 
     ];
 
     // Indices tell WebGL which sets create a single triange.
@@ -144,45 +143,18 @@ var init = function() {
             22, 20, 23
         ];
 
-    var pyramidVertices =
-    [
-          0.0,  1.0,  0.0,      1.0,0.0,0.0,
-        -1.0, 0.0, 1.0,       1.0,0.0,0.0,
-         1.0, 0.0, 1.0,       1.0,0.0,0.0,
-        // Right face
-         0.0,  1.0,  0.0,       0.0,1.0,0.0,
-         1.0, 0.0,  1.0,       0.0,1.0,0.0,
-         1.0, 0.0, -1.0,       0.0,1.0,0.0,
-        // Back face
-         0.0,  1.0,  0.0,       0.0,0.0,1.0,
-         -1.0, 0.0, -1.0,       0.0,0.0,1.0,
-         1.0, 0.0, -1.0,       0.0,0.0,1.0,
-        // Left face
-         0.0,  1.0,  0.0,       0.0,1.0,1.0,
-        -1.0, 0.0, -1.0,       0.0,1.0,1.0,
-        -1.0, 0.0,  1.0,       0.0,1.0,1.0,
-    ];
-
-    var pyramidIndices =
-    [
-        0,1,2,
-        3,4,5,
-        6,7,8,
-        9,10,11,
-
-    ];
-
     var seaVertices = [
-        -1.0, 1.0, -1.0,     0.0,0.0,1.0,
-        -1.0, 1.0, 1.0,      0.0,0.0,1.0,
-        1.0, 1.0, 1.0,       0.0,0.0,1.0,
-        1.0, 1.0, -1.0,      0.0,0.0,1.0
+        -1.0, 1.0, -1.0,     0, 0,
+        -1.0, 1.0, 1.0,      0, 1,
+        1.0, 1.0, 1.0,       1, 1,
+        1.0, 1.0, -1.0,      1, 0,
     ];
 
     var seaIndices = [
         0,1,2,
         0,2,3
     ];
+
 
     var boxVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
@@ -193,19 +165,6 @@ var init = function() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices),
                   gl.STATIC_DRAW);
-
-    // PYRAMID
-
-    var pyramidVertexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pyramidVertices),
-                  gl.STATIC_DRAW);
-
-    var pyramidIndexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(pyramidIndices),
-                  gl.STATIC_DRAW);
-
 
     // Sea
 
@@ -219,56 +178,37 @@ var init = function() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(seaIndices),
                   gl.STATIC_DRAW);
 
-    // Bind pyramid to array buffer
 
     var box_positionAttribLocation =
         gl.getAttribLocation(program, 'vertPosition');
 
-    var box_colorAttribLocation =
-        gl.getAttribLocation(program, 'vertColor');
-
-    var pyramid_positionAttribLocation =
-        gl.getAttribLocation(program, 'vertPosition');
-
-    var pyramid_colorAttribLocation =
-        gl.getAttribLocation(program, 'vertColor');
+    var box_texCoordAttribLocation =
+        gl.getAttribLocation(program, 'vertTexCoord');
 
     var sea_positionAttribLocation =
         gl.getAttribLocation(program, 'vertPosition');
 
-    var sea_colorAttribLocation =
-        gl.getAttribLocation(program, 'vertColor');
+    var sea_texCoordAttribLocation =
+        gl.getAttribLocation(program, 'vertTexCoord');
+
 
     gl.enableVertexAttribArray(box_positionAttribLocation);
-    gl.enableVertexAttribArray(box_colorAttribLocation);
-    gl.enableVertexAttribArray(pyramid_positionAttribLocation);
-    gl.enableVertexAttribArray(pyramid_colorAttribLocation);
-
+    gl.enableVertexAttribArray(box_texCoordAttribLocation);
     gl.enableVertexAttribArray(sea_positionAttribLocation);
-    gl.enableVertexAttribArray(sea_colorAttribLocation);
-
-    gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
-    gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                           Float32Array.BYTES_PER_ELEMENT);
-
-    gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
-    gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                           Float32Array.BYTES_PER_ELEMENT);
-
-    gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
-    gl.vertexAttribPointer(sea_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                           6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                           Float32Array.BYTES_PER_ELEMENT);
-
+    gl.enableVertexAttribArray(sea_texCoordAttribLocation);
     gl.useProgram(program);
+
+    // Textures
+
+    var boxTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("tex"));
+
+    // gl.bindTexture(gl.TEXTURE_2D, null);
 
     matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
     matViewUniformLocation = gl.getUniformLocation(program, 'mView');
@@ -280,9 +220,13 @@ var init = function() {
     mat4.lookAt(viewMatrix, [0,0,-10], [0,0,0], [0,1,0]);
     mat4.perspective(projMatrix, 45, canvas.width / canvas.height, 0.1, 100);
 
+    ship_bob = 0;
+    bob_direction = -1;
+
     setMatrixUniforms();
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
+    box_rotation = 0
 
     gl.clearColor(0.494,0.753,0.93,1.0);
     var loop = function() {
@@ -290,122 +234,65 @@ var init = function() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mat4.identity(worldMatrix);
 
+        gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+        gl.activeTexture(gl.TEXTURE0);
+
         // SEA //
 
-        mvPushMatrix();
-        mat4.translate(worldMatrix, worldMatrix, [0, -0.5, 0]);
-        mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
-        gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
-
-        gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBufferObject);
-
-        gl.vertexAttribPointer(sea_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                               Float32Array.BYTES_PER_ELEMENT);
-
-        setMatrixUniforms();
-        gl.drawElements(gl.TRIANGLE_STRIP, seaIndices.length,
-                        gl.UNSIGNED_SHORT, 0);
-        mvPopMatrix();
+        // mvPushMatrix();
+        // mat4.translate(worldMatrix, worldMatrix, [0, -0.5, 0]);
+        // mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
+        // gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+        //                        5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBufferObject);
+        // gl.vertexAttribPointer(sea_texCoordAttribLocation,3,gl.FLOAT,gl.FALSE,
+        //                        2 * Float32Array.BYTES_PER_ELEMENT,3 *
+        //                        Float32Array.BYTES_PER_ELEMENT);
+        // setMatrixUniforms();
+        // gl.drawElements(gl.TRIANGLE_STRIP, seaIndices.length,
+        //                 gl.UNSIGNED_SHORT, 0);
+        // mvPopMatrix();
 
         /// BOX //////////
 
         mvPushMatrix();
-        mat4.translate(worldMatrix, worldMatrix, [2, 0, 0]);
+        mat4.rotate(worldMatrix, worldMatrix, box_rotation, [0,1,0]);
+        box_rotation += 0.005;
+        mat4.translate(worldMatrix, worldMatrix, [2, 0, -2]);
+        mat4.translate(worldMatrix, worldMatrix, [0, ship_bob, 0]);
+        ship_bob += bob_direction*0.002;
+        if (ship_bob < -0.3 || ship_bob > 0.3) { bob_direction *= -1; }
         gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-
         gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
+                               5 * Float32Array.BYTES_PER_ELEMENT, 0);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-
-        gl.vertexAttribPointer(box_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                               Float32Array.BYTES_PER_ELEMENT);
-
+        gl.vertexAttribPointer(box_texCoordAttribLocation,2,
+                                gl.FLOAT,
+                                gl.FALSE,
+                               5 * Float32Array.BYTES_PER_ELEMENT,
+                               3 * Float32Array.BYTES_PER_ELEMENT);
         setMatrixUniforms();
         gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
                         gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
 
-        //// PYRAMID ////////////////////
+        // SHIP
 
-        mvPushMatrix();
-        mat4.translate(worldMatrix, worldMatrix, [-2, 0, 0]);
-        //console.log(worldMatrix);
-        //mat4.rotate(worldMatrix, worldMatrix, Math.PI / 4);
-        gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
-
-        gl.vertexAttribPointer(pyramid_positionAttribLocation,3,gl.FLOAT,
-                               gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBufferObject);
-
-        gl.vertexAttribPointer(pyramid_colorAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               6 * Float32Array.BYTES_PER_ELEMENT,3 *
-                               Float32Array.BYTES_PER_ELEMENT);
-        setMatrixUniforms();
-        gl.drawElements(gl.TRIANGLE_STRIP, pyramidIndices.length,
-                        gl.UNSIGNED_SHORT, 0);
-
-        mvPopMatrix();
+        // mvPushMatrix();
+        // gl.bindBuffer(gl.ARRAY_BUFFER, shipVertexBufferObject);
+        // gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+        //                        3 * Float32Array.BYTES_PER_ELEMENT, 0);
+        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shipIndexBufferObject);
+        // setMatrixUniforms();
+        // // console.log("Num indices " + ship_object.meshes[0].faces.length)
+        // gl.drawElements(gl.TRIANGLE_STRIP, 12, gl.UNSIGNED_SHORT, 0);
+        // mvPopMatrix();
+        
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
 };
-
-// PROJECTION FUNCTIONS
-
-// function to create an orthographic parallel projectoin to be
-// stored in "dest".
-
-function ortho(left, right, bottom, top, near, far) {
-    dest = mat4.create();
-    mat4.identity(dest);
-    dest[0] = 2 / (right - left);
-    dest[5] = 2 / (top - bottom);
-    dest[10] = -2 / (far - near);
-    dest[12] = - ((left + right)/(right - left));
-    dest[13] = - ((top + bottom)/(top - bottom));
-    dest[14] = - ((far + near)/(far - near));
-    return dest;
-}
-
-function oblique(left, right, bottom, top, near, far, theta, phi) {
-    var st = ortho(left, right, bottom, top, near, far);
-    h_matrix = mat4.create();
-    morth = mat4.create();
-    mat4.identity(h_matrix);
-    mat4.identity(morth);
-
-    // Changes to MORTH
-
-    morth[10] = 0;
-
-    // Changes to H (shear matrix)
-
-    h_matrix[8] = 1 / (Math.tan(theta));
-    h_matrix[9] = 1 / (Math.tan(phi));
-
-    mat4.multiply(st,st,h_matrix);
-    mat4.multiply(morth, morth, st);
-
-    return morth;
-}
-
-function perspective(fov, far, near) {
-    var pMatrix = mat4.create();
-    var s = 1 / ( Math.tan ( (fov / 2) * (Math.PI / 180)) );
-    pMatrix[0] = s;
-    pMatrix[5] = s;
-    pMatrix[10] = - far / (far - near);
-    pMatrix[11] = - (far * near) / (far - near);
-    pMatrix[14] = -1;
-    return pMatrix;
-}
 
 function get_shader_text(id) { return document.getElementById(id).innerHTML; }
 
