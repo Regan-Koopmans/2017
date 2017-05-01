@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Assignment 2</title>
+    <title>Pirate Ship</title>
     <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body onload="init()">
@@ -11,7 +11,9 @@
         Your browser does not support WebGL.
       </canvas>
 
-    <img width="0" height="0" id="tex" src="tex.png">
+    <img width="0" height="0" id="box-tex" src="textures/box.png">
+    <img width="0" height="0" id="sea-tex" src="textures/sea.png">
+    <img width="0" height="0" id="sky-tex" src="textures/sky.jpg">
   </body>
   <script id="shader-vs" type="text/plain">
   precision mediump float;
@@ -40,8 +42,9 @@
     }
   </script>
 
+  <source src="sounds/ocean.m3u" type="audio/mpeg">
   <script id="ship" type="text/json"></script>
-  <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="gl-matrix-min.js"></script>
+  <script type="text/javascript" src="utils/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="utils/gl-matrix-min.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </html>

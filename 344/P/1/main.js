@@ -15,7 +15,16 @@ var matWorldUniformLocation;
 var matViewUniformLocation;
 var matProjUniformLocation;
 
+var view_translate_x = 0;
+var view_translate_y = 0;
+var view_translate_z = 0;
+
+var view_rotate_x = 0;
+var view_rotate_y = 0;
+
 var init = function() {
+
+
     worldMatrix = mat4.create();
     mvMatrixStack = [];
     viewMatrix = mat4.create();
@@ -25,10 +34,14 @@ var init = function() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
+    orig_mouse_x = 0.5 * canvas.clientWidth;
+    orig_mouse_y = 0.5 * canvas.clientHeight;
+    
     gl = canvas.getContext("webgl");
     gl.viewport(0, 0, canvas.width, canvas.height);
     canvas.addEventListener("resize", init);
-    document.addEventListener("keypress", handleKeyPress);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
 
     if (!gl) { alert("Could not get WebGL context!"); }
 
@@ -145,9 +158,9 @@ var init = function() {
 
     var seaVertices = [
         -1.0, 1.0, -1.0,     0, 0,
-        -1.0, 1.0, 1.0,      0, 1,
+        -1.0, 1.0, 1.0,      1, 0,
         1.0, 1.0, 1.0,       1, 1,
-        1.0, 1.0, -1.0,      1, 0,
+        1.0, 1.0, -1.0,      0, 1,
     ];
 
     var seaIndices = [
@@ -206,9 +219,25 @@ var init = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("tex"));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("box-tex"));
 
-    // gl.bindTexture(gl.TEXTURE_2D, null);
+    var seaTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, seaTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRROR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRROR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("sea-tex"));
+    
+    var skyTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, skyTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("sky-tex"));
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
 
     matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
     matViewUniformLocation = gl.getUniformLocation(program, 'mView');
@@ -220,49 +249,71 @@ var init = function() {
     mat4.lookAt(viewMatrix, [0,0,-10], [0,0,0], [0,1,0]);
     mat4.perspective(projMatrix, 45, canvas.width / canvas.height, 0.1, 100);
 
-    ship_bob = 0;
+    sea_bob = 0;
     bob_direction = -1;
 
     setMatrixUniforms();
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
-    box_rotation = 0
+    
 
     gl.clearColor(0.494,0.753,0.93,1.0);
     var loop = function() {
 
+        // mat4.rotate(viewMatrix, viewMatrix, -view_rotate_y, [0,1,0]);
+        mat4.translate(viewMatrix, viewMatrix, [view_translate_x, view_translate_y, view_translate_z]);
+
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mat4.identity(worldMatrix);
 
-        gl.bindTexture(gl.TEXTURE_2D, boxTexture);
-        gl.activeTexture(gl.TEXTURE0);
-
         // SEA //
 
-        // mvPushMatrix();
-        // mat4.translate(worldMatrix, worldMatrix, [0, -0.5, 0]);
-        // mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
-        // gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-        //                        5 * Float32Array.BYTES_PER_ELEMENT, 0);
-        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBufferObject);
-        // gl.vertexAttribPointer(sea_texCoordAttribLocation,3,gl.FLOAT,gl.FALSE,
-        //                        2 * Float32Array.BYTES_PER_ELEMENT,3 *
-        //                        Float32Array.BYTES_PER_ELEMENT);
-        // setMatrixUniforms();
-        // gl.drawElements(gl.TRIANGLE_STRIP, seaIndices.length,
-        //                 gl.UNSIGNED_SHORT, 0);
-        // mvPopMatrix();
+        mvPushMatrix();
+        gl.bindTexture(gl.TEXTURE_2D, seaTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.translate(worldMatrix, worldMatrix, [0, -0.5 + sea_bob, 0]);
+        if (sea_bob > 0.3 || sea_bob < -0.3) { bob_direction *= -1; }
+        sea_bob += bob_direction * 0.001;
+        mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
+        gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBufferObject);
+        gl.vertexAttribPointer(sea_texCoordAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               2 * Float32Array.BYTES_PER_ELEMENT,3 *
+                               Float32Array.BYTES_PER_ELEMENT);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, seaIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        // SKY
+
+        mvPushMatrix();
+        gl.bindTexture(gl.TEXTURE_2D, skyTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.translate(worldMatrix, worldMatrix, [0, 35, 50]);
+        mat4.scale(worldMatrix, worldMatrix, [70,40,0]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [1, 0, 0]);
+        mat4.rotate(worldMatrix, worldMatrix, 3 *Math.PI / 2, [0, 1, 0]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
+        gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBufferObject);
+        gl.vertexAttribPointer(sea_texCoordAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               2 * Float32Array.BYTES_PER_ELEMENT,3 *
+                               Float32Array.BYTES_PER_ELEMENT);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, seaIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
 
         /// BOX //////////
 
         mvPushMatrix();
-        mat4.rotate(worldMatrix, worldMatrix, box_rotation, [0,1,0]);
-        box_rotation += 0.005;
-        mat4.translate(worldMatrix, worldMatrix, [2, 0, -2]);
-        mat4.translate(worldMatrix, worldMatrix, [0, ship_bob, 0]);
-        ship_bob += bob_direction*0.002;
-        if (ship_bob < -0.3 || ship_bob > 0.3) { bob_direction *= -1; }
+        gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.translate(worldMatrix, worldMatrix, [-3, 0, 2]);
         gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
         gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
                                5 * Float32Array.BYTES_PER_ELEMENT, 0);
@@ -275,11 +326,13 @@ var init = function() {
         setMatrixUniforms();
         gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
                         gl.UNSIGNED_SHORT, 0);
+        
         mvPopMatrix();
 
         // SHIP
 
         // mvPushMatrix();
+        // gl.bindTexture(gl.TEXTURE_2D, null);
         // gl.bindBuffer(gl.ARRAY_BUFFER, shipVertexBufferObject);
         // gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
         //                        3 * Float32Array.BYTES_PER_ELEMENT, 0);
@@ -315,10 +368,31 @@ function mvPushMatrix() {
     mvMatrixStack.push(copy);
 }
 
-function handleKeyPress(event) {
-    // switch(event.key) {
-    // case '1' : projMatrix = ortho(-5, 5, -5, 5, -5, 5); break;
-    // case '2' : projMatrix = oblique(-10, 10, -10, 10, -10, 10, Math.PI / 4, Math.PI / 2); break;
-    // case '3' : projMatrix = perspective(45, 100, 2); break;
-    // }
+function handleKeyDown(event) {
+    switch(event.key) {
+    case 'a' : view_translate_x = -0.05; break;
+    case 'd' : view_translate_x = 0.05; break;
+    case 'w' : view_translate_z = -0.05; break;
+    case 's' : view_translate_z = 0.05; break;
+    case 'k' : view_rotate_y = 0.05; break;
+    case 'l' : view_rotate_y = -0.05; break;
+    }
+}
+
+function handleKeyUp(event) {
+    switch(event.key) {
+    case 'a' : view_translate_x = 0; break;
+    case 'd' : view_translate_x = 0; break;
+    case 'w' : view_translate_z = 0; break;
+    case 's' : view_translate_z = 0; break;
+    case 's' : view_translate_z = 0; break;
+    case 's' : view_translate_z = 0; break;
+    case 'k' : view_rotate_y = 0; break;
+    case 'l' : view_rotate_y = 0; break;
+    }
+}
+
+function handleMouseMove(event) {
+    diff_mouse_x = orig_mouse_x - event.clientX;
+    diff_mouse_y = orig_mouse_y - event.clientY;
 }
