@@ -78,10 +78,10 @@ var init = function() {
     var boxVertices= [
 
         // TOP
-        -1.0, 1.0, -1.0,     1.0,0.0,0.0,
-        -1.0, 1.0, 1.0,      1.0,0.0,0.0,
-        1.0, 1.0, 1.0,       1.0,0.0,0.0,
-        1.0, 1.0, -1.0,      1.0,0.0,0.0,
+        -1.0, 1.0, -1.0,     1.0,0.843,0.0,
+        -1.0, 1.0, 1.0,      1.0,0.843,0.0,
+        1.0, 1.0, 1.0,       1.0,0.843,0.0,
+        1.0, 1.0, -1.0,      1.0,0.843,0.0,
 
         // LEFT
         -1.0, 1.0, 1.0,       1.0,1.0,0.5,
@@ -165,10 +165,9 @@ var init = function() {
     var pyramidIndices =
     [
         0,1,2,
-        3,4,5,
         6,7,8,
         9,10,11,
-
+        3,4,5,
     ];
 
     var boxVertexBufferObject = gl.createBuffer();
@@ -239,7 +238,7 @@ var init = function() {
     mat4.identity(worldMatrix);
 
     mat4.lookAt(viewMatrix, [0,0,-10], [0,0,0], [0,1,0]);
-    projMatrix = ortho(-5.0, 5.0, -5.0, 5.0, -5.0, 5.0);
+    projMatrix = ortho(-5, 5, -5, 5, -15, 15);
 
     //projMatrix = oblique(-10, 10, -10, 10, -10, 10, Math.PI/4, Math.PI/4);
 
@@ -276,7 +275,7 @@ var init = function() {
         //// PYRAMID ////////////////////
 
         mvPushMatrix();
-        mat4.translate(worldMatrix, worldMatrix, [-2, 0, -10]);
+        mat4.translate(worldMatrix, worldMatrix, [-2, 0, 5]);
         //console.log(worldMatrix);
         //mat4.rotate(worldMatrix, worldMatrix, Math.PI / 4);
         gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexBufferObject);
@@ -313,11 +312,13 @@ function ortho(left, right, bottom, top, near, far) {
     dest[12] = - ((left + right)/(right - left));
     dest[13] = - ((top + bottom)/(top - bottom));
     dest[14] = - ((far + near)/(far - near));
+    document.getElementById("canvas-caption").innerHTML = "Orthographic";
     return dest;
 }
 
 function oblique(left, right, bottom, top, near, far, theta, phi) {
     var st = ortho(left, right, bottom, top, near, far);
+    var n = mat4.create();
     h_matrix = mat4.create();
     morth = mat4.create();
     mat4.identity(h_matrix);
@@ -333,9 +334,9 @@ function oblique(left, right, bottom, top, near, far, theta, phi) {
     h_matrix[9] = 1 / (Math.tan(phi));
 
     mat4.multiply(st,st,h_matrix);
-    mat4.multiply(morth, morth, st);
-
-    return morth;
+    // mat4.multiply(n, morth, st);
+    document.getElementById("canvas-caption").innerHTML = "Oblique";
+    return st;
 }
 
 function perspective(fov, far, near) {
@@ -346,6 +347,8 @@ function perspective(fov, far, near) {
     pMatrix[10] = - far / (far - near);
     pMatrix[11] = - (far * near) / (far - near);
     pMatrix[14] = -1;
+    document.getElementById("canvas-caption").innerHTML = "Perspective";
+
     return pMatrix;
 }
 
@@ -372,8 +375,8 @@ function mvPushMatrix() {
 
 function handleKeyPress(event) {
     switch(event.key) {
-    case '1' : projMatrix = ortho(-5, 5, -5, 5, -5, 5); break;
-    case '2' : projMatrix = oblique(-10, 10, -10, 10, -10, 10, Math.PI / 4, Math.PI / 2); break;
-    case '3' : projMatrix = perspective(45, 100, 2); break;
+    case '1' : projMatrix = ortho(-5, 5, -5, 5, -15, 15); break;
+    case '2' : projMatrix = oblique(-5, 5, -5, 5, -15, 15, Math.PI / 2.1, Math.PI / 1.8); break;
+    case '3' : projMatrix = perspective(45, 10, 2); break;
     }
 }

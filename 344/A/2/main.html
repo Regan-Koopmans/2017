@@ -4,23 +4,22 @@
     <meta charset="utf-8">
     <title>Assignment 2</title>
     <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" type="text/css" href="utils/prism.css">
   </head>
   <body onload="init()">
     <div align="center">
-    <h1>Assignment 2</h1>
-    <h2>Regan Koopmans, 15043143</h2>
-      <canvas id="canvas-gl" width="500" height="500">
+    <h1><u>Assignment 2</u></h1>
+    <h2>~ Projections ~</h2>
+    <h3>Regan Koopmans, 15043143</h3>
+      <figure>
+      <canvas id="canvas-gl" width="600" height="600">
         Your browser does not support WebGL.
       </canvas>
-
+      <figcaption><i id="canvas-caption"></i></figcaption>
+      </figure>
     </div>
-
   </body>
   <script id="shader-vs" type="text/plain">
-  /*
-    This is the vertex shader for the graphics
-    program.
-  */
   precision mediump float;
 
   attribute vec3 vertPosition;
@@ -31,9 +30,7 @@
   uniform mat4 mProj;
 
   void main() {
-  // not doing anything exciting.
   fragColor = vertColor;
-  // operations happen left-to-right
   gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
 
   }
@@ -48,6 +45,7 @@
       gl_FragColor = vec4(fragColor, 1.0);
     }
   </script>
-  <script type="text/javascript" src="gl-matrix-min.js"></script>
+
+  <script type="text/javascript" src="utils/gl-matrix-min.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </html>

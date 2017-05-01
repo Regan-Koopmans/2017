@@ -1,3 +1,12 @@
-tt {
-	color : blue;
+@font-face {
+  font-family: 'TitleFont';
+  src: url('fonts/galatia.ttf') format('truetype');
+}
+
+h1,h2,h3,p {
+	font-family: "TitleFont", serif
+}
+
+h1 {
+	font-size: 40px;
 }
