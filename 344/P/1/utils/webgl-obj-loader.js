@@ -384,4 +384,3 @@
     gl.deleteBuffer(mesh.indexBuffer);
   }
 })(this);
-

@@ -19,29 +19,24 @@ var view_translate_x = 0;
 var view_translate_y = 0;
 var view_translate_z = 0;
 
-var view_rotate_x = 0;
-var view_rotate_y = 0;
+var ship_rotatation = 0;
 
 var init = function() {
-
-
     worldMatrix = mat4.create();
     mvMatrixStack = [];
     viewMatrix = mat4.create();
     projMatrix = mat4.create();
 
     canvas = document.getElementById("canvas-gl");
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    // canvas.width = 0.9*canvas.clientWidth;
+    // canvas.height = 0.9*canvas.clientHeight;
 
-    orig_mouse_x = 0.5 * canvas.clientWidth;
-    orig_mouse_y = 0.5 * canvas.clientHeight;
-    
+
     gl = canvas.getContext("webgl");
     gl.viewport(0, 0, canvas.width, canvas.height);
-    canvas.addEventListener("resize", init);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
+    document.addEventListener("keypress", handleKeyPress);
 
     if (!gl) { alert("Could not get WebGL context!"); }
 
@@ -72,7 +67,6 @@ var init = function() {
         return;
     }
 
-    // creates program for GPU
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -109,22 +103,22 @@ var init = function() {
         1.0, 1.0, -1.0,      1, 0,
 
         // FRONT
-        1.0, 1.0, 1.0,       1, 1, 
-         1.0, -1.0, 1.0,     1, 0, 
+        1.0, 1.0, 1.0,       1, 1,
+         1.0, -1.0, 1.0,     1, 0,
         -1.0, -1.0, 1.0,     0, 0,
-        -1.0, 1.0, 1.0,      0, 1, 
+        -1.0, 1.0, 1.0,      0, 1,
 
         // BACK
-        1.0, 1.0, -1.0,      0, 0, 
-        1.0, -1.0, -1.0,     0, 1, 
-        -1.0, -1.0, -1.0,    1, 1, 
+        1.0, 1.0, -1.0,      0, 0,
+        1.0, -1.0, -1.0,     0, 1,
+        -1.0, -1.0, -1.0,    1, 1,
         -1.0, 1.0, -1.0,     1, 0,
 
         // BOTTOM
-        -1.0, -1.0, -1.0,    1, 1, 
-        -1.0, -1.0, 1.0,     1, 0, 
+        -1.0, -1.0, -1.0,    1, 1,
+        -1.0, -1.0, 1.0,     1, 0,
         1.0, -1.0, 1.0,      0, 0,
-        1.0, -1.0, -1.0,     0, 1, 
+        1.0, -1.0, -1.0,     0, 1,
     ];
 
     // Indices tell WebGL which sets create a single triange.
@@ -168,7 +162,6 @@ var init = function() {
         0,2,3
     ];
 
-
     var boxVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices),
@@ -191,6 +184,27 @@ var init = function() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(seaIndices),
                   gl.STATIC_DRAW);
 
+    // Ship object
+
+    ship = JSON.parse(getFile("models/ship12.json"));
+    var shipVertices = ship.data.attributes.position.array;
+    var shipIndices = ship.data.index.array;
+    var shipNormals = ship.data.attributes.normal.array;
+
+    var shipVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shipVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shipVertices),
+                  gl.STATIC_DRAW);
+
+    var shipIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shipIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(shipIndices),
+                  gl.STATIC_DRAW);
+
+    var shipNormalBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, shipNormalBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shipNormals), gl.STATIC_DRAW);
+
 
     var box_positionAttribLocation =
         gl.getAttribLocation(program, 'vertPosition');
@@ -204,11 +218,22 @@ var init = function() {
     var sea_texCoordAttribLocation =
         gl.getAttribLocation(program, 'vertTexCoord');
 
+    var ship_positionAttribLocation =
+        gl.getAttribLocation(program, 'vertPosition');
+
+    var ship_texCoordAttribLocation =
+        gl.getAttribLocation(program, 'vertTexCoord');
+
+    var normalAttribLocation =
+        gl.getAttribLocation(program, 'vertNormal');
 
     gl.enableVertexAttribArray(box_positionAttribLocation);
     gl.enableVertexAttribArray(box_texCoordAttribLocation);
     gl.enableVertexAttribArray(sea_positionAttribLocation);
     gl.enableVertexAttribArray(sea_texCoordAttribLocation);
+    gl.enableVertexAttribArray(ship_positionAttribLocation);
+    gl.enableVertexAttribArray(ship_texCoordAttribLocation);
+    gl.enableVertexAttribArray(normalAttribLocation);
     gl.useProgram(program);
 
     // Textures
@@ -223,12 +248,12 @@ var init = function() {
 
     var seaTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, seaTexture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRROR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRROR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("sea-tex"));
-    
+
     var skyTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, skyTexture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
@@ -236,8 +261,15 @@ var init = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("sky-tex"));
-    gl.bindTexture(gl.TEXTURE_2D, null);
 
+    var shipTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, shipTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("ship-tex"));
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
     matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
     matViewUniformLocation = gl.getUniformLocation(program, 'mView');
@@ -251,18 +283,19 @@ var init = function() {
 
     sea_bob = 0;
     bob_direction = -1;
+    ship_rotation = 0;
 
     setMatrixUniforms();
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
-    
 
     gl.clearColor(0.494,0.753,0.93,1.0);
+    mat4.translate(viewMatrix, viewMatrix, [0, -5, 2]);
     var loop = function() {
 
-        // mat4.rotate(viewMatrix, viewMatrix, -view_rotate_y, [0,1,0]);
-        mat4.translate(viewMatrix, viewMatrix, [view_translate_x, view_translate_y, view_translate_z]);
 
+
+        mat4.translate(viewMatrix, viewMatrix, [view_translate_x, view_translate_y, view_translate_z]);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mat4.identity(worldMatrix);
 
@@ -272,8 +305,8 @@ var init = function() {
         gl.bindTexture(gl.TEXTURE_2D, seaTexture);
         gl.activeTexture(gl.TEXTURE0);
         mat4.translate(worldMatrix, worldMatrix, [0, -0.5 + sea_bob, 0]);
-        if (sea_bob > 0.3 || sea_bob < -0.3) { bob_direction *= -1; }
-        sea_bob += bob_direction * 0.001;
+        if (sea_bob > 1 || sea_bob < -0.7) { bob_direction *= -1; }
+        sea_bob += bob_direction * 0.01;
         mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
         gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
         gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
@@ -292,7 +325,7 @@ var init = function() {
         mvPushMatrix();
         gl.bindTexture(gl.TEXTURE_2D, skyTexture);
         gl.activeTexture(gl.TEXTURE0);
-        mat4.translate(worldMatrix, worldMatrix, [0, 35, 50]);
+        mat4.translate(worldMatrix, worldMatrix, [0, 35, 80]);
         mat4.scale(worldMatrix, worldMatrix, [70,40,0]);
         mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [1, 0, 0]);
         mat4.rotate(worldMatrix, worldMatrix, 3 *Math.PI / 2, [0, 1, 0]);
@@ -313,7 +346,7 @@ var init = function() {
         mvPushMatrix();
         gl.bindTexture(gl.TEXTURE_2D, boxTexture);
         gl.activeTexture(gl.TEXTURE0);
-        mat4.translate(worldMatrix, worldMatrix, [-3, 0, 2]);
+        mat4.translate(worldMatrix, worldMatrix, [-3, 4, 10]);
         gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
         gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
                                5 * Float32Array.BYTES_PER_ELEMENT, 0);
@@ -326,22 +359,44 @@ var init = function() {
         setMatrixUniforms();
         gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
                         gl.UNSIGNED_SHORT, 0);
-        
+
         mvPopMatrix();
 
-        // SHIP
+        // ship
 
-        // mvPushMatrix();
-        // gl.bindTexture(gl.TEXTURE_2D, null);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, shipVertexBufferObject);
-        // gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-        //                        3 * Float32Array.BYTES_PER_ELEMENT, 0);
-        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shipIndexBufferObject);
-        // setMatrixUniforms();
-        // // console.log("Num indices " + ship_object.meshes[0].faces.length)
-        // gl.drawElements(gl.TRIANGLE_STRIP, 12, gl.UNSIGNED_SHORT, 0);
-        // mvPopMatrix();
-        
+        mvPushMatrix();
+        gl.bindTexture(gl.TEXTURE_2D, shipTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.translate(worldMatrix, worldMatrix, [2, 0, 4]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.5, [0,1,0])
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [1,0,0])
+        mat4.scale(worldMatrix, worldMatrix, [2,2,2]);
+        mat4.rotate(worldMatrix, worldMatrix, 3* Math.PI / 2, [1,0,0])
+        mat4.rotate(worldMatrix, worldMatrix, ship_rotation, [0,1,0])
+        gl.bindBuffer(gl.ARRAY_BUFFER, shipVertexBufferObject);
+        gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               3 * Float32Array.BYTES_PER_ELEMENT, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, shipNormalBufferObject);
+
+        gl.vertexAttribPointer(
+          normalAttribLocation,
+          3, gl.FLOAT,
+          gl.TRUE,
+          3 * Float32Array.BYTES_PER_ELEMENT,
+          0
+        );
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shipIndexBufferObject);
+        gl.vertexAttribPointer(ship_texCoordAttribLocation,2,
+                                gl.FLOAT,
+                                gl.FALSE,
+                              2 * Float32Array.BYTES_PER_ELEMENT,
+                              0);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, shipIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
         requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -374,8 +429,14 @@ function handleKeyDown(event) {
     case 'd' : view_translate_x = 0.05; break;
     case 'w' : view_translate_z = -0.05; break;
     case 's' : view_translate_z = 0.05; break;
-    case 'k' : view_rotate_y = 0.05; break;
-    case 'l' : view_rotate_y = -0.05; break;
+
+    }
+}
+
+function handleKeyPress(event) {
+    switch(event.key) {
+    case 'j': ship_rotation += -0.1; break;
+    case 'l': ship_rotation += 0.1; break;
     }
 }
 
@@ -385,14 +446,12 @@ function handleKeyUp(event) {
     case 'd' : view_translate_x = 0; break;
     case 'w' : view_translate_z = 0; break;
     case 's' : view_translate_z = 0; break;
-    case 's' : view_translate_z = 0; break;
-    case 's' : view_translate_z = 0; break;
-    case 'k' : view_rotate_y = 0; break;
-    case 'l' : view_rotate_y = 0; break;
     }
 }
 
-function handleMouseMove(event) {
-    diff_mouse_x = orig_mouse_x - event.clientX;
-    diff_mouse_y = orig_mouse_y - event.clientY;
+function getFile(filename) {
+  var request = new XMLHttpRequest();
+  request.open("GET", filename, false);
+  request.send(null);
+  return request.responseText;
 }
