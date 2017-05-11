@@ -28,8 +28,8 @@ var init = function() {
     projMatrix = mat4.create();
 
     canvas = document.getElementById("canvas-gl");
-    // canvas.width = 0.9*canvas.clientWidth;
-    // canvas.height = 0.9*canvas.clientHeight;
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 
 
     gl = canvas.getContext("webgl");
@@ -82,73 +82,24 @@ var init = function() {
         return;
     }
 
-    var boxVertices= [
+    box = JSON.parse(getFile("models/box.json"));
+    var boxVertices = box.data.attributes.position.array;
+    var boxIndices = box.data.index.array;
+    var boxNormals = box.data.attributes.normal.array;
 
-        // TOP
-        -1.0, 1.0, -1.0,     0, 0,
-        -1.0, 1.0, 1.0,      0, 1,
-        1.0, 1.0, 1.0,       1, 1,
-        1.0, 1.0, -1.0,      1, 0,
+    var boxVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices),
+                  gl.STATIC_DRAW);
 
-        // LEFT
-        -1.0, 1.0, 1.0,      0, 0,
-        -1.0, -1.0, 1.0,     1, 0,
-        -1.0, -1.0, -1.0,    1, 1,
-        -1.0, 1.0, -1.0,     0, 1,
+    var boxIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices),
+                  gl.STATIC_DRAW);
 
-        // RIGHT
-        1.0, 1.0, 1.0,       1, 1,
-        1.0, -1.0, 1.0,      0, 1,
-        1.0, -1.0, -1.0,     0, 0,
-        1.0, 1.0, -1.0,      1, 0,
-
-        // FRONT
-        1.0, 1.0, 1.0,       1, 1,
-         1.0, -1.0, 1.0,     1, 0,
-        -1.0, -1.0, 1.0,     0, 0,
-        -1.0, 1.0, 1.0,      0, 1,
-
-        // BACK
-        1.0, 1.0, -1.0,      0, 0,
-        1.0, -1.0, -1.0,     0, 1,
-        -1.0, -1.0, -1.0,    1, 1,
-        -1.0, 1.0, -1.0,     1, 0,
-
-        // BOTTOM
-        -1.0, -1.0, -1.0,    1, 1,
-        -1.0, -1.0, 1.0,     1, 0,
-        1.0, -1.0, 1.0,      0, 0,
-        1.0, -1.0, -1.0,     0, 1,
-    ];
-
-    // Indices tell WebGL which sets create a single triange.
-
-    var boxIndices =
-        [
-            // TOP
-            0,1,2,
-            0,2,3,
-
-            // LEFT
-            5,4,6,
-            6,4,7,
-
-            // RIGHT
-            8,9,10,
-            8,10,11,
-
-            // FRONT
-            13,12,14,
-            15,14,12,
-
-            // BACK1
-            16,17,18,
-            16,18,19,
-
-            // BOTTOM
-            21, 20, 22,
-            22, 20, 23
-        ];
+    var boxNormalBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, boxNormalBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxNormals), gl.STATIC_DRAW);
 
     var seaVertices = [
         -1.0, 1.0, -1.0,     0, 0,
@@ -186,7 +137,7 @@ var init = function() {
 
     // Ship object
 
-    ship = JSON.parse(getFile("models/ship12.json"));
+    ship = JSON.parse(getFile("models/ship-final.json"));
     var shipVertices = ship.data.attributes.position.array;
     var shipIndices = ship.data.index.array;
     var shipNormals = ship.data.attributes.normal.array;
@@ -204,6 +155,28 @@ var init = function() {
     var shipNormalBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, shipNormalBufferObject);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shipNormals), gl.STATIC_DRAW);
+
+    // Pirate
+
+    pirate = JSON.parse(getFile("models/pirate.json"));
+    console.log(pirate);
+    var pirateVertices = pirate.data.attributes.position.array;
+    var pirateIndices = pirate.data.index.array;
+    var pirateNormals = pirate.data.attributes.normal.array;
+
+    var pirateVertexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, pirateVertexBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pirateVertices),
+                  gl.STATIC_DRAW);
+
+    var pirateIndexBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pirateIndexBufferObject);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(pirateIndices),
+                  gl.STATIC_DRAW);
+
+    var pirateNormalBufferObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, pirateNormalBufferObject);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pirateNormals), gl.STATIC_DRAW);
 
 
     var box_positionAttribLocation =
@@ -224,7 +197,7 @@ var init = function() {
     var ship_texCoordAttribLocation =
         gl.getAttribLocation(program, 'vertTexCoord');
 
-    var normalAttribLocation =
+    var ship_normalAttribLocation =
         gl.getAttribLocation(program, 'vertNormal');
 
     gl.enableVertexAttribArray(box_positionAttribLocation);
@@ -233,7 +206,7 @@ var init = function() {
     gl.enableVertexAttribArray(sea_texCoordAttribLocation);
     gl.enableVertexAttribArray(ship_positionAttribLocation);
     gl.enableVertexAttribArray(ship_texCoordAttribLocation);
-    gl.enableVertexAttribArray(normalAttribLocation);
+    gl.enableVertexAttribArray(ship_normalAttribLocation);
     gl.useProgram(program);
 
     // Textures
@@ -269,6 +242,14 @@ var init = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("ship-tex"));
+
+    var skinTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, skinTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("skin-tex"));
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
@@ -293,8 +274,6 @@ var init = function() {
     mat4.translate(viewMatrix, viewMatrix, [0, -5, 2]);
     var loop = function() {
 
-
-
         mat4.translate(viewMatrix, viewMatrix, [view_translate_x, view_translate_y, view_translate_z]);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mat4.identity(worldMatrix);
@@ -306,7 +285,7 @@ var init = function() {
         gl.activeTexture(gl.TEXTURE0);
         mat4.translate(worldMatrix, worldMatrix, [0, -0.5 + sea_bob, 0]);
         if (sea_bob > 1 || sea_bob < -0.7) { bob_direction *= -1; }
-        sea_bob += bob_direction * 0.01;
+        sea_bob += bob_direction * 0.0017;
         mat4.scale(worldMatrix, worldMatrix, [100,0,100]);
         gl.bindBuffer(gl.ARRAY_BUFFER, seaVertexBufferObject);
         gl.vertexAttribPointer(sea_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
@@ -346,20 +325,51 @@ var init = function() {
         mvPushMatrix();
         gl.bindTexture(gl.TEXTURE_2D, boxTexture);
         gl.activeTexture(gl.TEXTURE0);
-        mat4.translate(worldMatrix, worldMatrix, [-3, 4, 10]);
+        mat4.translate(worldMatrix, worldMatrix, [-7, 0, 10]);
         gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-        gl.vertexAttribPointer(box_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
-                               5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               3 * Float32Array.BYTES_PER_ELEMENT, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, boxNormalBufferObject);
+
+        gl.vertexAttribPointer(
+          ship_normalAttribLocation,
+          3, gl.FLOAT,
+          gl.TRUE,
+          3 * Float32Array.BYTES_PER_ELEMENT,
+          0
+        );
+
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-        gl.vertexAttribPointer(box_texCoordAttribLocation,2,
+        gl.vertexAttribPointer(ship_texCoordAttribLocation,2,
                                 gl.FLOAT,
                                 gl.FALSE,
-                               5 * Float32Array.BYTES_PER_ELEMENT,
-                               3 * Float32Array.BYTES_PER_ELEMENT);
+                              2 * Float32Array.BYTES_PER_ELEMENT,
+                              0);
         setMatrixUniforms();
         gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
                         gl.UNSIGNED_SHORT, 0);
 
+        mvPopMatrix();
+
+        mvPushMatrix();
+        gl.bindTexture(gl.TEXTURE_2D, shipTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.translate(worldMatrix, worldMatrix, [0.5, 3, 10]);
+        mat4.scale(worldMatrix, worldMatrix, [2,1,1]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.2, [0, 1, 0]);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        mvPushMatrix();
+        mat4.translate(worldMatrix, worldMatrix, [2, 3, 5]);
+        mat4.scale(worldMatrix, worldMatrix, [0.2,10,0.2]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.2, [0, 1, 0]);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
 
         // ship
@@ -368,7 +378,7 @@ var init = function() {
         gl.bindTexture(gl.TEXTURE_2D, shipTexture);
         gl.activeTexture(gl.TEXTURE0);
         mat4.translate(worldMatrix, worldMatrix, [2, 0, 4]);
-        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.5, [0,1,0])
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.3, [0,1,0])
         mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [1,0,0])
         mat4.scale(worldMatrix, worldMatrix, [2,2,2]);
         mat4.rotate(worldMatrix, worldMatrix, 3* Math.PI / 2, [1,0,0])
@@ -380,7 +390,7 @@ var init = function() {
         gl.bindBuffer(gl.ARRAY_BUFFER, shipNormalBufferObject);
 
         gl.vertexAttribPointer(
-          normalAttribLocation,
+          ship_normalAttribLocation,
           3, gl.FLOAT,
           gl.TRUE,
           3 * Float32Array.BYTES_PER_ELEMENT,
@@ -395,6 +405,47 @@ var init = function() {
                               0);
         setMatrixUniforms();
         gl.drawElements(gl.TRIANGLE_STRIP, shipIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        // Pirate
+
+        mvPushMatrix();
+        gl.bindTexture(gl.TEXTURE_2D, skinTexture);
+        gl.activeTexture(gl.TEXTURE0);
+        mat4.scale(worldMatrix, worldMatrix, [0.25,0.25,0.25]);
+        mat4.translate(worldMatrix, worldMatrix, [12, 8, -12]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [0,1,0])
+        gl.bindBuffer(gl.ARRAY_BUFFER, pirateVertexBufferObject);
+        gl.vertexAttribPointer(ship_positionAttribLocation,3,gl.FLOAT,gl.FALSE,
+                               3 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, pirateNormalBufferObject);
+        gl.vertexAttribPointer(
+          ship_normalAttribLocation,
+          3, gl.FLOAT,
+          gl.TRUE,
+          3 * Float32Array.BYTES_PER_ELEMENT,
+          0
+        );
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pirateIndexBufferObject);
+        gl.vertexAttribPointer(ship_texCoordAttribLocation,2,
+                                gl.FLOAT,
+                                gl.FALSE,
+                              2 * Float32Array.BYTES_PER_ELEMENT,
+                              0);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, pirateIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        mvPushMatrix()
+        setMatrixUniforms();
+        mat4.scale(worldMatrix, worldMatrix, [0.25,0.25,0.25]);
+        mat4.translate(worldMatrix, worldMatrix, [11, 8, 0]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2, [0,1,0]);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, pirateIndices.length,
                         gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
         requestAnimationFrame(loop);
