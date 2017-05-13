@@ -1,0 +1,34 @@
+{
+    "metadata":{
+        "type":"BufferGeometry",
+        "generator":"io_three",
+        "version":3,
+        "position":4,
+        "uv":4,
+        "normal":4
+    },
+    "data":{
+        "index":{
+            "itemSize":1,
+            "type":"Uint16Array",
+            "array":[0,1,2,0,3,1]
+        },
+        "attributes":{
+            "position":{
+                "itemSize":3,
+                "type":"Float32Array",
+                "array":[1,0,1,-1,-0,-1,-1,0,1,1,-0,-1]
+            },
+            "uv":{
+                "itemSize":2,
+                "type":"Float32Array",
+                "array":[0.0001,0.9999,0.9999,0.0001,0.9999,0.9999,0.0001,0.0001]
+            },
+            "normal":{
+                "itemSize":3,
+                "type":"Float32Array",
+                "array":[0,1,-0,0,1,-0,0,1,-0,0,1,-0]
+            }
+        }
+    }
+}

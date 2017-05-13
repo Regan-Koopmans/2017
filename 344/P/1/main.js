@@ -137,7 +137,7 @@ var init = function() {
 
     // Ship object
 
-    ship = JSON.parse(getFile("models/ship-final.json"));
+    ship = JSON.parse(getFile("models/ship.json"));
     var shipVertices = ship.data.attributes.position.array;
     var shipIndices = ship.data.index.array;
     var shipNormals = ship.data.attributes.normal.array;
@@ -163,7 +163,6 @@ var init = function() {
     var pirateVertices = pirate.data.attributes.position.array;
     var pirateIndices = pirate.data.index.array;
     var pirateNormals = pirate.data.attributes.normal.array;
-
     var pirateVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, pirateVertexBufferObject);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pirateVertices),
@@ -178,6 +177,7 @@ var init = function() {
     gl.bindBuffer(gl.ARRAY_BUFFER, pirateNormalBufferObject);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pirateNormals), gl.STATIC_DRAW);
 
+    // Particles
 
     var box_positionAttribLocation =
         gl.getAttribLocation(program, 'vertPosition');
@@ -363,8 +363,19 @@ var init = function() {
                         gl.UNSIGNED_SHORT, 0);
         mvPopMatrix();
 
+        // Mast
+
         mvPushMatrix();
         mat4.translate(worldMatrix, worldMatrix, [2, 3, 5]);
+        mat4.scale(worldMatrix, worldMatrix, [0.2,10,0.2]);
+        mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.2, [0, 1, 0]);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLE_STRIP, boxIndices.length,
+                        gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+
+        mvPushMatrix();
+        mat4.translate(worldMatrix, worldMatrix, [2, 3, 4]);
         mat4.scale(worldMatrix, worldMatrix, [0.2,10,0.2]);
         mat4.rotate(worldMatrix, worldMatrix, Math.PI / 2.2, [0, 1, 0]);
         setMatrixUniforms();
@@ -455,17 +466,17 @@ var init = function() {
 
 function get_shader_text(id) { return document.getElementById(id).innerHTML; }
 
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+    gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
+    gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
+}
+
 function mvPopMatrix() {
     if (mvMatrixStack.length == 0) {
         console.log("empty!");
     }
     worldMatrix = mvMatrixStack.pop();
-}
-
-function setMatrixUniforms() {
-    gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-    gl.uniformMatrix4fv(matViewUniformLocation,  gl.FALSE, viewMatrix);
-    gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 }
 
 function mvPushMatrix() {
@@ -480,7 +491,6 @@ function handleKeyDown(event) {
     case 'd' : view_translate_x = 0.05; break;
     case 'w' : view_translate_z = -0.05; break;
     case 's' : view_translate_z = 0.05; break;
-
     }
 }
 
@@ -499,6 +509,8 @@ function handleKeyUp(event) {
     case 's' : view_translate_z = 0; break;
     }
 }
+
+// Gets the text in a file synchronously
 
 function getFile(filename) {
   var request = new XMLHttpRequest();
